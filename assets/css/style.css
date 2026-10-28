@@ -3484,3 +3484,18 @@ img { -webkit-touch-callout: none; }
 .fond__img--galerie { background-color: #11213b; }
 .fond__img--reseaux { background-color: #17291a; }
 .fond::after { background: none; }
+
+/* ==========================================================
+   Téléphone : le premier écran doit montrer le logo, la prochaine date ET le bandeau « Ils nous ont fait confiance ».
+   La photo et le logo se calent sur la hauteur de l'écran (svh) et les espaces sont resserrés.
+   ========================================================== */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__media { aspect-ratio: auto; height: clamp(10rem, 30svh, 17rem); }
+  .hero__logo { width: min(62vw, 19rem); margin-top: max(-13vw, -4.5rem); }
+  .hero__style { margin-top: .5rem; }
+  .dates-zone { padding-top: var(--s2); padding-bottom: var(--s3); }
+  .annonce__entete { margin-bottom: 0; }
+  .scene { width: min(50%, 9rem); }
+  .confiance { padding-top: var(--s2); }
+  .confiance__titre { margin-bottom: .25rem; }
+}
