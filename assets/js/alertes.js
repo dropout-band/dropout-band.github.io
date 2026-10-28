@@ -157,22 +157,21 @@ export async function initAlertes() {
       toast("Notifications refusées : vous pouvez les autoriser dans les réglages du navigateur.");
       return;
     }
-    // La synchronisation en arrière-plan n'est accordée qu'au site installé.
-    const droit = await navigator.permissions?.query({ name: "periodic-background-sync" }).catch(() => null);
-    if (droit?.state !== "granted") {
-      toast("Installez d’abord le site sur l’écran d’accueil, puis réactivez les alertes.");
-      document.querySelector("[data-installer]:not([hidden])")?.click();
-      return;
-    }
-    try {
-      await reg.periodicSync.register(TAG, { minInterval: INTERVALLE });
-    } catch {
-      toast("Votre appareil n’autorise pas les vérifications en arrière-plan.");
-      return;
-    }
-    reg.active?.postMessage({ type: "alertes", actif: true });
+    // Le choix de l'utilisateur est pris en compte tout de suite : le bouton passe en « activé », puis on essaie de mettre
+    // en route la vérification en arrière-plan. Celle-ci n'est accordée qu'au site installé sur l'écran d'accueil :
+    // sinon on le dit clairement, et elle démarre toute seule au prochain passage depuis l'appli installée (voir reprendre()).
     ecrireChoix(true);
     afficher(bouton, true);
+    reg.active?.postMessage({ type: "alertes", actif: true });
+    const droit = await navigator.permissions?.query({ name: "periodic-background-sync" }).catch(() => null);
+    let enArrierePlan = false;
+    if (droit?.state === "granted") {
+      try { await reg.periodicSync.register(TAG, { minInterval: INTERVALLE }); enArrierePlan = true; } catch { /* pas accordé : message ci-dessous */ }
+    }
+    if (!enArrierePlan) {
+      toast("Alertes activées. Pour les recevoir même quand le site est fermé, ajoutez-le à l’écran d’accueil.");
+      return;
+    }
     reg.showNotification("Alertes activées — Drop Out", {
       body: "Vous serez prévenu dès qu’une nouvelle date est annoncée.",
       icon: "assets/icons/icon-192.png",

@@ -635,7 +635,7 @@ function animerTexteHero() {
   if (!p || p.hidden || mouvementReduit()) return;
   const texte = p.textContent.trim();
   if (!texte) return;
-  const base = document.documentElement.classList.contains("intro-actif") ? 2.7 : 0.5;
+  const base = document.documentElement.classList.contains("intro-actif") ? 1.5 : 0.4;
   let i = 0;
   p.setAttribute("aria-label", texte);
   p.innerHTML = texte.split(" ").map((mot) => `<span class="mot" aria-hidden="true">${[...mot].map((c) => `<span class="lettre" style="--i:${i++}">${esc(c)}</span>`).join("")}</span>`).join(" ");

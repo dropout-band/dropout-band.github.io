@@ -40,8 +40,8 @@ export function initIntro() {
     photo?.decode?.().catch(() => {}),
     document.readyState === "complete" ? null : new Promise((r) => addEventListener("load", r, { once: true })),
   ]);
-  // Au moins 1,3 s (le temps de voir le logo), au plus 4,5 s (réseau lent : on ne bloque pas)
-  Promise.race([Promise.all([attendre(1300 * k), prete]), attendre(4500 * k)]).then(() => {
+  // Au moins 0,7 s (le temps de voir le logo), au plus 3,5 s (réseau lent : on ne bloque pas)
+  Promise.race([Promise.all([attendre(700 * k), prete]), attendre(3500 * k)]).then(() => {
     const depart = logo.getBoundingClientRect();
     const cible = logoSite.getBoundingClientRect(); // l'emplacement exact du logo de l'en-tête
     if (!depart.width || !cible.width) { fin(); return; }
@@ -53,12 +53,12 @@ export function initIntro() {
     logo.style.opacity = "1";
     const deplacement = logo.animate(
       [{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${echelle})` }],
-      { duration: 950 * k, easing: "cubic-bezier(.65, 0, .2, 1)", fill: "forwards" },
+      { duration: 650 * k, easing: "cubic-bezier(.65, 0, .2, 1)", fill: "forwards" },
     );
     // Le fond s'efface pendant que le logo voyage : la page apparaît derrière lui
     intro.animate(
       [{ backgroundColor: "rgb(10 10 10 / 1)" }, { backgroundColor: "rgb(10 10 10 / 0)" }],
-      { duration: 750 * k, delay: 250 * k, easing: "ease-in-out", fill: "forwards" },
+      { duration: 500 * k, delay: 150 * k, easing: "ease-in-out", fill: "forwards" },
     );
     // Posé : le vrai logo prend le relais au pixel près, l'écran de démarrage disparaît
     deplacement.finished.then(fin, fin);
