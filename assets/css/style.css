@@ -3472,3 +3472,15 @@ a, button, summary, label, [role="button"], [role="switch"], [role="tab"] { touc
 .hors-ecran, .hors-ecran * { animation-play-state: paused !important; }
 /* Les images ne se glissent pas à la main et ne s'agrandissent pas au toucher long sur iPhone */
 img { -webkit-touch-callout: none; }
+
+/* ==========================================================
+   Fond uni : chaque section a UNE couleur franche et plate (plus de nappes, de dégradés ni de grain).
+   Elles se fondent toujours de l'une à l'autre au défilement.
+   ========================================================== */
+.fond__img { inset: 0; animation: none; background-image: none; will-change: opacity; }
+.fond__img--dates { background-color: #2b1113; }
+.fond__img--groupe { background-color: #2c2210; }
+.fond__img--ecouter { background-color: #2b1a2b; }
+.fond__img--galerie { background-color: #11213b; }
+.fond__img--reseaux { background-color: #17291a; }
+.fond::after { background: none; }
