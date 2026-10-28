@@ -1014,7 +1014,17 @@ function initFiches() {
     carte.getAnimations().forEach((an) => an.cancel()); // efface l'animation de retour restée figée (fill: forwards) de la fiche précédente
     const base = m.photo?.base ? urlSure(m.photo.base) : "";
     const img = $("[data-fiche-img]", dlg);
-    img.src = base ? `${base}-960.webp` : (m.photo?.src ? urlSure(m.photo.src) : "");
+    const grande = base ? `${base}-960.webp` : (m.photo?.src ? urlSure(m.photo.src) : "");
+    // La photo de CE membre s'affiche tout de suite (la version déjà chargée dans sa tuile), puis la grande la remplace
+    // dès qu'elle est prête. Sans ça, l'ancienne photo restait à l'écran jusqu'au chargement de la nouvelle.
+    const deja = $("img", t)?.currentSrc || "";
+    img.removeAttribute("srcset");
+    img.src = deja || grande;
+    if (deja && grande && deja !== grande) {
+      const pre = new Image();
+      pre.src = grande;
+      pre.decode().then(() => { if (tuile === t && !ferme) img.src = grande; }).catch(() => { /* la version de la tuile reste affichée */ });
+    }
     img.alt = m.photo?.alt || "";
     img.style.objectPosition = m.photo?.position || "50% 25%";
     $("[data-fiche-role]", dlg).textContent = m.nom && m.role ? m.role : "";
