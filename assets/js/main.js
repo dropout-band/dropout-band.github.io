@@ -1127,6 +1127,7 @@ function initBarre() {
     barre.classList.toggle("est-arrivee", arrive);
     barre.classList.toggle("est-active", p > 0.6);
     logo.classList.toggle("est-pose", arrive && !mouvementReduit());
+    logo.classList.toggle("en-vol", p > 0.02 && !mouvementReduit()); // l’œil se recentre dès que le logo part : plus de saut au moment du relais
   };
   const planifier = () => { if (!demande) demande = requestAnimationFrame(maj); };
   addEventListener("scroll", planifier, { passive: true });

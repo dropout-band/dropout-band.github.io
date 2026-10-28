@@ -3532,3 +3532,16 @@ img { -webkit-touch-callout: none; }
   .hero__suite-fleche { width: 1.2rem; height: .85rem; filter: none; }
   .hero__suite-fleche path { opacity: .6; }
 }
+
+/* ==========================================================
+   Logo qui glisse vers la barre : relais sans saut, et logo de la barre plus petit
+   - plus de fondu entre les deux logos (l’un disparait et l’autre apparaît dans la même image) ;
+   - l’œil animé du grand logo est recentré pendant le vol : le petit logo de la barre a l’œil au repos.
+   ========================================================== */
+.barre__logo { transition: none; }
+.hero__logo.en-vol .logo__oeil { animation: none !important; }
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .barre { height: calc(3.5rem + env(safe-area-inset-top)); }
+  .barre .barre__logo { width: 4.6rem; top: calc(env(safe-area-inset-top) + .48rem); }
+  .barre__booking { margin-top: 0; }
+}
