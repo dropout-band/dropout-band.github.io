@@ -3,16 +3,18 @@
 name = "drop-out-notifications"
 main = "worker.js"
 compatibility_date = "2025-01-01"
+workers_dev = true
+preview_urls = false
 
 [vars]
 # Adresse EXACTE du site (sans « / » à la fin) : seule cette origine peut abonner un appareil.
-ORIGINE = "https://REMPLACER.github.io"
+ORIGINE = "https://dropout-band.github.io"
 # Contact transmis aux services de push (Google, Apple, Mozilla), obligatoire.
 CONTACT = "mailto:dropout07200@gmail.com"
 # Clé publique : le résultat de « node tools/cles-push.mjs ».
-VAPID_PUBLIC = "REMPLACER"
+VAPID_PUBLIC = "BG4OLxydYuWAfRaFSjAZzCw2T9BdGHHf_tOwn1TS3JKus63JV9_DY_3W7wKswzwtIz5nO_KySsv9zwpv5NV6cR8"
 
 # Base des abonnements. Créée par : npx wrangler kv namespace create ABONNES  (copier l'id obtenu ci-dessous)
 [[kv_namespaces]]
 binding = "ABONNES"
-id = "REMPLACER"
+id = "0c38e30b437342208508a6fe26da219a"

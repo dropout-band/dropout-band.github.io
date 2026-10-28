@@ -167,8 +167,8 @@ export default {
    *  - clePublique : la clé publique donnée par « node tools/cles-push.mjs »
    */
   notifications: {
-    serveur: "",
-    clePublique: "",
+    serveur: "https://drop-out-notifications.dropout-band.workers.dev",
+    clePublique: "BG4OLxydYuWAfRaFSjAZzCw2T9BdGHHf_tOwn1TS3JKus63JV9_DY_3W7wKswzwtIz5nO_KySsv9zwpv5NV6cR8",
   },
 
   /*

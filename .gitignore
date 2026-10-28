@@ -8,3 +8,5 @@ notifications/.wrangler/
 README.md
 notifications/LISEZ-MOI.md
 assets/docs/LISEZ-MOI.txt
+notifications/.vapid-privee.json
+notifications/.admin-mdp.txt
