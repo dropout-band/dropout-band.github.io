@@ -17,7 +17,7 @@
  *
  * Après avoir ajouté des fichiers essentiels, augmentez VERSION.
  */
-const VERSION = "v167";
+const VERSION = "v177";
 const CACHE_PAGES = `dropout-pages-${VERSION}`;
 const CACHE_MEDIAS = `dropout-medias-${VERSION}`;
 const DELAI_RESEAU = 4000; // ms avant de se rabattre sur le cache

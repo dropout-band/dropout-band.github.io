@@ -7,24 +7,6 @@
   <meta name="description" content="Drop Out, groupe de rock alternatif ardéchois à cinq : deux voix, deux guitares, basse et batterie. Concerts, affiches et booking.">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="color-scheme" content="dark">
-  <meta name="robots" content="noindex, nofollow">
-  <!-- Application d'abord : hors de l'appli installée, on propose le téléchargement (app/).
-       Le lien « Continuer sur le site » de cette page ajoute ?site : le choix est alors gardé
-       pour la visite. Pas de renvoi : en local (développement), avec ?agenda (lien d'une
-       notification), ?apercu ou ?brouillon. -->
-  <script>
-    (function () {
-      try {
-        var p = new URLSearchParams(location.search);
-        var h = location.hostname;
-        var local = h === "localhost" || h === "127.0.0.1" || h === "[::1]" || /^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h) || /\.local$/.test(h);
-        var appli = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-        if (p.has("site")) sessionStorage.setItem("dropout-site", "1");
-        if (!appli && !local && !p.has("agenda") && !p.has("apercu") && !p.has("brouillon") && sessionStorage.getItem("dropout-site") !== "1") location.replace("app/");
-      } catch (e) { /* stockage ou API indisponible : on laisse le site s'afficher */ }
-    })();
-  </script>
-
   <!-- Écran de démarrage (fond noir + logo) : affiché si l'on n'a pas été sur le site depuis plus de
        5 minutes (heure de dernière présence : assets/js/intro.js). Pas de démarrage animé avec
        « réduire les animations », ni avec une ancre ou ?agenda dans l'adresse (lien d'une notification).

@@ -662,7 +662,7 @@ function initDiaporama() {
   const cadre = $("[data-diaporama]");
   const diapos = $$(".diapo", cadre);
   if (diapos.length < 2) return;
-  const DUREE = 6500;
+  const DUREE = 5500; // une photo toutes les 5,5 s
   let index = 0, minuteur;
 
   const montrer = async (i) => {
