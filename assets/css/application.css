@@ -1,0 +1,76 @@
+/* ==========================================================
+   Page « Télécharger l'application » (app/index.html)
+   Reprend les couleurs, polices et boutons de style.css.
+   ========================================================== */
+.page-appli { min-height: 100vh; min-height: 100svh; }
+.appli {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: max(2.5rem, env(safe-area-inset-top)) var(--marge-d) max(2.5rem, env(safe-area-inset-bottom)) var(--marge-g);
+  text-align: center;
+}
+.appli .hero__logo { width: min(78vw, 24rem); margin: 0; transform: none; }
+.appli__style {
+  margin-top: 1.1rem;
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .75rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gris-3);
+}
+.appli__texte { max-width: 26rem; margin-top: 2.25rem; font-size: 1.0625rem; line-height: 1.55; color: var(--gris-2); }
+.appli__bouton { margin-top: 2rem; min-width: min(100%, 18rem); min-height: 3.75rem; font-size: 1.125rem; gap: .75rem; }
+.appli__etat { min-height: 1.5rem; margin-top: 1rem; font-size: .9375rem; color: var(--gris-3); }
+.appli__etat:empty { min-height: 0; margin: 0; }
+.appli__etat.est-ok { color: var(--blanc); }
+
+/* Mode d'emploi */
+.appli__aide {
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border: 1px solid var(--filet);
+  background: var(--noir-2);
+  text-align: left;
+}
+.appli__aide[hidden] { display: none; }
+.appli__aide h2 { font-family: var(--groovy); font-weight: 800; font-size: 1.5rem; line-height: 1; text-transform: uppercase; color: var(--blanc); }
+.appli__aide ol { margin: .9rem 0 0; padding: 0; list-style: none; counter-reset: etape; }
+.appli__aide li {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  padding-block: .6rem;
+  border-top: 1px solid var(--filet);
+  counter-increment: etape;
+  font-size: .9375rem;
+}
+.appli__aide li::before { content: counter(etape); font-family: var(--groovy); font-weight: 800; font-size: 1.1rem; color: var(--jaune); }
+.appli__aide p { margin-top: .75rem; font-size: .8125rem; color: var(--gris-4); }
+
+/* Ce que l'application apporte */
+.appli__atouts { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: 2.25rem 0 0; padding: 0; list-style: none; }
+.appli__atouts li {
+  padding: .3rem .7rem .27rem;
+  border: 1px solid var(--filet);
+  color: var(--gris-3);
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.appli__suite { margin-top: 1.75rem; }
+
+@media (min-width: 56rem) {
+  .appli { max-width: 40rem; }
+  .appli .hero__logo { width: 28rem; }
+}

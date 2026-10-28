@@ -1,0 +1,18 @@
+# Configuration du serveur de notifications (Cloudflare Workers, offre gratuite).
+# Mode d'emploi : notifications/LISEZ-MOI.md
+name = "drop-out-notifications"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Adresse EXACTE du site (sans « / » à la fin) : seule cette origine peut abonner un appareil.
+ORIGINE = "https://REMPLACER.github.io"
+# Contact transmis aux services de push (Google, Apple, Mozilla), obligatoire.
+CONTACT = "mailto:dropout07200@gmail.com"
+# Clé publique : le résultat de « node tools/cles-push.mjs ».
+VAPID_PUBLIC = "REMPLACER"
+
+# Base des abonnements. Créée par : npx wrangler kv namespace create ABONNES  (copier l'id obtenu ci-dessous)
+[[kv_namespaces]]
+binding = "ABONNES"
+id = "REMPLACER"

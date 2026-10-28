@@ -1,0 +1,54 @@
+{
+  "concerts": [
+    {
+      "date": "2026-10-24",
+      "heure": "20:30",
+      "lieu": "Cinéma de Lussas",
+      "ville": "Lussas",
+      "info": "Clôture du concours de court métrage.",
+      "lien": "",
+      "statut": "",
+      "affiche": "assets/affiches/2026-10-24-lussas"
+    },
+    {
+      "date": "2026-08-29",
+      "heure": "",
+      "lieu": "Festival Tintamayres",
+      "ville": "Mayres",
+      "info": "Place du Chambon, de 17 h à minuit.",
+      "lien": "",
+      "statut": "entree-libre",
+      "affiche": "assets/affiches/2026-08-29-tintamayres"
+    },
+    {
+      "date": "2026-07-24",
+      "heure": "",
+      "lieu": "La Ferme",
+      "ville": "Aubenas",
+      "info": "",
+      "lien": "",
+      "statut": "",
+      "affiche": "assets/affiches/2026-ete-tournee"
+    },
+    {
+      "date": "2026-06-21",
+      "heure": "",
+      "lieu": "Lalevade",
+      "ville": "Lalevade",
+      "info": "",
+      "lien": "",
+      "statut": "",
+      "affiche": ""
+    },
+    {
+      "date": "2025-08-09",
+      "heure": "19:00",
+      "lieu": "Restaurant Les Mûriers",
+      "ville": "Meyras",
+      "info": "",
+      "lien": "",
+      "statut": "",
+      "affiche": "assets/affiches/2025-08-09-meyras"
+    }
+  ]
+}

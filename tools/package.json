@@ -1,0 +1,10 @@
+{
+  "name": "drop-out-outils",
+  "private": true,
+  "description": "Outils facultatifs (préparation des images). Le site lui-même n'a aucune dépendance.",
+  "type": "module",
+  "devDependencies": {
+    "sharp": "^0.33.5",
+    "lamejs": "^1.2.1"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "_attention": "DATES FICTIVES — fichier d'aperçu uniquement, affiché avec ?apercu=concerts. Ne pas publier comme vrai programme.",
+  "concerts": [
+    {
+      "date": "2026-11-21",
+      "heure": "20:30",
+      "lieu": "Salle d'exemple",
+      "ville": "Ville fictive",
+      "info": "Première partie à confirmer. Ouverture des portes 20 h.",
+      "lien": "https://example.com",
+      "statut": "",
+      "affiche": "assets/affiches/2026-10-24-lussas"
+    },
+    {
+      "date": "2026-12-05",
+      "heure": "21:00",
+      "lieu": "Bar d'exemple",
+      "ville": "Autre ville",
+      "info": "Concert au chapeau.",
+      "lien": "",
+      "statut": "entree-libre"
+    },
+    {
+      "date": "2027-01-16",
+      "heure": "20:00",
+      "lieu": "Festival d'exemple",
+      "ville": "Ville fictive",
+      "info": "",
+      "lien": "https://example.com",
+      "statut": "complet"
+    },
+    {
+      "date": "2027-02-06",
+      "heure": "",
+      "lieu": "Association d'exemple",
+      "ville": "Village fictif",
+      "info": "Horaire communiqué prochainement.",
+      "lien": "",
+      "statut": "annule"
+    },
+    {
+      "date": "2026-09-12",
+      "heure": "19:00",
+      "lieu": "Fête d'exemple",
+      "ville": "Ville fictive",
+      "info": "",
+      "lien": "",
+      "statut": ""
+    },
+    {
+      "date": "2026-06-21",
+      "heure": "18:00",
+      "lieu": "Place d'exemple",
+      "ville": "Autre ville",
+      "info": "Fête de la musique.",
+      "lien": "",
+      "statut": "entree-libre"
+    }
+  ]
+}

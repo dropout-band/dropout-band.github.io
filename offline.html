@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hors connexion — Drop Out</title>
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <style>
+    @font-face { font-family: "Bricolage"; src: url("assets/fonts/bricolage-grotesque.woff2") format("woff2"); font-weight: 200 800; font-stretch: 75% 100%; }
+    
+    *, *::before, *::after { box-sizing: border-box; }
+    html { color-scheme: dark; }
+    body {
+      margin: 0; min-height: 100svh; display: flex; flex-direction: column; justify-content: center;
+      padding: max(2rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
+      background: #0a0a0a; color: #d6d3cb; font: 1.0625rem/1.6 "Bricolage", system-ui, sans-serif;
+    }
+    main { width: 100%; max-width: 34rem; margin: 0 auto; }
+    img { width: min(60vw, 15rem); height: auto; display: block; }
+    h1 { margin: 2.5rem 0 0; font-family: "Bricolage", sans-serif; font-stretch: 75%; font-weight: 800; font-size: clamp(2.75rem, 13vw, 4.5rem); line-height: .9; color: #eeebe4; text-transform: lowercase; }
+    p { margin: 1.25rem 0 0; }
+    button {
+      margin-top: 2rem; min-height: 3.25rem; padding: .85rem 1.4rem; border: 2px solid #eeebe4; background: #eeebe4; color: #0a0a0a;
+      font: 700 1rem/1.1 "Bricolage", sans-serif; cursor: pointer;
+    }
+    button:hover { background: transparent; color: #eeebe4; }
+    button:focus-visible { outline: 3px solid #eeebe4; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="assets/logo/logo-blanc-600.webp" alt="Drop Out" width="600" height="330">
+    <h1>Pas de réseau pour l’instant.</h1>
+    <p>Cette page n’a pas encore été enregistrée sur votre appareil. Vérifiez votre connexion, puis réessayez&nbsp;: le site et le programme des concerts s’afficheront normalement.</p>
+    <button type="button" onclick="location.reload()">Réessayer</button>
+  </main>
+</body>
+</html>

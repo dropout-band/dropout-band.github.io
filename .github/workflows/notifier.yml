@@ -1,0 +1,52 @@
+# Prévient les abonnés quand une nouvelle date est publiée dans data/concerts.json.
+# Il faut, dans le dépôt GitHub (Settings > Secrets and variables > Actions), trois secrets :
+#   NOTIF_SERVEUR : l'adresse du serveur de notifications
+#   NOTIF_MDP     : le mot de passe ADMIN du serveur
+#   NOTIF_SITE    : l'adresse du site, en https (ex. https://monnom.github.io/drop-out/)
+name: Notifier les nouvelles dates
+
+on:
+  push:
+    branches: [main]
+    paths: [data/concerts.json]
+
+jobs:
+  notifier:
+    runs-on: ubuntu-latest
+    # Sans les trois secrets (pas encore de serveur de notifications), on ne fait rien.
+    env:
+      NOTIF_SERVEUR: ${{ secrets.NOTIF_SERVEUR }}
+      NOTIF_MDP: ${{ secrets.NOTIF_MDP }}
+      NOTIF_SITE: ${{ secrets.NOTIF_SITE }}
+    steps:
+      - name: Vérifier la configuration
+        id: config
+        run: |
+          if [ -z "$NOTIF_SERVEUR" ] || [ -z "$NOTIF_MDP" ] || [ -z "$NOTIF_SITE" ]; then echo "Secrets absents : rien à envoyer."; echo "actif=non" >> "$GITHUB_OUTPUT"; else echo "actif=oui" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.actif == 'oui'
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        if: steps.config.outputs.actif == 'oui'
+        with:
+          node-version: 20
+      - name: Attendre que le site publié contienne la nouvelle version
+        if: steps.config.outputs.actif == 'oui'
+        env:
+          NOTIF_SITE: ${{ secrets.NOTIF_SITE }}
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "${NOTIF_SITE%/}/data/concerts.json?v=$RANDOM" | cmp -s - data/concerts.json; then exit 0; fi
+            sleep 20
+          done
+          echo "Le site n'est pas encore à jour : notification quand même."
+      - name: Envoyer la notification
+        if: steps.config.outputs.actif == 'oui'
+        env:
+          NOTIF_SERVEUR: ${{ secrets.NOTIF_SERVEUR }}
+          NOTIF_MDP: ${{ secrets.NOTIF_MDP }}
+          NOTIF_SITE: ${{ secrets.NOTIF_SITE }}
+        run: |
+          git show HEAD~1:data/concerts.json > ancien.json 2>/dev/null || echo '{"concerts":[]}' > ancien.json
+          node tools/notifier.mjs --nouvelles ancien.json

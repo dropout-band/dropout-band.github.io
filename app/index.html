@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Télécharger l’application — Drop Out</title>
+  <meta name="description" content="Installez l’application Drop Out sur votre écran d’accueil : les dates, la musique et le booking du groupe en un geste.">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Même manifeste que le site : l'application installée s'ouvre sur l'accueil du site -->
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="../assets/icons/favicon-48.png">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Drop Out">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="preload" href="../assets/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/barlow-condensed-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/application.css">
+
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
+  <script type="module" src="../assets/js/installer.js"></script>
+</head>
+<body class="page-appli">
+  <main class="appli">
+    <!-- Le logo du site, avec l'œil qui bouge (animation de style.css) -->
+    <h1 class="hero__logo appli__logo">
+      <span class="logo">
+        <img class="logo__base"
+          src="../assets/logo/logo-sans-oeil-600.webp"
+          srcset="../assets/logo/logo-sans-oeil-600.webp 600w, ../assets/logo/logo-sans-oeil-1200.webp 1200w"
+          sizes="(min-width: 40rem) 26rem, 80vw"
+          width="1200" height="660" alt="Drop Out">
+        <img class="logo__oeil" src="../assets/logo/logo-oeil-76.webp" width="76" height="76" alt="">
+      </span>
+    </h1>
+    <p class="appli__style">Rock alternatif · Ardèche</p>
+
+    <p class="appli__texte">L’application Drop Out sur votre écran d’accueil : les dates, la musique et le booking, en un geste.</p>
+
+    <button type="button" class="bouton bouton--plein appli__bouton" data-telecharger>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>
+      <span>Télécharger</span>
+    </button>
+    <p class="appli__etat" data-etat role="status" aria-live="polite"></p>
+
+    <!-- Mode d'emploi (iPhone, ou navigateur sans installation directe) -->
+    <div class="appli__aide" data-aide hidden></div>
+
+    <ul class="appli__atouts" aria-label="Ce que l’application apporte">
+      <li>Les prochaines dates</li>
+      <li>Un extrait à écouter</li>
+      <li>Booking en un toucher</li>
+      <li>Alertes nouvelles dates (Android)</li>
+    </ul>
+
+    <a class="lien-action appli__suite" href="../?site"><span>Voir le site sans l’installer</span></a>
+  </main>
+</body>
+</html>

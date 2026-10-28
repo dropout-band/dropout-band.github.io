@@ -1,0 +1,3444 @@
+/* ==========================================================
+   Drop Out — feuille de style
+   Mobile d'abord → tablette (40rem) → ordinateur (64rem).
+   Noir, blanc cassé, et le jaune des affiches en touche.
+   ========================================================== */
+
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("../fonts/barlow-condensed-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("../fonts/barlow-condensed-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("../fonts/barlow-condensed-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Anton";
+  src: url("../fonts/anton.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --noir: #0a0a0a;
+  --noir-2: #151514;
+  --gris-6: #4a4945;
+  --gris-4: #8f8d87;
+  --gris-3: #b4b1aa;
+  --gris-2: #d6d3cb;
+  --blanc: #eeebe4;
+  --jaune: #f2b929;
+  /* Palette de l'illustration du groupe : aplats de couleur sous dessins noir et blanc */
+  --bd-rouge: #b3292c;
+  --bd-ocre: #d1933f;
+  --bd-vert: #66a03b;
+  --bd-orange: #d9583a;
+  --bd-bleu: #2a5a9a;
+  --bd-prune: #87507a;
+  --filet: #2a2927;
+
+  --titre: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  /* Gros titres façon affiche : titres de section, prénoms, billet */
+  --affiche: "Anton", "Impact", "Arial Narrow", sans-serif;
+  /* Gros titres : Anton (dense, haute, façon affiche de concert) */
+  /* Titres de section : Bungee (enseigne, capitales épaisses), toujours alignés à gauche */
+  --section: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --groovy: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --corps: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+
+  --marge: clamp(1.25rem, 4vw, 3rem);
+  --marge-g: max(var(--marge), env(safe-area-inset-left));
+  --marge-d: max(var(--marge), env(safe-area-inset-right));
+  --max: 75rem;
+  /* Retrait qui aligne une bande pleine largeur sur le conteneur */
+  --retrait: max(var(--marge-g), calc((100vw - var(--max)) / 2 + var(--marge)));
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(3.75rem + env(safe-area-inset-top)); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+body {
+  margin: 0;
+  background: var(--noir);
+  color: var(--gris-2);
+  font-family: var(--corps);
+  font-stretch: 100%;
+  font-optical-sizing: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+[hidden] { display: none !important; }
+::selection { background: var(--blanc); color: var(--noir); }
+:focus-visible { outline: 3px solid var(--jaune); outline-offset: 3px; }
+
+.visuellement-cache {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
+.discret { color: var(--gris-4); font-size: .9375rem; }
+
+.conteneur {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--marge-g) var(--marge-d);
+}
+.conteneur--etroit { max-width: 48rem; }
+
+/* ---------- Boutons ---------- */
+
+.bouton {
+  --b-fond: transparent;
+  --b-texte: var(--blanc);
+  --b-bord: var(--blanc);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55em;
+  min-height: 3.25rem;
+  padding: .75rem 1.1rem;
+  border: 2px solid var(--b-bord);
+  background: var(--b-fond);
+  color: var(--b-texte);
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: .9375rem;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.bouton--plein { --b-fond: var(--blanc); --b-texte: var(--noir); }
+.bouton:active { transform: scale(.985); }
+@media (hover: hover) {
+  .bouton--plein:hover { --b-fond: transparent; --b-texte: var(--blanc); }
+  .bouton--trait:hover { --b-fond: var(--blanc); --b-texte: var(--noir); }
+  
+  
+}
+
+/* Boutons sur le billet clair */
+
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+@media (max-width: 22rem) { .actions { grid-template-columns: 1fr; } }
+
+.lien-discret {
+  min-height: 2.75rem;
+  padding: .5rem 0;
+  background: none;
+  border: 0;
+  color: var(--gris-3);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .3em;
+  cursor: pointer;
+}
+
+/* ---------- En-tête : diaporama en fondu ---------- */
+
+/* L'en-tête occupe toute la première vue ; l'indicateur de défilement est en bas */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+/* Téléphone et tablette : cadre au format des photos de groupe (paysage),
+   pour que les cinq membres soient visibles sans être coupés */
+.hero__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--noir);
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+}
+.diapo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50% !important; /* photos centrées dans le cadre */
+  transform: scale(1.18); /* plus grandes : le cadre (overflow caché) rogne les bords */
+  opacity: 0;
+  transition: opacity 1.6s ease-in-out;
+}
+.diapo.est-active { opacity: 1; }
+
+/* Téléphone et tablette : logo et ligne de style centrés dans l'espace sous la photo */
+.hero__contenu {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--marge-g) var(--marge-d);
+  text-align: center;
+}
+.hero__logo { width: min(78vw, 26rem); }
+
+/* Indicateur de défilement : libellé + trait fin parcouru par un repère lumineux */
+.hero__suite {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .65rem;
+  padding: .5rem 1.25rem;
+  color: var(--gris-4);
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .6875rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity .5s var(--ease), color .2s var(--ease);
+}
+.hero__suite.est-cache { opacity: 0; pointer-events: none; }
+.hero__suite-trait {
+  position: relative;
+  width: 1px;
+  height: 3rem;
+  overflow: hidden;
+  background: var(--filet);
+}
+.hero__suite-trait::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 40%;
+  background: var(--blanc);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero__suite-trait::after { animation: suite-descend 2.2s cubic-bezier(.65, 0, .35, 1) infinite; }
+}
+@keyframes suite-descend {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(250%); }
+}
+@media (hover: hover) { .hero__suite:hover { color: var(--blanc); } }
+.hero__style {
+  margin-top: 1.1rem;
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .75rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gris-3);
+}
+/* Ordinateur : photo pleine largeur, logo et actions posés en bas à gauche */
+@media (min-width: 56rem) {
+  .hero {
+    display: grid;
+    align-items: end;
+    padding-bottom: 0;
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    aspect-ratio: auto;
+    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent), linear-gradient(to right, rgb(0 0 0 / .25), #000 62%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, #000 50%, transparent), linear-gradient(to right, rgb(0 0 0 / .25), #000 62%);
+    mask-composite: intersect;
+  }
+  .hero__contenu {
+    display: block;
+    max-width: calc(40rem + var(--retrait));
+    padding-left: var(--retrait);
+    padding-bottom: clamp(6rem, 14vh, 8rem); /* laisse la place à l'indicateur */
+    text-align: left;
+  }
+  .hero__logo { width: clamp(20rem, 32vw, 32rem); margin: 0; }
+  .hero__style { margin-top: 1.5rem; }
+}
+
+main { overflow-x: clip; }
+
+/* ---------- Blocs ---------- */
+
+.bloc { padding-block: clamp(2.25rem, 6vw, 4.5rem); }
+.bloc + .bloc { border-top: 0; }
+.bloc__entete { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+
+#concerts { --accent: var(--bd-rouge); }
+#groupe { --accent: var(--bd-ocre); }
+#galerie { --accent: var(--bd-bleu); }
+#reseaux { --accent: var(--bd-vert); }
+.bloc__titre {
+  margin-bottom: 1.5rem;
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 15vw, 8.5rem);
+  line-height: .84;
+  letter-spacing: -.02em;
+  color: var(--blanc);
+  text-transform: lowercase;
+}
+/* Intitulé secondaire : un mot, en grand et en gris, sans filet ni capitales */
+.sous-titre {
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  line-height: 1;
+  color: var(--gris-6);
+  text-transform: lowercase;
+}
+.intro { max-width: 40rem; margin-bottom: 1.5rem; color: var(--gris-2); text-wrap: pretty; }
+.note {
+  margin-bottom: 1rem;
+  padding: .7rem .85rem;
+  border-left: 2px solid var(--blanc);
+  background: var(--noir-2);
+  font-size: .875rem;
+  color: var(--gris-3);
+}
+
+/* Apparition des sections : le fondu (opacité seule : pas de glissement des photos) suit le
+   défilement. --v (0 à 1) est réglée par apparitionsAuDefilement() dans main.js ; les titres
+   et les étiquettes de noms s'animent aussi avec --v (voir plus bas). */
+.js [data-reveal] { opacity: var(--v, 0); }
+
+/* ---------- Dates ---------- */
+
+/* Zone des dates, juste sous l'en-tête. Elle ne compte pas dans la numérotation. */
+.dates-zone { padding-block: clamp(1.75rem, 6vw, 5rem) clamp(2.25rem, 6vw, 4.5rem); }
+.dates-zone + .bloc { border-top: 0; }
+
+/* Encart « Prochaine date » : cadre fin, titre centré, contenu sobre */
+.annonce {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  width: min(100% - 2 * var(--marge), 32rem);
+  margin-inline: auto;
+  padding: clamp(1.75rem, 6vw, 2.5rem) clamp(1.25rem, 5vw, 2.25rem) clamp(1.25rem, 4vw, 1.75rem);
+  border: 1px solid var(--filet);
+  background: var(--noir-2);
+  text-align: center;
+}
+.annonce__entete { display: grid; justify-items: center; gap: .9rem; }
+.annonce__entete::after { content: ""; width: 2.5rem; height: 2px; background: var(--bd-rouge); }
+.annonce__h {
+  font-family: var(--affiche);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 10vw, 3.25rem);
+  line-height: .95;
+  color: var(--blanc);
+  text-transform: lowercase;
+}
+.annonce__contenu { display: grid; justify-items: center; gap: 1rem; width: 100%; }
+
+.annonce__titre {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--titre);
+  font-weight: 500;
+  font-size: 1.125rem;
+  letter-spacing: .02em;
+  color: var(--gris-3);
+}
+/* Petit point de veille : simple fondu, actif même avec animations réduites */
+.annonce__titre::before {
+  content: "";
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: var(--bd-rouge);
+  animation: veille 2s ease-in-out infinite;
+}
+@keyframes veille { 50% { opacity: .25; } }
+.annonce__suivantes { width: 100%; text-align: left; }
+.annonce__aide { max-width: 22rem; }
+
+/* Lien d'action discret : icône fine + libellé, zone cliquable confortable */
+.lien-action {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 2.75rem;
+  padding: 0 .25rem;
+  border: 0;
+  background: none;
+  color: var(--gris-3);
+  font-family: var(--corps);
+  font-size: .9375rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .2s var(--ease);
+}
+.lien-action span { border-bottom: 1px solid var(--gris-6); padding-bottom: .1rem; transition: border-color .2s var(--ease); }
+.lien-action[aria-pressed="true"] { color: var(--blanc); }
+@media (hover: hover) {
+  .lien-action:hover { color: var(--blanc); }
+  .lien-action:hover span { border-color: var(--blanc); }
+}
+
+/* Affiche du prochain concert, au-dessus du billet */
+
+/* Le prochain concert, façon billet */
+
+.statut {
+  display: inline-block;
+  padding: .1rem .4rem;
+  border: 1.5px solid currentColor;
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: .6875rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  vertical-align: .1em;
+  white-space: nowrap;
+}
+.statut--complet, .statut--annule { background: var(--blanc); color: var(--noir); border-color: var(--blanc); }
+
+.date {
+  display: grid;
+  grid-template-columns: 3.25rem 1fr auto;
+  column-gap: .9rem;
+  align-items: center;
+  min-height: 4.25rem;
+  padding-block: .65rem;
+  border-bottom: 1px solid var(--filet);
+}
+.dates > .date:first-child { border-top: 1px solid var(--filet); }
+.date__quand { font-family: var(--titre); line-height: 1; text-align: center; }
+.date__jour { display: block; font-stretch: 75%; font-weight: 800; font-size: 1.75rem; color: var(--blanc); font-variant-numeric: tabular-nums; }
+.date__mois { display: block; margin-top: .15rem; font-size: .75rem; font-weight: 600; color: var(--gris-4); text-transform: lowercase; }
+.date__lieu { font-family: var(--titre); font-weight: 700; font-size: 1.0625rem; line-height: 1.2; color: var(--blanc); overflow-wrap: anywhere; }
+.date__meta { font-size: .8125rem; color: var(--gris-4); }
+.date__meta .statut { margin-left: .3rem; }
+.date__lien {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1.5px solid var(--gris-6);
+  color: var(--blanc);
+}
+@media (hover: hover) { .date__lien:hover { border-color: var(--blanc); } }
+.est-annule .date__lieu { text-decoration: line-through; }
+
+/* ---------- Dates passées : bande d'affiches qui défile ---------- */
+
+.deja { margin-top: clamp(2.5rem, 7vw, 4.5rem); }
+.deja .sous-titre { margin-bottom: .5rem; }
+.defile, .galerie {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.defile::-webkit-scrollbar, .galerie::-webkit-scrollbar { display: none; }
+.defile__piste {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  width: max-content;
+  padding: 1.25rem var(--retrait) 1.5rem;
+}
+/* La tuile prend la largeur de son affiche : le bandeau passe à la ligne au lieu d'élargir la tuile */
+.affiche { position: relative; flex: none; width: min-content; }
+.affiche button, .galerie__photo button {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Hauteur imposée, largeur libre : l'affiche garde ses proportions */
+.affiche img {
+  height: clamp(17rem, 62vw, 25rem);
+  width: auto;
+  max-width: none;
+  outline: 1px solid var(--filet);
+  background: var(--noir-2);
+  transition: transform .4s var(--ease), opacity .4s var(--ease);
+}
+@media (hover: hover) {
+  .defile:hover .affiche img { opacity: .55; }
+  .defile:hover .affiche button:hover img { opacity: 1; transform: translateY(-6px); }
+}
+
+/* ---------- Galerie : une rangée de photos ---------- */
+
+.galerie {
+  display: flex;
+  gap: clamp(.5rem, 1.5vw, .9rem);
+  padding: .25rem var(--retrait) .5rem;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--retrait);
+}
+.galerie__photo { flex: none; scroll-snap-align: start; }
+.galerie__photo img {
+  display: block;
+  height: clamp(13rem, 46vw, 20rem);
+  width: auto;
+  max-width: none;
+  background: var(--noir-2);
+  transition: opacity .3s var(--ease);
+}
+/* Photos en couleur ; au survol, les autres s'estompent légèrement */
+@media (hover: hover) {
+  .galerie:hover .galerie__photo img { opacity: .6; }
+  .galerie:hover .galerie__photo button:hover img { opacity: 1; }
+}
+
+/* ---------- Le groupe : tuiles ---------- */
+/* Téléphone : défilement vertical. Tablette : 2 colonnes. Ordinateur : défilement horizontal. */
+
+.membres {
+  display: grid;
+  gap: 2.25rem;
+  padding-inline: var(--marge-g) var(--marge-d);
+}
+.membre { position: relative; --couleur: var(--blanc); --encre: var(--noir); }
+.membre__photo {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--noir-2);
+  /* Cadre épais dessiné DANS la tuile : la tuile reste alignée sur les
+     marges de l'écran, le cadre ne déborde jamais dans la marge. */
+  border: 7px solid var(--noir-2);
+  transition: border-color 1.4s var(--ease);
+}
+/* Quand la photo s'allume, le cadre prend la couleur du membre */
+.membre.est-en-couleur .membre__photo { border-color: var(--couleur); }
+@media (hover: hover) { .membre:hover .membre__photo { border-color: var(--couleur); } }
+.membre__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.12);
+  transition: filter 1.4s var(--ease), transform 1s var(--ease);
+}
+@media (hover: hover) {
+  .membre:hover .membre__photo img { filter: none; transform: scale(1.03); }
+}
+/* Écrans tactiles : la photo prend ses couleurs au centre de l'écran (voir main.js) */
+.membre.est-en-couleur .membre__photo img { filter: none; }
+.membre__photo--vide { display: grid; place-items: center; font-size: .75rem; color: var(--gris-4); }
+
+/* Annotations : petits bandeaux penchés en bas à droite, façon gaffer
+   (même langage que les bandeaux des affiches). Ils sont posés au-dessus de
+   l'étiquette de couleur pour ne jamais la chevaucher. */
+.membre__traits {
+  position: absolute;
+  right: .75rem;
+  bottom: 5.4rem;
+  display: grid;
+  justify-items: end;
+  gap: .45rem;
+  max-width: calc(100% - 1.5rem);
+  pointer-events: none;
+}
+.membre__traits li {
+  padding: .3rem .6rem .27rem;
+  background: var(--noir);
+  color: var(--blanc);
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: .9375rem;
+  line-height: 1.15;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  text-align: right;
+  transform: rotate(-4deg);
+  box-shadow: 0 2px 0 rgb(0 0 0 / .35);
+  opacity: .8;
+  transition: opacity .6s var(--ease) calc(var(--rang, 0) * 90ms);
+}
+.membre.est-en-couleur .membre__traits li { opacity: 1; }
+@media (hover: hover) { .membre:hover .membre__traits li { opacity: 1; } }
+
+.membre__etiquette {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  max-width: calc(100% - 1rem);
+  padding: .7rem 2.2rem .6rem 0;
+  background: var(--couleur);
+  color: var(--encre);
+  /* aplat penché, comme les cases de l'illustration */
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1.4rem) 100%, 0 100%);
+  /* En noir et blanc comme la photo ; la couleur revient en même temps */
+  filter: grayscale(1);
+  transition: filter 1.4s var(--ease);
+}
+.membre.est-en-couleur .membre__etiquette { filter: none; }
+@media (hover: hover) { .membre:hover .membre__etiquette { filter: none; } }
+/* Chaque aplat s'ouvre en biais, l'un après l'autre, comme une case de BD — et cette
+   ouverture suit le défilement (--v, réglée par main.js) : elle se joue en descendant
+   et se rembobine en remontant. Sans animation : les aplats sont simplement là. */
+@media (prefers-reduced-motion: no-preference) {
+  .js #groupe .membre__etiquette {
+    /* --p : avancement de CETTE étiquette (0 fermée, 1 ouverte), décalé selon son rang */
+    --p: clamp(0, calc((var(--v, 0) * 1.6 - .35 - var(--n, 0) * .06) * 2), 1);
+    clip-path: polygon(0 0, calc(1.4rem + (100% - 1.4rem) * var(--p)) 0, calc((100% - 1.4rem) * var(--p)) 100%, 0 100%);
+    transition: filter 1.4s var(--ease);
+  }
+  .js #groupe .membre__etiquette > * { opacity: var(--p); }
+}
+.membre__nom {
+  display: block;
+  padding-left: .75rem;
+  color: inherit;
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+/* Rôle : petit bandeau en haut à gauche de la photo, aux couleurs du membre */
+.membre__role {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  margin: 0;
+  padding: .3rem .65rem .25rem;
+  background: var(--couleur);
+  color: var(--encre);
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: .75rem;
+  line-height: 1.1;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  filter: grayscale(1);
+  transition: filter 1.4s var(--ease);
+}
+.membre.est-en-couleur .membre__role { filter: none; }
+@media (hover: hover) { .membre:hover .membre__role { filter: none; } }
+.membre .a-renseigner { position: absolute; top: .5rem; right: .5rem; background: var(--noir); padding: .2rem .4rem; }
+
+.fleches { display: none; gap: .5rem; margin-bottom: 1.4rem; }
+.fleche-btn {
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--blanc);
+  background: none;
+  color: var(--blanc);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.fleche-btn:disabled { opacity: .3; cursor: default; }
+@media (hover: hover) { .fleche-btn:not(:disabled):hover { background: var(--blanc); color: var(--noir); } }
+
+@media (min-width: 40rem) {
+  .membres { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.75rem; row-gap: 2.5rem; max-width: var(--max); margin-inline: auto; }
+  .membre:nth-child(even) { margin-top: 3rem; }
+}
+@media (min-width: 64rem) {
+  .fleches { display: flex; }
+  .membres {
+    display: flex;
+    gap: 2rem;
+    max-width: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--retrait);
+    padding: .5rem var(--retrait) 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gris-6) transparent;
+  }
+  .membre { flex: 0 0 clamp(18rem, 26vw, 24rem); scroll-snap-align: start; }
+  .membre:nth-child(even) { margin-top: 2.5rem; }
+}
+
+/* ---------- Pied ---------- */
+
+.pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  padding-top: 1.25rem;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--filet);
+  font-size: .8125rem;
+  color: var(--gris-4);
+}
+.pied .lien-discret { font-size: .8125rem; }
+
+/* ---------- Visionneuse d'affiche ---------- */
+
+.visionneuse {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: max(1rem, env(safe-area-inset-top)) var(--marge-d) max(1rem, env(safe-area-inset-bottom)) var(--marge-g);
+  border: 0;
+  background: rgb(10 10 10 / .96);
+  color: var(--blanc);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.visionneuse[open] { display: flex; }
+.visionneuse::backdrop { background: rgb(0 0 0 / .8); }
+.visionneuse form { align-self: flex-end; }
+.visionneuse__fermer {
+  min-height: 2.75rem;
+  padding: .5rem 1rem;
+  border: 2px solid var(--blanc);
+  background: none;
+  font-family: var(--titre);
+  font-weight: 700;
+  cursor: pointer;
+}
+.visionneuse img {
+  max-height: calc(100svh - 9rem);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border: 3px solid var(--blanc);
+}
+.visionneuse__legende { font-weight: 700; text-align: center; }
+
+/* ---------- Aide installation ---------- */
+
+.aide-installation {
+  width: min(28rem, calc(100% - 2rem));
+  margin: auto;
+  padding: 1.5rem 1.25rem 1.25rem;
+  border: 1px solid var(--filet);
+  background: var(--noir-2);
+  color: var(--gris-2);
+}
+.aide-installation::backdrop { background: rgb(0 0 0 / .75); }
+.aide-installation h2 {
+  font-family: var(--titre);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--blanc);
+  text-transform: lowercase;
+}
+.aide-installation ol { margin: 1rem 0; counter-reset: etape; }
+.aide-installation li {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  padding-block: .6rem;
+  border-top: 1px solid var(--filet);
+  counter-increment: etape;
+}
+.aide-installation li::before { content: counter(etape); font-family: var(--titre); font-weight: 700; color: var(--gris-4); }
+.aide-installation p { margin-top: .75rem; font-size: .9375rem; }
+.aide-installation p.note { font-size: .8125rem; color: var(--gris-4); }
+.aide-installation form { margin-top: 1.25rem; }
+.aide-installation .bouton { width: 100%; }
+
+/* ---------- Toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 80;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2rem);
+  padding: .75rem 1rem;
+  background: var(--blanc);
+  color: var(--noir);
+  font-weight: 700;
+  font-size: .9375rem;
+}
+
+/* ---------- Icônes des liens externes (réseaux, crédit photo) ---------- */
+/* Tracé fin et monochrome, 20 px, dans une zone cliquable de 44 px */
+
+.icones { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+.lien-icone {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--gris-3);
+  transition: color .2s var(--ease), transform .2s var(--ease);
+}
+.lien-icone svg { display: block; }
+@media (hover: hover) { .lien-icone:hover { color: var(--blanc); transform: translateY(-1px); } }
+
+/* ---------- Crédit photo ---------- */
+
+.credit-photo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 .75rem;
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  font-size: .8125rem;
+  color: var(--gris-4);
+}
+.credit-photo .icones { margin-inline: -.6rem; } /* icône alignée sur le texte, zone tactile conservée */
+
+/* ---------- Réseaux sociaux ---------- */
+
+.actus { display: grid; gap: 2rem; }
+@media (min-width: 56rem) { .actus { grid-template-columns: 1fr minmax(0, 500px); gap: 4rem; align-items: start; } }
+.actus .icones { margin: -.5rem 0 0 -.6rem; }
+.fb { width: 100%; max-width: 500px; }
+/* Une fois l'accord donné : hauteur réservée, pas de saut de mise en page */
+.fb.est-charge { min-height: 560px; }
+.fb iframe { display: block; width: 100%; max-width: 500px; border: 0; background: var(--blanc); }
+.fb__accord {
+  display: grid;
+  justify-items: start;
+  gap: .5rem;
+  padding: 1.25rem 1.25rem .75rem;
+  border: 1px solid var(--filet);
+}
+.fb__info { font-size: .8125rem; color: var(--gris-4); }
+.fb__accord .lien-action { margin-left: -.25rem; }
+.fb__retirer { font-size: .75rem; color: var(--gris-4); }
+
+/* Pied de page : icônes sociales à droite de la mention */
+.pied .icones { margin-right: -.6rem; }
+
+/* ---------- En-tête compact (téléphone, tablette) ---------- */
+/* Pas de plein écran : la photo, le logo qui la chevauche, puis l'annonce des
+   dates directement visible — elle suffit à montrer qu'on peut défiler. */
+@media (max-width: 55.99rem) {
+  .hero { min-height: 0; padding-bottom: 0; }
+  .hero__contenu { flex: none; justify-content: flex-start; }
+  .hero__logo { width: min(72vw, 24rem); margin-top: max(-11vw, -5rem); }
+  .hero__style { margin-top: .9rem; }
+  .hero__suite { display: none; }
+}
+
+/* ---------- Barre fixe : le logo s'y pose au défilement ---------- */
+/* --p (0 → 1) suit la montée du logo, réglé par main.js. */
+.barre {
+  --p: 0;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(3.5rem + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) var(--marge-d) 0 var(--marge-g);
+  background: rgb(10 10 10 / calc(var(--p) * .78));
+  -webkit-backdrop-filter: blur(calc(var(--p) * 14px));
+  backdrop-filter: blur(calc(var(--p) * 14px));
+  border-bottom: 1px solid rgb(42 41 39 / var(--p));
+  pointer-events: none;
+}
+.barre.est-active { pointer-events: auto; }
+.barre__logo { display: block; width: 5.25rem; opacity: 0; transition: opacity .15s linear; }
+.barre__logo img { display: block; width: 100%; height: auto; }
+.barre.est-arrivee .barre__logo { opacity: 1; }
+.barre__booking {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 .9rem;
+  border: 1px solid rgb(238 235 228 / .7);
+  color: var(--blanc);
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: .8125rem;
+  letter-spacing: .04em;
+  text-decoration: none;
+  opacity: var(--p);
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+@media (hover: hover) { .barre__booking:hover { background: var(--blanc); color: var(--noir); } }
+/* Téléphone : logo centré dans la barre, Booking à droite */
+@media (max-width: 55.99rem) {
+  .barre__logo { position: absolute; left: 50%; top: calc(env(safe-area-inset-top) + .3rem); transform: translateX(-50%); width: 4.75rem; }
+  .barre__booking { margin-left: auto; }
+}
+/* Le gros logo de l'en-tête, déplacé et réduit par main.js pendant la montée */
+.hero__logo { position: relative; z-index: 70; transform-origin: 0 0; will-change: transform; }
+.hero__logo.est-pose { opacity: 0; }
+
+/* ---------- Titres centrés sur téléphone ---------- */
+@media (max-width: 39.99rem) {
+  .bloc__titre, .sous-titre { text-align: center; }
+  .bloc__entete { justify-content: center; }
+  .actus .icones { justify-content: center; margin-left: 0; }
+}
+
+/* ---------- Gros titres : Anton ---------- */
+/* Chiffres du billet et des dates : Anton, plus nets en grand. Une seule
+   graisse par police : pas de faux gras ni de condensation. */
+.bloc__titre,
+.sous-titre,
+.membre__nom,
+.annonce__h {
+  font-family: var(--groovy);
+  font-stretch: normal;
+  font-weight: 800;
+  font-synthesis: none;
+  letter-spacing: 0;
+}
+.date__jour {
+  font-family: var(--affiche);
+  font-stretch: normal;
+  font-weight: 400;
+  font-synthesis: none;
+}
+.bloc__titre { font-size: clamp(3rem, 14vw, 8rem); line-height: 1; letter-spacing: .01em; }
+.annonce__h { font-size: clamp(2.5rem, 10.5vw, 3.75rem); line-height: 1.05; }
+.membre__nom { font-size: clamp(2.25rem, 10vw, 3.25rem); line-height: 1.1; }
+
+/* ---------- Repères « à renseigner » (brouillon local uniquement) ---------- */
+
+.a-renseigner { display: none; }
+.est-brouillon .a-renseigner {
+  display: block;
+  margin-top: .5rem;
+  padding: .4rem .55rem;
+  border: 1px dashed currentColor;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: .6875rem;
+  line-height: 1.4;
+  color: var(--gris-4);
+}
+.est-brouillon span.a-renseigner { display: block; margin: 0; border: 0; font-size: .625rem; }
+.est-brouillon span.a-renseigner::before { content: "※ "; }
+
+/* ---------- Texte adapté au smartphone ---------- */
+/* Rien sous 13 px ; méta-infos à 14-15 px ; annotations des tuiles un peu
+   moins grosses sur petit écran pour rester dans la photo. */
+@media (max-width: 39.99rem) {
+  .hero__style { font-size: .8125rem; letter-spacing: .18em; }
+  .statut { font-size: .8125rem; }
+  .date__mois { font-size: .8125rem; }
+  .date__meta,
+.fb__info,
+.credit-photo,
+.pied { font-size: .875rem; }
+  .lien-action,
+.bouton { font-size: 1rem; }
+  .membre__traits li { font-size: clamp(.8125rem, 3.6vw, .9375rem); }
+}
+
+/* ---------- Téléphone en paysage : même page qu'en portrait ---------- */
+/* Même composition (photo, logo centré, encart, tuiles), proportions
+   adaptées à un écran peu haut. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .hero__media { aspect-ratio: auto; height: 72svh; }
+  .diapo { object-position: 50% 35% !important; }
+  .hero__logo { width: min(40vw, 19rem); margin-top: max(-14svh, -4rem); }
+  .hero__style { margin-top: .6rem; }
+  .dates-zone { padding-block: 1.5rem 2.5rem; }
+  .annonce { width: min(100% - 2 * var(--marge), 30rem); }
+  .affiche img { height: min(72svh, 20rem); }
+  .galerie__photo img { height: min(62svh, 15rem); }
+  .bloc { padding-block: 2.5rem; }
+  .bloc__titre { font-size: clamp(2.25rem, 7vw, 3.5rem); }
+  .barre { height: calc(3rem + env(safe-area-inset-top)); }
+}
+
+/* ==========================================================
+   Mise en page centrée (paysage, tablette, ordinateur)
+   Même logique que le mobile : une colonne centrée, des marges
+   identiques des deux côtés, aucune rangée qui file vers le bord.
+   ========================================================== */
+
+/* Titres centrés partout */
+.bloc__titre, .sous-titre { text-align: center; }
+.bloc__entete { justify-content: center; }
+.fleches { display: none !important; }
+.credit-photo { justify-content: center; }
+
+@media (min-width: 40rem) {
+  /* Zone de contenu commune : même largeur, mêmes marges */
+  .membres, .galerie, .defile__piste {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--marge-g) var(--marge-d);
+  }
+
+  /* Le groupe : tuiles centrées, sans décalage, sur une ou deux rangées */
+  .membres {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.75rem 1.5rem;
+    overflow: visible !important;
+    padding-block: .25rem 0 !important;
+  }
+  .membre { flex: 0 0 min(15rem, calc((100% - 3rem) / 3)) !important; margin-top: 0 !important; }
+  .membre__nom { font-size: clamp(1.75rem, 3vw, 2.4rem); }
+  .membre__role { font-size: .6875rem; top: .9rem; left: .9rem; }
+  .membre__etiquette { padding: .5rem 1.7rem .45rem 0; }
+  .membre__traits { bottom: 4.2rem; gap: .35rem; right: .6rem; }
+  .membre__traits li { font-size: .75rem; }
+
+  /* Affiches et galerie : rangées centrées qui passent à la ligne */
+  .defile { overflow: visible; }
+  .defile__piste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-block: 1rem 0;
+  }
+  .affiche img { height: clamp(13rem, 24vw, 18rem); }
+  .galerie {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+    gap: .75rem;
+    padding-block: .25rem 0;
+  }
+  .galerie__photo img { height: clamp(9rem, 16vw, 13rem); }
+
+  /* Réseaux sociaux : empilé et centré */
+  .actus { grid-template-columns: 1fr !important; justify-items: center; gap: 1.5rem; }
+  .actus > div:first-child { display: grid; justify-items: center; }
+  .actus .icones { justify-content: center; margin: -.5rem 0 0; }
+  .fb { margin-inline: auto; }
+
+  /* Pied de page centré */
+  .pied { justify-content: center; text-align: center; gap: .5rem 1.5rem; }
+}
+
+/* Ordinateur : logo et ligne de style centrés en bas de la photo */
+@media (min-width: 56rem) {
+  .hero__contenu {
+    justify-self: center;
+    max-width: none;
+    padding-inline: var(--marge-g) var(--marge-d);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero__media {
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+    mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  }
+  .hero__logo { width: clamp(18rem, 28vw, 28rem); }
+}
+/* Ordinateur : 3 + 2 tuiles centrées, assez grandes pour les annotations */
+@media (min-width: 64rem) {
+  .membres { max-width: 66rem; gap: 2rem 1.75rem; }
+  .membre { flex-basis: calc((100% - 3.5rem) / 3) !important; }
+  .membre__traits li { font-size: .8125rem; }
+  .membre__traits { bottom: 5.4rem; }
+}
+
+/* Téléphone en paysage : rangées plus basses pour tenir dans l'écran */
+@media (orientation: landscape) and (max-height: 540px) {
+  .membre { flex-basis: min(14rem, calc((100% - 3rem) / 3)) !important; }
+  .affiche img { height: min(60svh, 14rem); }
+  .galerie__photo img { height: min(40svh, 9.5rem); }
+}
+
+.bouton[hidden] { display: none; }
+
+/* ==========================================================
+   Écouter
+   ========================================================== */
+#ecouter { --accent: var(--bd-prune); }
+
+.pistes { list-style: none; margin: 0 auto 2rem; padding: 0; display: grid; gap: .75rem; max-width: 44rem; }
+.pistes:empty, .videos:empty, .ecoute:empty { display: none; }
+/* Forme d'onde : dessin (canvas) + curseur invisible par-dessus pour se déplacer */
+.onde { position: relative; height: 3.25rem; }
+.onde__dessin { display: block; width: 100%; height: 100%; }
+.onde__curseur {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.onde:has(.onde__curseur:focus-visible) { outline: 2px solid var(--jaune); outline-offset: 3px; }
+
+.videos { display: grid; gap: 1rem; max-width: 44rem; margin: 0 auto 2rem; }
+.video { aspect-ratio: 16 / 9; border: 1px solid var(--filet); background: var(--noir-2); }
+.video iframe { display: block; width: 100%; height: 100%; border: 0; }
+.video__lancer {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: .7rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  border: 0;
+  background: none;
+  color: var(--blanc);
+  font-family: var(--corps);
+  text-align: center;
+  cursor: pointer;
+}
+.video__titre { font-family: var(--groovy); font-weight: 800; font-size: clamp(1.4rem, 5vw, 2rem); line-height: 1.05; text-transform: uppercase; }
+.video__action { display: inline-flex; align-items: center; gap: .6rem; padding: .6rem 1rem; border: 2px solid var(--blanc); font-weight: 700; transition: background-color .2s var(--ease), color .2s var(--ease); }
+.video__info { font-size: .8125rem; color: var(--gris-4); }
+@media (hover: hover) { .video__lancer:hover .video__action { background: var(--blanc); color: var(--noir); } }
+.ecoute { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+
+/* ==========================================================
+   Booking
+   ========================================================== */
+
+/* ==========================================================
+   Grain léger sur les fonds noirs
+   ========================================================== */
+body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ==========================================================
+   Interrupteur d'alertes (dans « Prochaine date »)
+   ========================================================== */
+.alertes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .9rem;
+  margin: 0 0 1.5rem;
+  color: var(--gris-2);
+  font-size: .9375rem;
+}
+.alertes[hidden] { display: none; }
+.interrupteur {
+  position: relative;
+  flex: none;
+  width: 3.25rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 2px solid var(--gris-4);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.interrupteur__bouton {
+  position: absolute;
+  top: 50%;
+  left: .2rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: var(--gris-3);
+  transform: translateY(-50%);
+  transition: left .25s var(--ease), background-color .25s var(--ease);
+}
+.interrupteur[aria-checked="true"] { background: var(--jaune); border-color: var(--jaune); }
+.interrupteur[aria-checked="true"] .interrupteur__bouton { left: calc(100% - 1.25rem); background: var(--noir); }
+.interrupteur:focus-visible { outline: 2px solid var(--blanc); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .interrupteur, .interrupteur__bouton { transition: none; } }
+
+/* ==========================================================
+   Logo : le point du grand rond bouge comme un œil
+   ========================================================== */
+.logo { position: relative; display: block; }
+.logo__base { width: 100%; }
+/* Position du point dans le logo d'origine (1200 × 660) : même place au repos
+   que dans le logo fixe de la barre, pour un relais invisible. */
+.logo__oeil {
+  position: absolute;
+  left: 12.458%;
+  top: 77.879%;
+  width: 6.333%;
+  height: auto;
+  pointer-events: none;
+}
+/* Petits coups d'œil rapides : le point file d'un coin à l'autre du rond (en %
+   de sa propre taille), puis revient. Il s'arrête quand le logo est posé dans
+   la barre et repart quand on remonte (voir .est-pose, posé par main.js). */
+/* Deux boucles indépendantes, de durées différentes : l'une pilote le
+   mouvement horizontal (propriété « translate »), l'autre le vertical
+   (« transform »). Elles ne retombent ensemble que très rarement, donc le
+   regard ne se répète pas : plus organique. Les deux plages (x de 0 à -148 %,
+   y de 0 à -128 %) restent toujours à l'intérieur du rond, quelle que soit la
+   combinaison. Valeurs en % de la taille du point. */
+@keyframes oeil-x {
+  0%, 10%   { translate: 0 0; }
+  14%, 30%  { translate: -135% 0; }
+  34%, 44%  { translate: -23% 0; }
+  48%, 58%  { translate: -115% 0; }
+  62%, 70%  { translate: -148% 0; }
+  74%, 86%  { translate: -49% 0; }
+  90%, 100% { translate: 0 0; }
+}
+@keyframes oeil-y {
+  0%, 8%    { transform: translateY(0); }
+  12%, 26%  { transform: translateY(-108%); }
+  30%, 40%  { transform: translateY(-20%); }
+  44%, 58%  { transform: translateY(-128%); }
+  62%, 72%  { transform: translateY(-42%); }
+  76%, 88%  { transform: translateY(-90%); }
+  92%, 100% { transform: translateY(0); }
+}
+/* Chaque déplacement dure ~0,2 s : départ vif, arrivée en douceur, puis le
+   regard se fixe un instant, comme un vrai œil. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__logo:not(.est-pose) .logo__oeil {
+    animation:
+      oeil-x 5.9s cubic-bezier(.2, .9, .3, 1) infinite,
+      oeil-y 8.8s cubic-bezier(.2, .9, .3, 1) infinite;
+  }
+}
+
+/* ==========================================================
+   Titres en bandes penchées (gaffer) — même langage que les
+   étiquettes des membres : aplat de la couleur de la section,
+   bout coupé en biais, inclinaison propre à chaque titre.
+   ========================================================== */
+.dates-zone { --accent: var(--bd-rouge); --sur-accent: var(--blanc); }
+#ecouter { --sur-accent: var(--blanc); }
+#groupe { --sur-accent: var(--noir); }
+#galerie { --sur-accent: var(--blanc); }
+
+#reseaux { --sur-accent: var(--noir); }
+.dates-zone .annonce__h { --r: -2deg; }
+#ecouter .bloc__titre { --r: 1.5deg; }
+#groupe .bloc__titre { --r: -2deg; }
+#galerie .bloc__titre { --r: 1.5deg; }
+
+#reseaux .bloc__titre { --r: 2deg; }
+
+.bloc__titre, .annonce__h {
+  --coupe: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  display: block;
+  width: fit-content;
+  padding: .08em .5em .02em .28em;
+  background: var(--accent, var(--bd-rouge));
+  color: var(--sur-accent, var(--blanc));
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  clip-path: var(--coupe);
+  transform: rotate(var(--r, -2deg));
+  transform-origin: 0 50%;
+}
+.bloc__titre { font-size: clamp(2.5rem, 11vw, 5.5rem); line-height: 1; margin-bottom: 1.75rem; }
+.annonce__h { font-size: clamp(2.25rem, 10vw, 3.5rem); line-height: 1; transform-origin: 50% 50%; }
+/* Le numéro de section prend place dans la bande */
+
+@media (max-width: 39.99rem) {
+  .bloc__titre { margin-inline: auto; }
+}
+/* Le titre se pose sur la page au fil du défilement : il arrive un peu plus bas et plus
+   penché, puis se redresse (--v, réglée par main.js) ; en remontant, il se rembobine. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] .bloc__titre {
+    clip-path: var(--coupe);
+    transform: translateY(calc((1 - var(--v, 0)) * .9em)) rotate(calc(var(--r, -2deg) + (1 - var(--v, 0)) * -5deg));
+    transition: none;
+  }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  .bloc__titre { font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 1.25rem; }
+}
+
+/* ==========================================================
+   « Prochaine date » : un ticket de concert, sans cadre autour
+   ========================================================== */
+.annonce { padding: 0; border: 0; background: none; gap: 1.5rem; width: min(100% - 2 * var(--marge), 30rem); }
+.annonce__entete::after { display: none; }
+
+/* Ruban adhésif en haut du ticket */
+
+/* Talon : le jour, en grand, sur le jaune des affiches */
+
+/* Encoches de perforation, en haut et en bas de la ligne pointillée */
+
+/* ==========================================================
+   Affiches posées directement sur la page (plus de mur : elles se fondent dans le fond noir,
+   avec le même scotch et la même inclinaison que l'affiche de « Prochaine date »)
+   ========================================================== */
+.defile__piste { padding-block: 1.75rem 1.25rem; gap: clamp(1.5rem, 4vw, 2.5rem); }
+.affiche { --r: 0deg; transform: rotate(var(--r)); }
+.affiche:nth-child(4n + 1) { --r: -1.8deg; }
+.affiche:nth-child(4n + 2) { --r: 1.2deg; }
+.affiche:nth-child(4n + 3) { --r: -.7deg; }
+.affiche:nth-child(4n + 4) { --r: 2deg; }
+.affiche img { outline: 0; box-shadow: 0 .7rem 1.4rem rgb(0 0 0 / .7); }
+/* Scotch de papier kraft au sommet de chaque affiche */
+.affiche::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -.55rem;
+  left: 50%;
+  width: 3.6rem;
+  height: 1.25rem;
+  background: rgb(214 196 150 / .82);
+  transform: translateX(-50%) rotate(-3deg);
+  clip-path: polygon(0 10%, 5% 0, 10% 12%, 100% 0, 95% 50%, 100% 100%, 6% 90%, 0 100%, 4% 50%);
+  pointer-events: none;
+}
+.affiche:nth-child(even)::before { transform: translateX(-50%) rotate(4deg); }
+
+/* Le clignement du point n'est plus ici : il est déclenché par assets/js/oeil.js, uniquement
+   quand le regard (oeil-x / oeil-y ci-dessus) est à l'arrêt. */
+
+/* ==========================================================
+   Bandeau défilant des dates passées (au-dessus des affiches)
+   ========================================================== */
+
+/* ==========================================================
+   Tablette et ordinateur : tout centré, tailles proportionnées
+   ========================================================== */
+/* Titres en bandes : toujours centrés, pivot au milieu */
+.bloc__titre, .annonce__h { margin-inline: auto; transform-origin: 50% 50%; }
+.bloc__entete { justify-content: center; }
+
+/* Booking : une colonne centrée (texte, infos, boutons) */
+
+@media (min-width: 40rem) {
+  .bloc { padding-block: clamp(3rem, 6vw, 5.5rem); }
+  .bloc__titre { font-size: clamp(2.75rem, 6vw, 4.5rem); margin-bottom: 2.25rem; }
+  .annonce__h { font-size: clamp(2.5rem, 5.5vw, 3.5rem); }
+  .annonce { width: min(100% - 2 * var(--marge), 32rem); }
+  /* Affiches et photos : plus grandes, en rangées centrées */
+  .defile__piste { gap: clamp(1.5rem, 3vw, 2.5rem); padding-block: 2.75rem 3rem; }
+  .affiche img { height: clamp(13rem, 21vw, 22rem); }
+  .galerie { gap: clamp(.75rem, 1.2vw, 1.1rem); }
+  .galerie__photo img { height: clamp(11rem, 21vw, 19rem); }
+}
+
+@media (min-width: 56rem) {
+  /* Premier écran : logo plus présent, contenu centré */
+  .hero__logo { width: clamp(20rem, 30vw, 36rem); }
+  .hero__style { font-size: .875rem; }
+  .annonce { width: min(100% - 2 * var(--marge), 34rem); }
+  
+}
+
+@media (min-width: 64rem) {
+  .membres { max-width: 72rem; }
+  .defile__piste { max-width: 92rem; } /* les affiches tiennent sur une seule ligne */
+  
+}
+
+/* ==========================================================
+   Effet des boutons : au survol, le bouton se soulève et une ombre
+   jaune pleine apparaît dessous ; à l'appui, il s'enfonce. La flèche
+   avance un peu. Coupé si l'on a demandé moins d'animations.
+   ========================================================== */
+.barre__booking { transition: background-color .2s var(--ease), color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
+.bouton .fleche { transition: transform .25s var(--ease); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .bouton:hover, .barre__booking:hover { transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--jaune); }
+  .bouton:hover .fleche { transform: translateX(4px); }
+  .bouton:active, .barre__booking:active { transform: translate(0, 0); box-shadow: 0 0 0 var(--jaune); }
+}
+.bouton:focus-visible, .barre__booking:focus-visible { outline: 2px solid var(--jaune); outline-offset: 3px; }
+
+/* ==========================================================
+   Le groupe sur téléphone : grille à 2 colonnes (6 tuiles ≈ 3 rangées).
+   Les trois petits textes apparaissent quand on touche une tuile, qui
+   passe aussi en couleur (classe .est-en-couleur, posée par main.js).
+   ========================================================== */
+.membres__astuce { display: none; }
+@media (max-width: 39.99rem) {
+  .membres { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .membre { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .membre__photo { border-width: 4px; }
+  .membre__role { top: .5rem; left: .5rem; padding: .18rem .4rem .15rem; font-size: .625rem; }
+  .membre__etiquette { padding: .3rem 1.5rem .25rem 0; }
+  .membre__nom { padding-left: .55rem; font-size: 1.5rem; }
+  .membre__traits { display: none; } /* les trois textes sont dans la fiche qui s'ouvre au toucher */
+  .membre__photo img { transition: filter .5s var(--ease), transform .5s var(--ease); }
+  .membre__photo, .membre__etiquette, .membre__role { transition-duration: .5s; }
+  .membres__astuce { display: block; margin-top: 1rem; text-align: center; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gris-4); }
+}
+@media (max-width: 39.99rem) and (hover: hover) {
+  .membres__astuce { display: none; }
+}
+
+/* ---------- Fiche d'un membre : s'ouvre en grand depuis la tuile ---------- */
+/* <dialog> plein écran transparent : un toucher en dehors de la carte la referme. */
+.fiche {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 1rem;
+  border: 0;
+  background: none;
+  color: var(--blanc);
+  place-items: center;
+}
+.fiche[open] { display: grid; }
+.fiche::backdrop { background: rgb(5 5 5 / .8); backdrop-filter: blur(3px); animation: fiche-fondu .3s ease both; }
+@keyframes fiche-fondu { from { opacity: 0; } }
+html:has(.fiche[open]) { overflow: hidden; }
+.fiche__carte {
+  position: relative;
+  width: min(86vw, 22rem);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--noir-2);
+  border: 5px solid var(--couleur, var(--blanc));
+  box-shadow: 0 1.5rem 3rem rgb(0 0 0 / .7);
+  transform-origin: 0 0;
+}
+.fiche__carte:focus { outline: none; }
+.fiche__photo { position: absolute; inset: 0; }
+.fiche__photo img { width: 100%; height: 100%; object-fit: cover; }
+.fiche__role {
+  position: absolute;
+  top: .8rem;
+  left: .8rem;
+  margin: 0;
+  padding: .3rem .65rem .25rem;
+  background: var(--couleur);
+  color: var(--encre);
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: .75rem;
+  line-height: 1.1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.fiche__nom {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: .45rem 2.6rem .4rem .8rem;
+  background: var(--couleur);
+  color: var(--encre);
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: 2.75rem;
+  line-height: 1;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1.4rem) 100%, 0 100%);
+}
+.fiche__traits { position: absolute; right: .75rem; bottom: 4.6rem; display: grid; gap: .45rem; justify-items: end; margin: 0; padding: 0; list-style: none; }
+.fiche__traits li {
+  padding: .3rem .65rem .27rem;
+  background: var(--noir);
+  color: var(--blanc);
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: .9375rem;
+  line-height: 1.15;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  box-shadow: 0 2px 0 rgb(0 0 0 / .4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Les trois textes arrivent l'un après l'autre, comme des tampons posés sur la photo */
+  .fiche[open] .fiche__traits li { animation: fiche-tampon .42s cubic-bezier(.2, .9, .3, 1.25) both; animation-delay: calc(.4s + var(--rang, 0) * .14s); }
+  .fiche[open] .fiche__nom { animation: fiche-nom .55s cubic-bezier(.7, 0, .2, 1) .12s both; }
+  .fiche[open] .fiche__role { animation: fiche-role .4s ease .3s both; }
+}
+@keyframes fiche-tampon {
+  from { opacity: 0; transform: translateX(2.5rem) rotate(6deg) scale(1.35); }
+  to { opacity: 1; transform: rotate(-3deg) scale(1); }
+}
+@keyframes fiche-nom {
+  from { clip-path: polygon(0 0, 1.4rem 0, 0 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 100% 0, calc(100% - 1.4rem) 100%, 0 100%); }
+}
+@keyframes fiche-role { from { opacity: 0; transform: translateY(-.4rem); } }
+
+/* ==========================================================
+   Barre fixe sur téléphone : logo à gauche, un peu plus gros,
+   fond qui se fond doucement dans la page (pas de bord net).
+   Le gros logo de l'en-tête monte vers ce nouvel emplacement
+   (main.js lit la position du petit logo : rien d'autre à régler).
+   ========================================================== */
+@media (max-width: 55.99rem) {
+  .barre {
+    height: calc(3.75rem + env(safe-area-inset-top));
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom: 0;
+  }
+  /* Le fond est un calque à part, plus haut que la barre, estompé vers le bas */
+  .barre::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 -1.75rem;
+    background: linear-gradient(to bottom, rgb(10 10 10 / calc(var(--p) * .92)) 0%, rgb(10 10 10 / calc(var(--p) * .8)) 55%, rgb(10 10 10 / 0) 100%);
+    -webkit-backdrop-filter: blur(calc(var(--p) * 10px));
+    backdrop-filter: blur(calc(var(--p) * 10px));
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    pointer-events: none;
+  }
+  .barre__logo {
+    left: var(--marge-g);
+    top: calc(env(safe-area-inset-top) + .2rem);
+    transform: none;
+    width: 6.25rem;
+  }
+}
+@media (max-width: 55.99rem) and (orientation: landscape) and (max-height: 540px) {
+  .barre { height: calc(3rem + env(safe-area-inset-top)); }
+  .barre__logo { top: calc(env(safe-area-inset-top) + .1rem); width: 4.75rem; }
+}
+
+/* ==========================================================
+   « Prochaine date » : blanc sur noir, sans fioriture
+   ========================================================== */
+.annonce__h {
+  padding: 0;
+  background: none;
+  color: var(--blanc);
+  clip-path: none;
+  transform: none;
+  text-align: center;
+}
+.annonce__entete::after { display: block; content: ""; width: 2.5rem; height: 2px; background: var(--blanc); }
+
+ /* plus de ruban */
+
+/* Boutons du ticket : blanc sur noir, comme partout ailleurs */
+
+/* Sans date annoncée : un simple « Bientôt » */
+.annonce__titre { color: var(--blanc); font-size: 1.375rem; }
+.annonce__titre::before { background: var(--blanc); }
+
+/* ==========================================================
+   Première vue : la photo, le logo ET la prochaine date
+   ========================================================== */
+/* Téléphone et tablette : en-tête compact, annonce serrée ; le ticket passe avant
+   l'affiche (l'info d'abord), l'affiche vient juste en dessous. */
+@media (max-width: 55.99rem) {
+  .hero__logo { width: min(66vw, 21rem); margin-top: max(-10vw, -4rem); }
+  .hero__style { margin-top: .7rem; }
+  .dates-zone { padding-block: 1.25rem clamp(2rem, 6vw, 3.5rem); }
+  .annonce { gap: 1rem; }
+  .annonce__h { font-size: clamp(2rem, 9vw, 3rem); }
+  .alertes { margin-bottom: 0; }
+  .annonce__contenu { gap: 1.25rem; }
+  
+}
+/* Ordinateur : un en-tête moins haut, pour que l'annonce soit visible sans défiler ;
+   l'affiche se place à côté du ticket au lieu d'au-dessus. */
+@media (min-width: 56rem) {
+  .hero { min-height: clamp(24rem, 52vh, 36rem); min-height: clamp(24rem, 52svh, 36rem); }
+  .hero__contenu { padding-bottom: 1.75rem; }
+  .hero__logo { width: clamp(16rem, 24vw, 26rem); }
+  .hero__style { margin-top: 1rem; }
+  .hero__suite { display: none; }
+  .dates-zone { padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem); }
+  .annonce { gap: 1.1rem; }
+  
+  
+  
+  .diapo { object-position: 50% 32% !important; }
+}
+
+/* « Prochaine date » : bandeau noir, plus foncé que la page, légèrement de travers */
+.annonce__h {
+  padding: .14em 1.1em .08em;
+  background: #000;
+  transform: rotate(-1.5deg);
+  border-block: 1px solid rgb(238 235 228 / .3);
+  box-shadow: 0 .5rem 1.2rem rgb(0 0 0 / .7);
+}
+.annonce__entete::after { display: none; }
+
+/* Fiche d'un membre : le logo du groupe sous la carte, discret */
+.fiche__scene { display: grid; justify-items: center; gap: 1.1rem; }
+.fiche__logo { display: block; width: clamp(5.5rem, 26vw, 7rem); height: auto; opacity: .92; }
+@media (prefers-reduced-motion: no-preference) {
+  .fiche[open] .fiche__logo { animation: fiche-logo .6s ease .55s both; }
+}
+@keyframes fiche-logo { from { opacity: 0; transform: translateY(.6rem); } }
+
+/* ==========================================================
+   Chaque élément qui apparaît a sa propre animation, liée à SA position à l'écran :
+   --ain (0 → 1 à l'entrée) et --aout (1 → 0 à la sortie) sont réglées par
+   apparitionsAuDefilement() dans main.js. Il arrive du côté d'où l'on vient (bas en
+   descendant, haut en remontant) et repart à l'inverse : tout se rembobine au défilement.
+   ========================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-anim] {
+    --dx: 0px;
+    --dy: 2rem;   /* distance parcourue */
+    --ds: .07;    /* part de réduction (échelle) au plus bas */
+    --dr: 0deg;   /* rotation en plus au plus bas */
+    opacity: min(var(--ain, 1), var(--aout, 1));
+    transform:
+      translate(
+        /* côté : la sortie repart du MÊME côté que l'arrivée (+) ; en hauteur, la sortie continue vers le haut (−) */
+        calc((1 - var(--ain, 1)) * var(--dx) + (1 - var(--aout, 1)) * var(--dx)),
+        calc((1 - var(--ain, 1)) * var(--dy) - (1 - var(--aout, 1)) * var(--dy))
+      )
+      scale(calc(1 - var(--ds) * ((1 - var(--ain, 1)) + (1 - var(--aout, 1)))))
+      rotate(calc(var(--r, 0deg) + (1 - var(--ain, 1)) * var(--dr) - (1 - var(--aout, 1)) * var(--dr)));
+  }
+  .js [data-anim="gauche"] { --dx: -3.5rem; --dy: .8rem; }
+  .js [data-anim="droite"] { --dx: 3.5rem; --dy: .8rem; }
+  .js [data-anim="zoom"] { --dy: 1.2rem; --ds: .16; --dr: -4deg; }
+}
+
+/* ==========================================================
+   Écran de démarrage : fond noir uni, logo au centre, puis le logo vient se poser
+   dans l'en-tête (assets/js/intro.js). Affiché seulement avec html.intro-actif.
+   ========================================================== */
+.demarrage { display: none; }
+html.intro-actif .demarrage {
+  position: fixed;
+  inset: 0 0 calc(-1 * env(safe-area-inset-bottom, 0px));
+  z-index: 300;
+  margin: 0;
+  max-width: none;
+  display: grid;
+  place-items: center;
+  background: var(--noir);
+  /* Filet de sécurité : si le script ne se lance pas, l'écran s'efface seul après 6 s */
+  animation: intro-secours .5s ease 6s forwards;
+}
+.demarrage__logo {
+  width: min(62vw, 19rem);
+  height: auto;
+  opacity: 0;
+  transform: scale(.9);
+  animation: intro-entree .8s var(--ease) .15s forwards;
+  will-change: transform;
+}
+@keyframes intro-entree { to { opacity: 1; transform: none; } }
+@keyframes intro-secours { to { opacity: 0; visibility: hidden; } }
+/* Le vrai logo attend sa place : l'écran de démarrage le remplace pendant le voyage */
+html.intro-actif .hero__logo { visibility: hidden; animation: intro-revele 0s 6s forwards; }
+@keyframes intro-revele { to { visibility: visible; } }
+
+/* Tuiles du groupe : elles glissent franchement de côté, sans monter ni se réduire,
+   et se posent proprement (la colonne de gauche vient de la gauche, celle de droite de la droite) */
+@media (prefers-reduced-motion: no-preference) {
+  .js .membres .membre[data-anim="gauche"] { --dx: -7rem; --dy: 0px; --ds: .03; }
+  .js .membres .membre[data-anim="droite"] { --dx: 7rem; --dy: 0px; --ds: .03; }
+}
+
+/* ==========================================================
+   Texte de présentation du groupe (sous le titre « Le groupe »)
+   ========================================================== */
+.presentation { display: grid; justify-items: center; gap: 1.1rem; max-width: 40rem; margin: 0 auto 2.5rem; text-align: center; }
+.presentation[hidden] { display: none; }
+.presentation p { margin: 0; font-size: 1.0625rem; line-height: 1.6; color: var(--gris-2); }
+.presentation__accroche {
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: clamp(2rem, 8vw, 3rem) !important;
+  line-height: 1 !important;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--blanc) !important;
+}
+.presentation__chute {
+  margin-top: .5rem !important;
+  padding: .3em .8em .22em;
+  background: var(--bd-ocre);
+  color: var(--noir) !important;
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: clamp(1.4rem, 5.5vw, 1.9rem) !important;
+  line-height: 1.1 !important;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .5em) 100%, 0 100%);
+}
+@media (min-width: 40rem) { .presentation { gap: 1.25rem; margin-bottom: 3rem; } .presentation p { font-size: 1.125rem; } }
+
+/* Barre du haut sur téléphone : de l'air au-dessus du logo et du bouton Booking (ils ne touchent plus le bord) */
+@media (max-width: 55.99rem) {
+  .barre { height: calc(4.25rem + env(safe-area-inset-top)); }
+  .barre__logo { top: calc(env(safe-area-inset-top) + .65rem); }
+  .barre__booking { margin-top: .35rem; }
+}
+@media (max-width: 55.99rem) and (orientation: landscape) and (max-height: 540px) {
+  .barre { height: calc(3.5rem + env(safe-area-inset-top)); }
+  .barre__logo { top: calc(env(safe-area-inset-top) + .4rem); }
+  .barre__booking { margin-top: .2rem; }
+}
+
+/* ==========================================================
+   « Prochain concert » : le flyer collé. L'affiche penchée avec son scotch, la date sur un
+   autocollant jaune, le lieu, l'horaire sur une étiquette blanche. Même carte, vide, pour
+   « Stay tuned » (cases en pointillés). Pas de cadre : l'affiche est posée sur la page.
+   ========================================================== */
+.annonce { width: min(100% - 2 * var(--marge), 34rem); }
+.prochaine {
+  display: grid;
+  grid-template-columns: clamp(7.5rem, 38vw, 10rem) minmax(0, 1fr);
+  gap: 1.1rem 1.2rem;
+  align-items: center;
+  width: 100%;
+  padding: .85rem .25rem 0;
+  text-align: left;
+}
+.prochaine--sans-affiche { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+.prochaine__affiche {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  transform: rotate(-3.5deg);
+  box-shadow: 0 .7rem 1.4rem rgb(0 0 0 / .7);
+  transition: transform .35s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.prochaine__affiche img { display: block; width: 100%; height: auto; }
+/* Scotch de papier kraft en haut de l'affiche */
+.prochaine__affiche::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -.6rem;
+  left: 50%;
+  width: 3.6rem;
+  height: 1.2rem;
+  background: rgb(214 196 150 / .82);
+  transform: translateX(-50%) rotate(3deg);
+  clip-path: polygon(0 10%, 5% 0, 10% 12%, 100% 0, 95% 50%, 100% 100%, 6% 90%, 0 100%, 4% 50%);
+  pointer-events: none;
+}
+@media (hover: hover) { .prochaine__affiche:hover { transform: rotate(-1.5deg) scale(1.03); } }
+.prochaine__corps { display: grid; justify-items: start; align-content: center; gap: .55rem; min-width: 0; }
+.prochaine--sans-affiche .prochaine__corps { justify-items: center; }
+.prochaine__label { margin: 0; font-size: .6875rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--gris-3); }
+.prochaine__label::before { content: "★ "; color: var(--jaune); }
+.prochaine__label .statut { margin-left: .4rem; }
+/* La date : un autocollant jaune, coupé en biais */
+.prochaine__date {
+  width: fit-content;
+  max-width: 100%;
+  margin: .1rem 0;
+  padding: .14em .6em .08em .5em;
+  background: var(--jaune);
+  color: var(--noir);
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 9.5vw, 2.7rem);
+  line-height: .95;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  transform: rotate(2deg);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  overflow-wrap: anywhere;
+}
+.prochaine__lieu { margin: 0; font-size: 1.05rem; font-weight: 700; line-height: 1.25; color: var(--blanc); }
+/* L'horaire : une étiquette blanche légèrement de travers */
+.prochaine__heure {
+  width: fit-content;
+  margin: 0;
+  padding: .18rem .65rem .14rem;
+  background: var(--blanc);
+  color: var(--noir);
+  font-size: .9375rem;
+  font-weight: 700;
+  transform: rotate(-1.5deg);
+}
+.prochaine__info { margin: .15rem 0 0; font-size: .875rem; line-height: 1.45; color: var(--gris-3); }
+.prochaine__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .6rem; padding-top: .35rem; }
+.prochaine__actions .bouton { flex: 1 1 9rem; }
+.prochaine__actions:empty { display: none; }
+
+@media (min-width: 56rem) {
+  .annonce { width: min(100% - 2 * var(--marge), 42rem); }
+  .prochaine { grid-template-columns: clamp(9.5rem, 17vw, 12rem) minmax(0, 1fr); gap: 1.4rem 2rem; }
+  .prochaine__date { font-size: 3.1rem; }
+  .prochaine__lieu { font-size: 1.2rem; }
+  .prochaine__heure { font-size: 1rem; }
+}
+
+/* Alertes activées : l'encart devient jaune (le choix est gardé d'une visite à l'autre) */
+.alertes {
+  width: fit-content;
+  margin-inline: auto;
+  padding: .5rem 1rem;
+  border: 1px solid transparent;
+  transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+}
+.alertes.est-active { background: var(--jaune); border-color: var(--jaune); color: var(--noir); font-weight: 700; }
+.alertes.est-active .interrupteur { background: var(--noir); border-color: var(--noir); }
+.alertes.est-active .interrupteur__bouton { background: var(--jaune); }
+@media (prefers-reduced-motion: reduce) { .alertes { transition: none; } }
+
+/* ==========================================================
+   « Ils nous ont fait confiance » : bandeau de logos défilant, sans fond
+   Logos en blanc sur transparent (assets/partenaires/), qui défilent dans le même sens
+   bords estompés ; immobile avec « réduire les animations ».
+   ========================================================== */
+.confiance { padding-block: clamp(1.5rem, 4vw, 2.5rem) 0; text-align: center; }
+.confiance[hidden] { display: none; }
+.confiance__titre {
+  margin: 0 var(--marge-d) 1.4rem var(--marge-g);
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .75rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gris-3);
+}
+.confiance__fenetre {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.confiance__piste {
+  --n: 8;
+  display: flex;
+  width: max-content;
+  animation: confiance calc(var(--n) * 3.4s) linear infinite; /* de gauche à droite */
+  will-change: transform;
+}
+.confiance__moitie { display: flex; flex: none; align-items: center; margin: 0; padding: 0; list-style: none; }
+.confiance__logo { flex: none; display: grid; place-items: center; padding-inline: clamp(1.75rem, 5vw, 3.25rem); }
+.confiance__logo img { display: block; width: auto; height: calc(3.25rem * var(--taille, 1)); max-width: none; opacity: .85; }
+.confiance__logo a { display: block; }
+@keyframes confiance { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (min-width: 56rem) { .confiance__logo img { height: calc(3.75rem * var(--taille, 1)); } }
+@media (prefers-reduced-motion: reduce) {
+  .confiance__fenetre { -webkit-mask-image: none; mask-image: none; }
+  .confiance__piste { width: auto; animation: none; justify-content: center; flex-wrap: wrap; }
+  .confiance__moitie + .confiance__moitie { display: none; }
+  .confiance__moitie { flex-wrap: wrap; justify-content: center; }
+  .confiance__logo:nth-child(n + 5) { display: none; } /* sans animation : une seule série de logos */
+}
+
+/* ==========================================================
+   Barre du haut : « Booking » est maintenant un bouton qui ouvre une fenêtre
+   ========================================================== */
+.barre__booking { background: none; cursor: pointer; }
+
+/* ==========================================================
+   Fenêtre Booking : une petite carte centrée sur fond flou. Le titre reprend la bande rouge
+   penchée des titres de section ; un seul bouton, « Nous contacter ».
+   ========================================================== */
+.booking-fenetre {
+  /* centrée, à la taille de son contenu */
+  position: fixed;
+  inset: 0;
+  width: min(88vw, 23rem);
+  height: fit-content;
+  max-height: 90svh;
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 1px solid rgb(238 235 228 / .35);
+  background: var(--noir);
+  color: var(--blanc);
+  box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / .65);
+}
+.booking-fenetre:not([open]) { display: none; }
+.booking-fenetre::backdrop {
+  background: rgb(8 8 8 / .6);
+  -webkit-backdrop-filter: blur(12px) saturate(.9);
+  backdrop-filter: blur(12px) saturate(.9);
+}
+html:has(.booking-fenetre[open]) { overflow: hidden; }
+.booking-fenetre__fermer {
+  position: absolute;
+  z-index: 2;
+  top: .5rem;
+  right: .5rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gris-3);
+  font-size: 1rem;
+  cursor: pointer;
+}
+@media (hover: hover) { .booking-fenetre__fermer:hover { color: var(--blanc); } }
+.booking-fenetre__contenu { display: grid; justify-items: center; gap: 1.25rem; padding: 2.25rem 1.5rem 1.75rem; text-align: center; }
+.booking-fenetre__contenu:focus { outline: none; }
+.booking-fenetre__titre {
+  --coupe: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  margin: 0;
+  padding: .08em .6em .02em .45em;
+  background: var(--bd-rouge);
+  color: var(--blanc);
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 13vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  clip-path: var(--coupe);
+  transform: rotate(-2deg);
+}
+.booking-fenetre__texte { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--gris-2); }
+.booking-fenetre__texte[hidden] { display: none; }
+.booking-fenetre__bouton { width: 100%; gap: .7rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .booking-fenetre[open] { animation: booking-entree .4s var(--ease) both; }
+  .booking-fenetre[open]::backdrop { animation: booking-fondu .35s ease both; }
+  .booking-fenetre[open] .booking-fenetre__titre { animation: booking-titre .55s cubic-bezier(.2, .9, .3, 1.15) .1s both; }
+}
+@keyframes booking-fondu { from { opacity: 0; } }
+@keyframes booking-entree { from { opacity: 0; transform: translateY(1rem) scale(.96); } }
+@keyframes booking-titre { from { transform: rotate(-6deg) scale(.85); } }
+
+/* « Stay tuned » (aucune date annoncée) : petit texte blanc, sans fond, avec une icône REC qui clignote */
+.prochaine--attente { grid-template-columns: minmax(0, 1fr); justify-items: center; padding-block: .5rem .25rem; }
+.prochaine--attente .prochaine__corps { justify-items: center; }
+.prochaine__stay {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin: 0;
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--blanc);
+}
+.rec {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .18rem .45rem .15rem;
+  border: 1px solid rgb(238 235 228 / .55);
+  border-radius: .25rem;
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--blanc);
+}
+.rec i { width: .55rem; height: .55rem; border-radius: 50%; background: #e0312f; box-shadow: 0 0 0 0 rgb(224 49 47 / .6); }
+@media (prefers-reduced-motion: no-preference) {
+  .rec i { animation: rec 1.4s ease-in-out infinite; }
+}
+@keyframes rec {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgb(224 49 47 / .55); }
+  50% { opacity: .25; box-shadow: 0 0 0 .35rem rgb(224 49 47 / 0); }
+}
+
+/* Bouton « Contact » de la barre du haut : petit arrondi */
+.barre__booking { border-radius: .6rem; }
+
+/* ==========================================================
+   Menu d'accès rapide : trois traits dans la barre du haut
+   ========================================================== */
+.bloc, .dates-zone { scroll-margin-top: 3.5rem; }
+
+
+
+/* Trois petits traits au centre de la barre du haut (visibles avec la barre, comme « Contact ») */
+.barre__menu {
+  position: absolute;
+  left: 50%;
+  top: calc(env(safe-area-inset-top) + (100% - env(safe-area-inset-top)) / 2);
+  transform: translate(-50%, -50%);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: .3rem;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blanc);
+  opacity: var(--p);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.barre__menu span { display: block; width: 1.5rem; height: 2px; background: currentColor; transition: width .2s var(--ease); }
+.barre__menu span:nth-child(2) { width: 1.1rem; }
+@media (hover: hover) { .barre__menu:hover span:nth-child(2) { width: 1.5rem; } }
+.barre__menu:focus-visible { outline: 2px solid var(--blanc); outline-offset: -4px; }
+
+/* Menu : un panneau noir pur qui descend du haut, texte blanc très lisible */
+.menu {
+  position: fixed;
+  inset: 0 0 auto 0;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  max-height: 100svh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgb(238 235 228 / .35);
+  background: #000;
+  color: var(--blanc);
+  overflow-y: auto;
+}
+.menu:not([open]) { display: none; }
+.menu::backdrop { background: rgb(0 0 0 / .72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html:has(.menu[open]) { overflow: hidden; }
+.menu__panneau:focus { outline: none; }
+.menu__panneau { position: relative; padding: calc(env(safe-area-inset-top) + 4.5rem) var(--marge-d) 2rem var(--marge-g); }
+/* La croix prend la place exacte des trois traits */
+.menu__fermer {
+  position: absolute;
+  left: 50%;
+  top: calc(env(safe-area-inset-top) + 2.1rem);
+  transform: translate(-50%, -50%);
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blanc);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.menu__fermer span { position: absolute; left: 50%; top: 50%; width: 1.5rem; height: 2px; background: currentColor; transform: translate(-50%, -50%) rotate(45deg); }
+.menu__fermer span:last-child { transform: translate(-50%, -50%) rotate(-45deg); }
+.menu__liste { display: grid; max-width: 30rem; margin-inline: auto; }
+.menu__liste button {
+  position: relative;
+  padding: .9rem 0 .8rem;
+  border: 0;
+  border-top: 1px solid rgb(238 235 228 / .28);
+  background: none;
+  color: var(--blanc);
+  font-family: var(--groovy);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 9vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: .02em;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.menu__liste button:last-child { border-bottom: 1px solid rgb(238 235 228 / .28); }
+.menu__liste button[hidden] { display: none; }
+.menu__liste button:active { background: rgb(238 235 228 / .12); }
+@media (hover: hover) { .menu__liste button:hover { background: rgb(238 235 228 / .1); } }
+/* La section où l'on se trouve : un filet blanc à gauche */
+.menu__liste button.est-actif::before { content: ""; position: absolute; left: 0; top: 18%; bottom: 18%; width: 3px; background: var(--blanc); }
+.menu__liste button:focus-visible { outline: 2px solid var(--blanc); outline-offset: -3px; }
+@media (prefers-reduced-motion: no-preference) {
+  .menu[open] { animation: menu-descend .32s var(--ease) both; }
+  .menu[open]::backdrop { animation: menu-fondu .3s ease both; }
+  .menu[open] .menu__liste button { animation: menu-entree .4s var(--ease) both; animation-delay: calc(.06s + var(--i, 0) * .04s); }
+  .menu[open] .menu__liste button:nth-child(2) { --i: 1; }
+  .menu[open] .menu__liste button:nth-child(3) { --i: 2; }
+  .menu[open] .menu__liste button:nth-child(4) { --i: 3; }
+  .menu[open] .menu__liste button:nth-child(5) { --i: 4; }
+  .menu[open] .menu__liste button:nth-child(6) { --i: 5; }
+}
+@keyframes menu-descend { from { transform: translateY(-100%); } }
+@keyframes menu-fondu { from { opacity: 0; } }
+@keyframes menu-entree { from { opacity: 0; transform: translateY(-.6rem); } }
+
+/* ==========================================================
+   Premier écran : photo plus immersive, plus de profondeur, texte qui arrive
+   ========================================================== */
+/* Traitement de la photo : contraste, bords assombris (vignette) et grain fin, comme une affiche */
+.diapo { filter: contrast(1.12) brightness(.96); will-change: transform; }
+.hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at 50% 38%, transparent 50%, rgb(0 0 0 / .6) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .13 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: auto, 220px 220px;
+}
+/* Mouvement lent dans la photo (le zoom respire) et léger décalage au défilement (--defil, réglée par main.js) */
+@media (prefers-reduced-motion: no-preference) {
+  .diapo { animation: hero-zoom 14s ease-in-out infinite alternate; translate: 0 calc(var(--defil, 0) * 5%); }
+}
+@keyframes hero-zoom { from { transform: scale(1.18); } to { transform: scale(1.29); } }
+
+/* Téléphone et tablette : la photo est plus haute, fond dans le noir plus bas ; le logo mord dessus davantage */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__media {
+    aspect-ratio: 4 / 3.3;
+    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 99%);
+    mask-image: linear-gradient(to bottom, #000 50%, transparent 99%);
+  }
+  .hero__logo { margin-top: max(-19vw, -7rem); }
+}
+
+/* Petits points de progression, sur le bord droit de la photo */
+.diaporama__points { position: absolute; z-index: 3; right: .3rem; top: 50%; transform: translateY(-50%); display: grid; gap: .05rem; }
+.diaporama__points button { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.diaporama__points button::before { content: ""; width: .4rem; height: .4rem; border-radius: 50%; background: rgb(238 235 228 / .45); transition: height .35s var(--ease), background-color .3s ease, border-radius .35s var(--ease); }
+.diaporama__points button[aria-current="true"]::before { height: 1.4rem; border-radius: .2rem; background: var(--blanc); }
+.diaporama__points button:focus-visible { outline: 2px solid var(--blanc); outline-offset: -4px; }
+@media (min-width: 56rem) { .diaporama__points { right: 1.25rem; } }
+
+/* « Rock alternatif · Ardèche » : les lettres arrivent une à une, après le logo */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__style .mot { display: inline-block; white-space: nowrap; }
+  .hero__style .lettre {
+    display: inline-block;
+    opacity: 0;
+    animation: lettre-entree .5s var(--ease) calc(var(--base, .5s) + var(--i, 0) * 32ms) forwards;
+  }
+}
+@keyframes lettre-entree { from { opacity: 0; transform: translateY(.45em); } to { opacity: 1; transform: none; } }
+
+/* Téléphone et tablette : la photo est plus haute, donc on zoome moins pour garder les musiciens à l'image */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .diapo { transform: scale(1.05); }
+}
+@media (max-width: 55.99rem) and (min-height: 541px) and (prefers-reduced-motion: no-preference) {
+  .diapo { animation-name: hero-zoom-tel; }
+}
+@keyframes hero-zoom-tel { from { transform: scale(1.05); } to { transform: scale(1.13); } }
+
+/* ==========================================================
+   Fond habillé de photos en couleur floutées (assets/fond/, quelques centaines d'octets chacune)
+   Une couche fixe derrière toute la page ; un voile sombre garde le texte lisible ; le grain
+   du fond est reporté dessus. Les nappes dérivent lentement et se fondent au défilement (--o).
+   ========================================================== */
+.fond { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--noir); pointer-events: none; }
+.fond__img {
+  position: absolute;
+  inset: -14%;
+  background-size: cover;
+  background-position: center;
+  opacity: var(--o, 0);
+  will-change: transform, opacity;
+}
+.fond__img:first-child { --o: 1; }
+.fond__img--dates { background-image: url("../fond/sec-dates.webp"); }
+.fond__img--groupe { background-image: url("../fond/sec-groupe.webp"); }
+.fond__img--ecouter { background-image: url("../fond/sec-ecouter.webp"); }
+.fond__img--galerie { background-image: url("../fond/sec-galerie.webp"); }
+.fond__img--reseaux { background-image: url("../fond/sec-reseaux.webp"); }
+.fond::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgb(8 8 8 / .5);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fond__img { animation: fond-derive 38s ease-in-out infinite alternate; }
+  .fond__img:nth-child(2) { animation-duration: 46s; animation-delay: -12s; }
+  .fond__img:nth-child(3) { animation-duration: 42s; animation-delay: -25s; }
+  .fond__img:nth-child(4) { animation-duration: 50s; animation-delay: -7s; }
+  .fond__img:nth-child(5) { animation-duration: 44s; animation-delay: -18s; }
+}
+@keyframes fond-derive { from { transform: translate3d(-3%, -2%, 0) scale(1.04); } to { transform: translate3d(3%, 2.5%, 0) scale(1.16); } }
+
+/* ==========================================================
+   Titres : Bungee, alignés à gauche, avec un filet de la couleur de la section
+   (remplace les bandes de couleur penchées et centrées)
+   ========================================================== */
+.bloc__titre, .annonce__h {
+  --coupe: none;
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.6rem;
+  padding: 0 0 .5em;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: var(--blanc);
+  font-family: var(--section);
+  font-weight: 400;
+  font-size: clamp(2rem, 9vw, 3.4rem);
+  line-height: 1.02;
+  letter-spacing: .005em;
+  text-align: left;
+  text-transform: uppercase;
+  text-shadow: none;
+  clip-path: none;
+  transform-origin: 0 50%;
+  overflow-wrap: anywhere;
+}
+.bloc__titre::after, .annonce__h::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.4rem;
+  height: .3rem;
+  background: var(--accent, var(--jaune));
+}
+#groupe .bloc__titre, #ecouter .bloc__titre, #galerie .bloc__titre, #reseaux .bloc__titre, .dates-zone .annonce__h { --r: 0deg; transform: none; }
+.bloc__titre { margin-inline: 0; }
+@media (max-width: 39.99rem) { .bloc__titre { margin-inline: 0; } }
+@media (min-width: 40rem) { .bloc__titre { font-size: clamp(2.4rem, 5vw, 3.4rem); } }
+.bloc__entete { justify-content: flex-start; }
+.bloc__titre, .sous-titre { text-align: left; }
+.annonce__entete { justify-items: start; width: 100%; }
+.annonce__h { margin: 0 0 .25rem; font-size: clamp(1.9rem, 8.4vw, 2.8rem); }
+.dates-zone .annonce { justify-items: center; }
+.dates-zone .annonce__entete { justify-self: stretch; }
+@media (min-width: 56rem) { .annonce__h { font-size: 2.8rem; } }
+
+/* Le texte de présentation et les contenus qui suivent un titre s'alignent aussi à gauche */
+.presentation { justify-items: start; margin-inline: 0; text-align: left; max-width: 36rem; }
+@media (max-width: 39.99rem) { .presentation { margin-inline: 0; text-align: left; } }
+.presentation__accroche { font-family: var(--section) !important; font-weight: 400 !important; font-size: clamp(1.35rem, 5.8vw, 1.9rem) !important; line-height: 1.12 !important; letter-spacing: .005em; }
+.presentation__chute { justify-self: start; text-align: left; transform-origin: 0 50%; }
+.pistes, .videos { margin-inline: 0; }
+.ecoute { justify-content: flex-start; }
+.galerie { justify-content: flex-start; }
+@media (min-width: 64rem) { .membres { max-width: var(--max); } }
+@media (min-width: 40rem) {
+  .actus, .actus > div:first-child { justify-items: start !important; }
+  .actus .icones { justify-content: flex-start; margin-left: -.6rem; }
+  .fb { margin-inline: 0; }
+}
+@media (max-width: 39.99rem) {
+  .actus > div:first-child { justify-items: start; }
+  .actus .icones { justify-content: flex-start; margin-left: -.6rem; }
+  .fb { margin-inline: 0; }
+}
+
+/* Menu et fenêtre Contact : même police et même alignement */
+.menu__liste button { font-family: var(--section); font-weight: 400; font-size: clamp(1.45rem, 6.6vw, 1.95rem); letter-spacing: .005em; text-align: left; padding: 1rem .9rem .9rem; }
+.menu__liste button.est-actif::before { top: 22%; bottom: 22%; }
+.menu__liste { max-width: 34rem; }
+.booking-fenetre__contenu { justify-items: start; text-align: left; }
+.booking-fenetre__titre {
+  --coupe: none;
+  padding: 0 0 .5em;
+  position: relative;
+  background: none;
+  color: var(--blanc);
+  font-family: var(--section);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 11vw, 2.8rem);
+  letter-spacing: .005em;
+  clip-path: none;
+  transform: none;
+}
+.booking-fenetre__titre::after { content: ""; position: absolute; left: 0; bottom: 0; width: 3.2rem; height: .3rem; background: var(--bd-rouge); }
+@media (prefers-reduced-motion: no-preference) { .booking-fenetre[open] .booking-fenetre__titre { animation: booking-titre-gauche .5s var(--ease) .1s both; } }
+@keyframes booking-titre-gauche { from { opacity: 0; transform: translateX(-.8rem); } }
+
+/* Petits textes gris : plus clairs, pour rester lisibles sur les nappes de couleur du fond */
+.fb__info, .fb__retirer, .credit-photo, .pied, .pied p, .alertes__texte, .discret, .note { color: var(--gris-2); }
+.fond::after { background-color: rgb(8 8 8 / .58); }
+
+/* « Prochaine date » à vide : pas de cadre, juste un point rouge qui clignote, REC et « Stay tuned », centrés */
+.rec { border: 0; padding: 0; gap: .45rem; font-size: .75rem; }
+.rec i { width: .7rem; height: .7rem; }
+.prochaine__stay { justify-content: center; gap: .9rem; font-size: 1.05rem; }
+.alertes { border-color: transparent; }
+
+/* Noms et rôles des membres : toujours en blanc ; le fond de l'étiquette est la couleur du membre,
+   légèrement assombrie pour que le blanc reste lisible (ocre, vert, orange…) */
+.membre__etiquette, .membre__role, .fiche__nom, .fiche__role {
+  background: color-mix(in srgb, var(--couleur) 68%, #000);
+  color: var(--blanc);
+}
+.membre__nom, .fiche__nom { text-shadow: 0 1px 0 rgb(0 0 0 / .35); }
+/* Nappes du fond : un voile un peu moins épais pour laisser vivre les tons chauds */
+.fond::after { background-color: rgb(8 8 8 / .54); }
+
+/* « Prochaine date » : un titre plus discret que les titres de section */
+.annonce__h { font-size: clamp(1.3rem, 5.6vw, 1.75rem); padding-bottom: .55em; margin-bottom: .1rem; letter-spacing: .02em; }
+.annonce__h::after { width: 2.4rem; height: .24rem; }
+@media (min-width: 56rem) { .annonce__h { font-size: 1.85rem; } }
+
+/* ==========================================================
+   Fond plus rock : de la couleur chaude, mais noyée dans le noir.
+   - voile plus sombre ; bords et coins presque noirs (vignette) ; haut et bas de l'écran noircis ;
+   - deux faisceaux de projecteur très doux en biais ; grain un peu plus marqué.
+   ========================================================== */
+.fond::after {
+  background-color: rgb(6 6 6 / .66);
+  background-image:
+    radial-gradient(ellipse 85% 70% at 50% 45%, transparent 18%, rgb(0 0 0 / .78) 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / .72), transparent 22%, transparent 70%, rgb(0 0 0 / .8)),
+    linear-gradient(112deg, transparent 18%, rgb(255 150 60 / .09) 30%, transparent 44%),
+    linear-gradient(68deg, transparent 56%, rgb(255 110 40 / .07) 70%, transparent 84%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Barre de progression : fine ligne blanche collée en haut de l'écran, au-dessus de tout sauf de l'écran de démarrage */
+.progression {
+  position: fixed;
+  z-index: 250;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgb(238 235 228 / .14);
+  pointer-events: none;
+}
+.progression i { display: block; width: 100%; height: 100%; background: var(--blanc); transform: scaleX(0); transform-origin: 0 50%; will-change: transform; }
+
+/* « Prochaine date » : titre centré, avec son filet */
+.annonce__h { margin-inline: auto; text-align: center; }
+.annonce__h::after { left: 50%; transform: translateX(-50%); }
+.annonce__entete { justify-items: center; }
+
+/* ==========================================================
+   Typographie rock : Anton (titres, en majuscules) + Barlow Condensed (texte)
+   Tailles fluides : un minimum lisible sur téléphone, un maximum raisonnable sur grand écran.
+   Anton n'a qu'une graisse : pas de gras simulé.
+   ========================================================== */
+body { font-weight: 500; font-size: 1.1875rem; line-height: 1.5; font-optical-sizing: auto; }
+.bloc__titre, .annonce__h, .menu__liste button, .presentation__accroche, .presentation__chute, .prochaine__date, .booking-fenetre__titre, .fiche__nom, .piste__titre, .video__titre, .membre__nom, .date__jour, .billet__jour {
+  font-family: var(--section);
+  font-weight: 400;
+  font-synthesis: none;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+.bloc__titre { font-size: clamp(2.6rem, 11.5vw, 3.6rem); line-height: 1; padding-bottom: .4em; }
+@media (min-width: 40rem) { .bloc__titre { font-size: clamp(3.2rem, 6.2vw, 4.7rem); } }
+.annonce__h { font-size: clamp(1.7rem, 7.4vw, 2.2rem); line-height: 1.05; padding-bottom: .4em; }
+@media (min-width: 56rem) { .annonce__h { font-size: 2.5rem; } }
+.presentation__accroche { font-size: clamp(1.8rem, 7.4vw, 2.5rem) !important; line-height: 1.08 !important; }
+.presentation__chute { font-size: clamp(1.3rem, 5.4vw, 1.75rem) !important; line-height: 1.15 !important; }
+.presentation p { font-size: clamp(1.15rem, 4.5vw, 1.3rem); line-height: 1.5; font-weight: 500; }
+.prochaine__date { font-size: clamp(2.2rem, 9.6vw, 2.9rem); }
+@media (min-width: 56rem) { .prochaine__date { font-size: 3.3rem; } }
+.menu__liste button { font-size: clamp(2rem, 8.6vw, 2.6rem); line-height: 1.05; padding: .8rem .9rem .7rem; }
+.booking-fenetre__titre { font-size: clamp(2.4rem, 12vw, 3.2rem); }
+.fiche__nom { font-size: 2.9rem; }
+.membre__nom { font-size: clamp(1.9rem, 8vw, 2.5rem); line-height: 1.02; }
+@media (min-width: 40rem) { .membre__nom { font-size: clamp(1.7rem, 2.8vw, 2.3rem); } }
+.piste__titre { font-size: 1.5rem; line-height: 1.1; }
+.video__titre { font-size: clamp(1.6rem, 5.6vw, 2.1rem); }
+/* Étiquettes, boutons et petits libellés : Barlow Condensed en capitales espacées, bien lisibles */
+.membre__role, .fiche__role, .hero__style, .confiance__titre, .prochaine__label, .alertes__texte { font-family: var(--titre); font-weight: 600; }
+.bouton, .barre__booking { font-family: var(--titre); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.bouton { font-size: 1.1rem; min-height: 3.25rem; }
+.barre__booking { font-size: .95rem; }
+
+/* La phrase en bande : lignes équilibrées (pas de mot seul), un peu plus petite */
+.presentation { max-width: 40rem; }
+.presentation__chute { text-wrap: balance; max-width: 100%; }
+
+/* « Prochaine date » : le contenu (Stay tuned, ou la date annoncée) vient d'abord, le sélecteur d'alertes ensuite */
+.annonce__entete { order: 0; }
+.annonce .note { order: 1; }
+.annonce__contenu { order: 2; }
+.annonce .alertes { order: 3; margin: .25rem auto 0; }
+.annonce__suivantes { order: 4; }
+
+/* Petits textes : Barlow Condensed est étroite, on les agrandit pour garder une bonne lisibilité */
+.alertes { font-size: 1.1rem; }
+.prochaine__stay { font-size: 1.2rem; letter-spacing: .12em; }
+.rec { font-size: .85rem; }
+.hero__style { font-size: .95rem; letter-spacing: .24em; }
+@media (min-width: 56rem) { .hero__style { font-size: 1.05rem; } }
+.confiance__titre { font-size: .9rem; letter-spacing: .24em; }
+.membre__role, .fiche__role { font-size: .8rem; letter-spacing: .1em; }
+.membre__traits li, .fiche__traits li { font-size: 1rem; }
+@media (max-width: 39.99rem) { .membre__traits li { font-size: .9rem; } }
+.fb__info, .fb__retirer, .credit-photo, .pied, .lien-discret, .lien-action { font-size: 1.05rem; }
+.prochaine__label { font-size: .85rem; }
+.prochaine__lieu { font-size: 1.25rem; }
+.prochaine__heure { font-size: 1.1rem; }
+.prochaine__info { font-size: 1.05rem; }
+
+/* Les logos passent avant les affiches : un peu d'air entre les deux */
+.confiance { padding-block: clamp(1.25rem, 3vw, 2rem) clamp(.5rem, 2vw, 1.25rem); }
+.deja { margin-top: clamp(1.25rem, 4vw, 2.5rem); }
+
+/* ==========================================================
+   Téléphone et tablette : une invitation à descendre, fixée en bas de la première vue,
+   avec une flèche qui rebondit ; elle s'efface dès qu'on commence à défiler.
+   ========================================================== */
+.hero__suite-fleche { display: none; }
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__suite {
+    display: flex;
+    position: fixed;
+    z-index: 40;
+    bottom: calc(env(safe-area-inset-bottom) + .9rem);
+    gap: .1rem;
+    padding: .35rem 1.2rem .15rem;
+    color: var(--blanc);
+    font-size: .95rem;
+    letter-spacing: .2em;
+    text-shadow: 0 1px 6px rgb(0 0 0 / .9);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hero__suite-trait { display: none; }
+  .hero__suite-fleche { display: block; filter: drop-shadow(0 1px 5px rgb(0 0 0 / .9)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @media (max-width: 55.99rem) and (min-height: 541px) {
+    .hero__suite-fleche { animation: fleche-rebond 1.6s ease-in-out infinite; }
+    .hero__suite-texte { animation: suite-pulse 1.6s ease-in-out infinite; }
+  }
+}
+@keyframes fleche-rebond { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(5px); } }
+@keyframes suite-pulse { 0%, 100% { opacity: .65; } 50% { opacity: 1; } }
+
+/* Indication « Faites défiler » : une seule ligne compacte sur un dégradé noir en bas de l'écran
+   (le texte du dessous reste lisible, l'invitation reste visible sur tous les fonds) */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__suite {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: .55rem;
+    padding: 1.6rem 1rem calc(env(safe-area-inset-bottom) + .55rem);
+    background: linear-gradient(to bottom, transparent, rgb(0 0 0 / .86) 70%);
+    font-size: .9rem;
+    letter-spacing: .22em;
+  }
+  .hero__suite-fleche { width: 1.15rem; height: 1.15rem; }
+}
+
+/* ==========================================================
+   Indication de défilement, sans texte : deux chevrons blancs qui s'allument l'un après l'autre
+   (téléphone et tablette). Elle se place au-dessus de la barre de navigation du téléphone et de
+   la zone des gestes (env(safe-area-inset-bottom)), sans dégradé ni cadre.
+   ========================================================== */
+.hero__suite-texte { display: none; }
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__suite {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.6rem);
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    color: var(--blanc);
+    text-shadow: none;
+  }
+  .hero__suite-fleche { display: block; width: 1.75rem; height: 1.9rem; filter: drop-shadow(0 1px 6px rgb(0 0 0 / .85)); }
+  .hero__suite-fleche path { opacity: .35; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @media (max-width: 55.99rem) and (min-height: 541px) {
+    .hero__suite-fleche { animation: none; }
+    .hero__suite-fleche .f1 { animation: chevron 1.8s ease-in-out infinite; }
+    .hero__suite-fleche .f2 { animation: chevron 1.8s ease-in-out .3s infinite; }
+  }
+}
+@keyframes chevron { 0%, 100% { opacity: .25; transform: translateY(-2px); } 45% { opacity: 1; transform: translateY(2px); } }
+.hero__suite-fleche path { transform-box: fill-box; }
+
+/* Une seule flèche : elle descend doucement et s'estompe, en boucle */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__suite-fleche { width: 1.9rem; height: 1.35rem; }
+  .hero__suite-fleche path { opacity: .9; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @media (max-width: 55.99rem) and (min-height: 541px) {
+    .hero__suite-fleche .f1 { animation: fleche-unique 1.7s cubic-bezier(.45, 0, .25, 1) infinite; }
+    .hero__suite-fleche .f2 { animation: none; }
+  }
+}
+@keyframes fleche-unique { 0% { opacity: 0; transform: translateY(-6px); } 35% { opacity: 1; } 70% { opacity: 1; transform: translateY(4px); } 100% { opacity: 0; transform: translateY(8px); } }
+
+/* ==========================================================
+   Lecteur façon tête d'ampli de guitare
+   Plaque en métal brossé cerclée d'un liseré doré, gros bouton chromé (lecture/pause) au repère
+   qui tourne, titre gravé, afficheur noir pour la forme d'onde, compteur ambre, voyant rouge
+   qui s'allume à la lecture, et grille de haut-parleur en bas.
+   ========================================================== */
+.pistes { list-style: none; margin: 0 auto 2rem; padding: 0; display: grid; gap: 1.1rem; max-width: 44rem; }
+.pistes:empty, .videos:empty, .ecoute:empty { display: none; }
+.piste {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 1.15rem;
+  align-items: center;
+  padding: 1.15rem 1.15rem 2.9rem;
+  overflow: hidden;
+  border: 3px solid #0b0b0a;
+  border-radius: .45rem;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / .03) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, rgb(255 255 255 / .08), transparent 24%),
+    linear-gradient(180deg, #343330, #1c1b1a);
+  box-shadow:
+    0 .7rem 1.5rem rgb(0 0 0 / .65),
+    inset 0 0 0 2px #8f6f2b,           /* liseré doré */
+    inset 0 0 0 4px #0e0d0b,
+    inset 0 -3px 0 rgb(0 0 0 / .5);
+}
+/* Gros bouton chromé */
+.piste__lire {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, #fbf8f1, #c9c5bb 38%, #7c7971 72%, #3b3a36);
+  color: #0b0b0a;
+  cursor: pointer;
+  box-shadow:
+    0 .3rem .6rem rgb(0 0 0 / .75),
+    0 0 0 .28rem #11100f,
+    0 0 0 .34rem rgb(255 255 255 / .12);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .15s var(--ease);
+}
+.piste__lire:active { transform: scale(.96); }
+/* Repère du bouton : il tourne quand le morceau est en lecture */
+.piste__lire::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(#0b0b0a, #0b0b0a) 50% 7% / .2rem .75rem no-repeat;
+  transform: rotate(-135deg);
+  transition: transform .6s var(--ease);
+}
+.piste.est-lecture .piste__lire::before { transform: rotate(135deg); }
+.piste__lire svg { position: relative; width: 1.1rem; height: 1.25rem; }
+@media (hover: hover) { .piste__lire:hover { filter: brightness(1.08); } }
+.piste__lire:focus-visible { outline: 2px solid var(--jaune); outline-offset: .5rem; }
+.piste.est-lecture .piste__lire { background: radial-gradient(circle at 34% 28%, #fbf8f1, #c9c5bb 38%, #7c7971 72%, #3b3a36); color: #0b0b0a; }
+
+.piste__corps { display: grid; gap: .55rem; min-width: 0; padding-top: .1rem; }
+/* Titre gravé dans la plaque */
+.piste__titre {
+  margin: 0;
+  padding-right: 6.4rem;
+  font-family: var(--section);
+  font-size: 1.2rem;
+  line-height: 1.1;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--blanc);
+  text-shadow: 0 1px 0 #000, 0 -1px 0 rgb(255 255 255 / .12);
+}
+/* Afficheur noir encastré pour la forme d'onde */
+.onde {
+  position: relative;
+  height: 3.25rem;
+  padding: .3rem .55rem;
+  border-radius: .25rem;
+  background: #060606;
+  box-shadow: inset 0 .2rem .55rem rgb(0 0 0 / .95), 0 1px 0 rgb(255 255 255 / .14);
+}
+.onde__dessin { display: block; width: 100%; height: 100%; }
+.onde__curseur {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.onde:has(.onde__curseur:focus-visible) { outline: 2px solid var(--jaune); outline-offset: 3px; }
+/* Compteur ambre (temps restant) et voyant rouge, dans l'angle haut droit de la plaque */
+.piste__temps {
+  position: absolute;
+  top: .85rem;
+  right: 2.55rem;
+  min-width: 3.9rem;
+  padding: .12rem .45rem .08rem;
+  border-radius: .2rem;
+  background: #0b0703;
+  box-shadow: inset 0 0 .5rem #000, 0 1px 0 rgb(255 255 255 / .12);
+  font-family: var(--titre);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .06em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #ffb43a;
+  text-shadow: 0 0 .55rem rgb(255 150 30 / .7);
+}
+.piste__lampe {
+  position: absolute;
+  top: 1.05rem;
+  right: 1.2rem;
+  width: .9rem;
+  height: .9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #ff9c8c, #b3140f 55%, #4a0603);
+  box-shadow: 0 0 0 .2rem #100f0e, inset 0 -1px 2px rgb(0 0 0 / .6);
+  opacity: .5;
+  transition: opacity .3s ease, box-shadow .3s ease;
+}
+.piste.est-lecture .piste__lampe { opacity: 1; box-shadow: 0 0 0 .2rem #100f0e, 0 0 1rem .3rem rgb(255 60 40 / .75); }
+/* Grille de haut-parleur, bordée d'un filet doré */
+.piste__grille {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.55rem;
+  border-top: 2px solid #8f6f2b;
+  background:
+    repeating-linear-gradient(45deg, #2a2113 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(-45deg, #2a2113 0 2px, transparent 2px 5px),
+    #090705;
+  box-shadow: inset 0 .25rem .5rem rgb(0 0 0 / .7);
+}
+@media (max-width: 29rem) {
+  .piste { gap: 0 .9rem; padding: 1rem .9rem 2.8rem; }
+  .piste__lire { width: 3.6rem; height: 3.6rem; }
+  .piste__titre { font-size: 1.05rem; padding-right: 6.1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .piste__lire, .piste__lire::before, .piste__lampe { transition: none; } }
+
+/* ==========================================================
+   Soulignement des titres : un petit égaliseur blanc (barres de hauteurs variées),
+   à la place du trait de couleur. Il respire doucement.
+   ========================================================== */
+.bloc__titre, .annonce__h, .booking-fenetre__titre { padding-bottom: 1.5rem; }
+.bloc__titre::after, .annonce__h::after, .booking-fenetre__titre::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: .1rem;
+  width: 4.6rem;
+  height: 1.05rem;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='92' height='21' viewBox='0 0 92 21' fill='%23eeebe4'><rect x='0' y='11' width='5' height='10'/><rect x='10' y='4' width='5' height='17'/><rect x='20' y='8' width='5' height='13'/><rect x='30' y='0' width='5' height='21'/><rect x='40' y='6' width='5' height='15'/><rect x='50' y='12' width='5' height='9'/><rect x='60' y='3' width='5' height='18'/><rect x='70' y='9' width='5' height='12'/><rect x='80' y='13' width='5' height='8'/></svg>") left bottom / 100% 100% no-repeat;
+  transform-origin: 0 100%;
+}
+.annonce__h::after { left: 50%; transform: translateX(-50%); transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .bloc__titre::after, .booking-fenetre__titre::after { animation: egaliseur 2.4s ease-in-out infinite alternate; }
+  .annonce__h::after { animation: egaliseur-centre 2.4s ease-in-out infinite alternate; }
+}
+@keyframes egaliseur { from { transform: scaleY(.55); } to { transform: scaleY(1); } }
+@keyframes egaliseur-centre { from { transform: translateX(-50%) scaleY(.55); } to { transform: translateX(-50%) scaleY(1); } }
+
+/* Lecteur : aligné à gauche, comme les titres */
+.pistes { margin-inline: 0; }
+
+/* « Prochaine date » : pas d'égaliseur dessous (on garde un titre simple) */
+.annonce__h::after { content: none; animation: none; }
+.annonce__h { padding-bottom: .15em; }
+.annonce__entete { gap: 0; }
+
+/* Bandeau « Ils nous ont fait confiance » : logos plus petits */
+.confiance__logo { padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
+.confiance__logo img { height: calc(2.3rem * var(--taille, 1)); }
+@media (min-width: 56rem) { .confiance__logo img { height: calc(2.6rem * var(--taille, 1)); } }
+
+/* Soulignement des titres : une simple ligne blanche, nette (plus d'égaliseur ni d'animation) */
+.bloc__titre, .booking-fenetre__titre { padding-bottom: .55em; }
+.bloc__titre::after, .booking-fenetre__titre::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.6rem;
+  height: 3px;
+  background: var(--blanc);
+  background-image: none;
+  transform: none;
+  animation: none;
+}
+
+/* Logos cliquables : le défilement s'arrête au survol, au toucher et au clavier */
+.confiance__logo a { display: block; border-radius: .2rem; -webkit-tap-highlight-color: transparent; }
+.confiance__logo a:focus-visible { outline: 2px solid var(--blanc); outline-offset: .35rem; }
+.confiance__logo img { transition: opacity .2s ease, transform .25s var(--ease); }
+@media (hover: hover) {
+  .confiance__fenetre:hover .confiance__piste { animation-play-state: paused; }
+  .confiance__logo a:hover img { opacity: 1; transform: scale(1.08); }
+}
+/* Pause seulement pendant l'appui, ou quand un logo a le focus AU CLAVIER (:focus-visible) :
+   un clic à la souris ou au doigt laisse le focus sur le lien, et le bandeau restait arrêté au retour */
+.confiance__fenetre:active .confiance__piste, .confiance__fenetre:has(a:focus-visible) .confiance__piste { animation-play-state: paused; }
+
+/* Réseaux sociaux : deux petits encarts (Facebook, Instagram), chargés seulement après accord */
+.embeds { display: grid; grid-template-columns: 1fr; gap: clamp(1rem, 3vw, 1.5rem); margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+@media (min-width: 40rem) { .embeds { grid-template-columns: 1fr 1fr; max-width: 46rem; align-items: start; } }
+.embed { min-width: 0; border: 1px solid rgb(238 235 228 / .3); border-radius: .75rem; background: rgb(8 8 8 / .55); overflow: hidden; }
+.embed__tete { display: flex; align-items: center; gap: .6rem; padding: .7rem .9rem; border-bottom: 1px solid rgb(238 235 228 / .2); }
+.embed__icone svg { display: block; width: 1.35rem; height: 1.35rem; color: var(--blanc); }
+.embed__nom { margin: 0; font-family: var(--titre); font-weight: 700; font-size: .9rem; letter-spacing: .12em; text-transform: uppercase; }
+.embed__ouvrir {
+  margin-left: auto; padding: .35rem .85rem; border: 1px solid var(--blanc); border-radius: 999px;
+  font-family: var(--titre); font-weight: 600; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--blanc); transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+@media (hover: hover) { .embed__ouvrir:hover { background: var(--blanc); color: var(--noir); } }
+.embed__zone { padding: .9rem; }
+.embed.est-charge .embed__zone { padding: 0; }
+.embed__accord { display: grid; justify-items: start; gap: .8rem; min-height: 9rem; align-content: center; }
+.embed__info { margin: 0; font-size: .8125rem; line-height: 1.45; color: var(--gris-3); }
+.embed__bouton { min-height: 2.5rem; padding-block: .5rem; }
+.embed iframe { display: block; width: 100%; height: 380px; border: 0; background: var(--blanc); }
+.embed__retirer { display: block; margin: 0; padding: .55rem .9rem; font-size: .75rem; color: var(--gris-4); }
+
+/* Mentions légales (fenêtre) */
+.mentions-fenetre { width: min(94vw, 40rem); }
+.mentions { max-height: 86svh; overflow-y: auto; padding: 2rem 1.5rem 1.75rem; }
+.mentions:focus { outline: none; }
+.mentions__titre { margin: 0 2.5rem 1.25rem 0; font-family: var(--titre); font-weight: 700; font-size: clamp(1.5rem, 6vw, 2rem); letter-spacing: .04em; text-transform: uppercase; }
+.mentions h3 { margin: 1.5rem 0 .5rem; font-family: var(--titre); font-weight: 700; font-size: .8125rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gris-3); }
+.mentions p, .mentions li { margin: 0 0 .6rem; font-size: .9rem; line-height: 1.55; color: var(--gris-2); }
+.mentions ul { margin: 0; padding: 0; list-style: none; }
+.mentions strong { color: var(--blanc); }
+.mentions a { color: var(--blanc); text-decoration: underline; text-underline-offset: .2em; }
+.mentions__maj { margin-top: 1.5rem !important; font-size: .75rem !important; color: var(--gris-4) !important; }
+.mentions__retirer { min-height: 2.5rem; padding: .4rem 1rem; }
+.pied__legal { cursor: pointer; }
+
+/* Bandeau glissable : le défilement est piloté par main.js (piloterBandeau), plus par l'animation CSS */
+.confiance__piste--doigt { animation: none; touch-action: pan-y; }
+.confiance__fenetre { touch-action: pan-y; cursor: grab; -webkit-user-select: none; user-select: none; }
+.confiance__fenetre--saisie { cursor: grabbing; }
+.confiance__logo img { -webkit-user-drag: none; }
+
+/* « Prochaine date » à vide : on dit qu'il n'y a rien pour l'instant, mais que ça peut arriver
+   (trois points qui attendent, et une invitation à activer l'alerte juste en dessous) */
+.prochaine--attente .prochaine__corps { gap: .7rem; max-width: 26rem; }
+.prochaine__rien {
+  margin: 0;
+  font-family: var(--section);
+  font-size: clamp(1.35rem, 5.6vw, 1.75rem);
+  line-height: 1.1;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--blanc);
+}
+.points { display: inline-flex; gap: .22em; margin-left: .3em; vertical-align: baseline; }
+.points i { width: .2em; height: .2em; margin-top: .72em; border-radius: 50%; background: currentColor; opacity: .25; }
+.prochaine__espoir { margin: 0; font-size: 1.15rem; line-height: 1.4; color: var(--gris-2); text-wrap: balance; }
+@media (prefers-reduced-motion: no-preference) {
+  .points i { animation: attente-point 1.5s ease-in-out infinite; }
+  .points i:nth-child(2) { animation-delay: .25s; }
+  .points i:nth-child(3) { animation-delay: .5s; }
+}
+@keyframes attente-point { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .points i { opacity: .7; } }
+@media (min-width: 56rem) { .prochaine__rien { font-size: 1.9rem; } .prochaine__espoir { font-size: 1.2rem; } }
+
+/* « Prochaine date » à vide : tout le bloc est centré */
+.prochaine--attente .prochaine__corps { justify-items: center; text-align: center; margin-inline: auto; }
+.prochaine__espoir { text-align: center; }
+
+/* « Prochaine date » à vide : une petite scène animée (projecteur, micro, poussière) et « Stay tuned » */
+.prochaine--attente { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: .35rem; padding-block: 0; }
+.scene { display: block; width: min(100%, 20rem); height: auto; overflow: visible; }
+.scene__lampe { transform-origin: 160px 0; }
+.scene__sol, .scene__micro { transform-box: fill-box; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene__lampe { animation: lampe-balaye 6s ease-in-out infinite alternate; }
+  .scene__sol { animation: sol-pulse 6s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+  .scene__poussiere circle { animation: poussiere 5s linear infinite; }
+  .scene__poussiere circle:nth-child(2n) { animation-duration: 6.5s; animation-delay: -2s; }
+  .scene__poussiere circle:nth-child(3n) { animation-duration: 4.2s; animation-delay: -3s; }
+  .scene__micro { animation: micro-attente 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+}
+@keyframes lampe-balaye { from { transform: rotate(-9deg); opacity: .75; } to { transform: rotate(9deg); opacity: 1; } }
+@keyframes sol-pulse { from { transform: translateX(-26px) scaleX(.85); opacity: .6; } to { transform: translateX(26px) scaleX(1.1); opacity: 1; } }
+@keyframes poussiere { 0% { transform: translate(0, 0); opacity: 0; } 20% { opacity: .9; } 100% { transform: translate(8px, -34px); opacity: 0; } }
+@keyframes micro-attente { 0%, 100% { transform: rotate(-1.2deg); } 50% { transform: rotate(1.2deg); } }
+.prochaine--attente .prochaine__corps { display: none; }
+
+/* Scène « Prochaine date » à vide : plus petite et plus discrète */
+.scene { width: min(62%, 11rem); margin-top: -.25rem; }
+.prochaine--attente { gap: 0; }
+.prochaine__stay { font-size: 1.05rem; }
+@media (min-width: 56rem) { .scene { width: 12rem; } }
+
+/* Scène à vide : une bande large et basse, trois projecteurs qui balaient une scène vide */
+.scene { width: min(100%, 24rem); margin-top: 0; }
+.scene__lampe--g { transform-origin: 70px 0; }
+.scene__lampe--c { transform-origin: 180px 0; }
+.scene__lampe--d { transform-origin: 290px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene__lampe--g { animation: lampe-balaye 5.5s ease-in-out infinite alternate; }
+  .scene__lampe--c { animation: lampe-balaye 6.5s ease-in-out -2.5s infinite alternate-reverse; }
+  .scene__lampe--d { animation: lampe-balaye 5s ease-in-out -1.2s infinite alternate; }
+  .scene__sol { animation: none; }
+}
+@keyframes lampe-balaye { from { transform: rotate(-12deg); opacity: .55; } to { transform: rotate(12deg); opacity: 1; } }
+@media (min-width: 56rem) { .scene { width: 28rem; } }
+
+/* Scène à vide, version deux projecteurs : leurs faisceaux se rejoignent sur un petit ampli, au centre.
+   Les projecteurs vacillent un peu (légère oscillation + scintillement), le voyant de l'ampli veille. */
+.scene__lampe--c { display: none; }
+.scene__lampe--g { transform-origin: 50px 0; }
+.scene__lampe--d { transform-origin: 310px 0; }
+.scene__micro { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene__lampe--g { animation: projecteur-vacille 4.6s linear infinite; }
+  .scene__lampe--d { animation: projecteur-vacille 5.4s linear -1.7s infinite; }
+  .scene__voyant { animation: voyant-veille 2.4s ease-in-out infinite; }
+}
+@keyframes projecteur-vacille {
+  0%   { transform: rotate(-1.4deg); opacity: 1; }
+  12%  { transform: rotate(1deg);    opacity: .9; }
+  14%  { opacity: .45; }
+  16%  { opacity: 1; }
+  30%  { transform: rotate(-.6deg);  opacity: .95; }
+  47%  { transform: rotate(1.6deg);  opacity: .85; }
+  49%  { opacity: .5; }
+  51%  { opacity: .98; }
+  53%  { opacity: .6; }
+  55%  { opacity: 1; }
+  72%  { transform: rotate(-1.2deg); opacity: .92; }
+  100% { transform: rotate(-1.4deg); opacity: 1; }
+}
+@keyframes voyant-veille { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* ==========================================================
+   Scène à vide : les projecteurs sont de part et d'autre du titre « Prochaine date » (même niveau),
+   leurs faisceaux descendent vers un micro au centre, avec un petit REC à côté.
+   ========================================================== */
+.annonce__entete { position: relative; z-index: 2; }
+.annonce__contenu:has(.prochaine--attente) { margin-top: var(--remonte, -2.5rem); }
+.prochaine--attente { gap: .15rem; }
+.scene-cadre { position: relative; width: min(100%, 26rem); margin-inline: auto; }
+.scene-cadre .scene { width: 100%; }
+.scene__lampe--g { transform-origin: 20px 2px; }
+.scene__lampe--d { transform-origin: 340px 2px; }
+.scene__ampli { display: none; }
+.scene__micro { display: block; }
+.prochaine--attente .prochaine__stay .rec { display: none; }
+.prochaine--attente .prochaine__stay { font-size: 1.05rem; letter-spacing: .16em; }
+@media (min-width: 56rem) { .scene-cadre { width: 30rem; } .annonce__contenu:has(.prochaine--attente) { margin-top: var(--remonte, -2.9rem); } }
+
+/* Micro posé sur la ligne de la scène, plus petit */
+.scene__micro { transform-origin: 180px 94px; }
+
+/* Le micro ne bouge pas : pas de balancement, il reste posé sur la ligne */
+.scene__micro { animation: none !important; transform: none; }
+
+/* ==========================================================
+   Titres de section : de retour sur un cadre de couleur (la couleur de chaque section),
+   légèrement penché et coupé en biais, mais plus petits qu'avant. Alignés à gauche.
+   ========================================================== */
+#groupe { --accent: var(--bd-ocre); --sur-accent: var(--noir); --rt: -1.6deg; }
+#ecouter { --accent: var(--bd-prune); --sur-accent: var(--blanc); --rt: 1.2deg; }
+#galerie { --accent: var(--bd-bleu); --sur-accent: var(--blanc); --rt: -1.2deg; }
+#reseaux { --accent: var(--bd-vert); --sur-accent: var(--noir); --rt: 1.6deg; }
+.bloc__titre {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.5rem;
+  padding: .1em .65em .04em .4em;
+  background: var(--accent, var(--bd-ocre));
+  color: var(--sur-accent, var(--noir));
+  font-size: clamp(1.75rem, 7vw, 2.3rem);
+  line-height: 1.08;
+  letter-spacing: .015em;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  transform-origin: 0 50%;
+}
+.bloc__titre::after { content: none; }
+@media (min-width: 40rem) { .bloc__titre { font-size: clamp(2rem, 3.4vw, 2.8rem); } }
+#groupe .bloc__titre, #ecouter .bloc__titre, #galerie .bloc__titre, #reseaux .bloc__titre {
+  transform: translateY(calc((1 - var(--v, 1)) * .8em)) rotate(calc(var(--rt, 0deg) + (1 - var(--v, 1)) * -4deg));
+}
+/* La fenêtre Contact : même cadre, en rouge */
+.booking-fenetre__titre {
+  width: fit-content;
+  padding: .1em .6em .04em .4em;
+  background: var(--bd-rouge);
+  color: var(--blanc);
+  font-size: clamp(1.9rem, 9vw, 2.4rem);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  transform: rotate(-1.4deg);
+}
+.booking-fenetre__titre::after { content: none; }
+
+/* « Prochaine date » : un titre plus petit (les projecteurs restent au niveau du titre) */
+.annonce__h { font-size: clamp(1.3rem, 5.2vw, 1.6rem); padding-bottom: .1em; }
+.annonce__contenu:has(.prochaine--attente) { margin-top: var(--remonte, -2.1rem); }
+@media (min-width: 56rem) {
+  .annonce__h { font-size: 1.9rem; }
+  .annonce__contenu:has(.prochaine--attente) { margin-top: var(--remonte, -2.4rem); }
+}
+
+/* « Événements passés » : petit titre aligné à gauche, au-dessus des affiches */
+.deja__titre {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-inline: var(--marge-g) var(--marge-d);
+  font-family: var(--titre);
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .24em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--gris-2);
+}
+.defile__piste { padding-top: 1.5rem; }
+
+/* Crédit photo : le nom, puis dessous Instagram (aux couleurs d'Instagram) et le site web à côté */
+.credit-photo { flex-direction: column; align-items: center; gap: .4rem; }
+.credit__nom { font-size: 1rem; letter-spacing: .02em; color: var(--gris-2); }
+.credit__liens { display: flex; align-items: center; gap: .35rem; }
+.credit__lien { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; color: var(--gris-2); transition: transform .2s var(--ease), color .2s var(--ease), filter .2s var(--ease); -webkit-tap-highlight-color: transparent; }
+.credit__lien svg { display: block; width: 2rem; height: 2rem; }
+.credit__lien--insta svg { border-radius: .5rem; box-shadow: 0 .15rem .5rem rgb(0 0 0 / .45); }
+@media (hover: hover) {
+  .credit__lien:hover { transform: translateY(-2px); }
+  .credit__lien--insta:hover { filter: brightness(1.12) saturate(1.1); }
+  .credit__lien--site:hover { color: var(--blanc); }
+}
+.credit__lien:focus-visible { outline: 2px solid var(--blanc); outline-offset: 2px; border-radius: .5rem; }
+.credit-photo .icones { margin-inline: 0; }
+
+/* ==========================================================
+   Lecteur : carte sombre épurée, gros bouton blanc rond, forme d'onde sur fond libre
+   ========================================================== */
+.piste {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0 1.1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgb(255 255 255 / .14);
+  border-radius: 1rem;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgb(255 150 60 / .16), transparent 55%),
+    linear-gradient(180deg, rgb(24 22 20 / .88), rgb(10 9 8 / .92));
+  box-shadow: 0 .9rem 2rem rgb(0 0 0 / .5), inset 0 1px 0 rgb(255 255 255 / .08);
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.piste.est-lecture { border-color: rgb(255 190 110 / .5); box-shadow: 0 .9rem 2rem rgb(0 0 0 / .5), 0 0 2.2rem rgb(255 140 50 / .18), inset 0 1px 0 rgb(255 255 255 / .1); }
+.piste__lire, .piste.est-lecture .piste__lire {
+  width: 3.6rem; height: 3.6rem;
+  background: var(--blanc);
+  color: #0b0b0a;
+  box-shadow: 0 .35rem 1rem rgb(0 0 0 / .55);
+}
+.piste__lire::before { display: none; }
+.piste__lire svg { width: 1.15rem; height: 1.3rem; }
+.piste__titre { padding-right: 0; font-size: 1.35rem; text-shadow: none; }
+.piste__corps { gap: .4rem; }
+.onde { height: 3rem; padding: 0; background: none; box-shadow: none; }
+.piste__temps {
+  position: static;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 1.15rem;
+  color: var(--gris, #b9b5ad);
+  text-shadow: none;
+  align-self: center;
+}
+@media (max-width: 29rem) {
+  .piste { gap: 0 .8rem; padding: .95rem .9rem; }
+  .piste__lire, .piste.est-lecture .piste__lire { width: 3.2rem; height: 3.2rem; }
+  .piste__titre { font-size: 1.15rem; padding-right: 0; }
+}
+
+/* Clip vidéo hébergé sur le site : cadre 16/9, coins nets, lecteur du navigateur */
+.video { overflow: hidden; background: #000; }
+.video video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+
+/* Projecteurs : allumage et extinction pilotés par --allume (voir initProjecteurs) */
+.scene__lampe polygon { opacity: var(--allume, 1); }
+.scene__tetes { opacity: calc(.28 + .72 * var(--allume, 1)); }
+.scene__poussiere { opacity: var(--allume, 1); }
+
+/* « Événements passés » : titre centré (le dernier espacement de lettres est compensé à gauche) */
+.deja__titre { text-align: center; padding-inline: var(--marge-g) var(--marge-d); padding-left: calc(var(--marge-g) + .24em); }
+
+/* Tous les boutons gardent des bords arrondis (même rayon que « Contact ») */
+.bouton, .barre__booking, .fleche-btn, .visionneuse__fermer, .menu__fermer, .booking-fenetre__fermer { border-radius: .6rem; }
+.interrupteur, .piste__lire { border-radius: 999px; }
+
+/* Phrase au-dessus du lecteur, dans « Écouter » : même texte que la présentation du groupe */
+.ecouter__texte { max-width: 36rem; margin: 0 0 1.5rem; font-size: clamp(1.15rem, 4.5vw, 1.3rem); line-height: 1.5; font-weight: 500; color: var(--gris-2); text-wrap: pretty; }
+.ecouter__texte[hidden] { display: none; }
+
+/* ==========================================================
+   Médias : grille nette. Mobile : 2 colonnes, la première photo en bandeau. Ordinateur : 3 colonnes.
+   Tuiles aux angles vifs, photos en noir et blanc au repos (ordinateur) qui passent en couleur au
+   survol ; sur écran tactile elles restent en couleur.
+   ========================================================== */
+#galerie .galerie {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5rem;
+  width: min(100% - 2 * var(--marge), var(--max));
+  margin: 0 auto;
+  padding: 0;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+#galerie .galerie__photo { position: relative; overflow: hidden; background: var(--noir-2); }
+#galerie .galerie__photo--une { grid-column: 1 / -1; }
+#galerie .galerie__photo button { width: 100%; height: 100%; }
+#galerie .galerie__photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 28%;
+  opacity: 1;
+  transition: transform .6s var(--ease), filter .4s var(--ease);
+}
+#galerie .galerie__photo--une img { aspect-ratio: 4 / 3; }
+#galerie .galerie__photo::after {
+  content: ""; position: absolute; inset: auto 0 0; height: 40%;
+  background: linear-gradient(transparent, rgb(0 0 0 / .45)); pointer-events: none;
+}
+@media (min-width: 56rem) {
+  #galerie .galerie { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+  #galerie .galerie__photo img { aspect-ratio: 4 / 3; }
+  #galerie .galerie__photo--une img { aspect-ratio: 21 / 9; object-position: 50% 30%; }
+}
+@media (hover: hover) {
+  #galerie .galerie__photo img { filter: grayscale(1) contrast(1.08); }
+  #galerie .galerie:hover .galerie__photo img { opacity: 1; }
+  #galerie .galerie__photo button:hover img, #galerie .galerie__photo button:focus-visible img { filter: none; transform: scale(1.04); }
+}
+#galerie .galerie__photo button:focus-visible { outline: 2px solid var(--blanc); outline-offset: -4px; }
+#galerie .galerie { width: 100%; max-width: var(--max); padding-inline: var(--marge-g) var(--marge-d); box-sizing: border-box; }
+
+/* ==========================================================
+   Médias : photos en cases de BD. Cadre épais crème, angles légèrement de travers (une forme par
+   case), trame de points (« halftone ») dans un coin. Le cadre est le fond de la case : la photo est
+   posée dedans avec une marge fixe.
+   ========================================================== */
+#galerie .galerie { gap: .7rem; }
+#galerie .galerie__photo {
+  padding: 4px;
+  background: var(--blanc);
+  clip-path: polygon(0 .6%, 99.4% 0, 100% 99.2%, .5% 100%);
+}
+#galerie .galerie__photo:nth-child(2n) { clip-path: polygon(.5% 0, 100% .7%, 99.4% 100%, 0 99.3%); }
+#galerie .galerie__photo:nth-child(3n) { clip-path: polygon(0 0, 99.3% .6%, 100% 100%, .6% 99.4%); }
+#galerie .galerie__photo:nth-child(5n) { clip-path: polygon(.6% .4%, 100% 0, 99.5% 99.4%, 0 100%); }
+#galerie .galerie__photo button { overflow: hidden; background: var(--noir-2); }
+#galerie .galerie__photo::after {
+  inset: auto 4px 4px auto;
+  width: 46%;
+  height: 46%;
+  background: radial-gradient(circle, rgb(0 0 0 / .55) 1.1px, transparent 1.6px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(135deg, transparent 35%, #000);
+  mask-image: linear-gradient(135deg, transparent 35%, #000);
+}
+
+/* ==========================================================
+   Médias : une vraie planche de BD. Une page de papier crème, des cases de tailles différentes aux
+   contours noirs épais, séparées par des gouttières, trame de points dans un coin de chaque case.
+   Mobile : cases en paire ou pleine largeur. Ordinateur : grille de 12 colonnes, grande case + cases étroites.
+   ========================================================== */
+#galerie .galerie {
+  --gouttiere: clamp(.5rem, 1.4vw, .85rem);
+  --unite: 9.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: var(--unite);
+  gap: var(--gouttiere);
+  width: min(100% - var(--marge-g) - var(--marge-d), calc(var(--max) - var(--marge-g) - var(--marge-d)));
+  max-width: none;
+  margin-inline: auto;
+  padding: var(--gouttiere);
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle, rgb(0 0 0 / .07) 1px, transparent 1.4px) 0 0 / 6px 6px,
+    #efe7d4;
+  box-shadow: 0 1rem 2.2rem rgb(0 0 0 / .55);
+}
+#galerie .galerie__photo {
+  grid-column: span 1;
+  grid-row: span 1;
+  padding: 0;
+  background: #0a0a0a;
+  border: 3px solid #0a0a0a;
+  clip-path: none;
+}
+#galerie .galerie__photo:nth-child(1), #galerie .galerie__photo:nth-child(4), #galerie .galerie__photo:nth-child(7) { grid-column: 1 / -1; }
+#galerie .galerie__photo:nth-child(1) { grid-row: span 2; }
+#galerie .galerie__photo button { width: 100%; height: 100%; }
+#galerie .galerie__photo img, #galerie .galerie__photo--une img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 30%; }
+#galerie .galerie__photo::after { inset: auto 0 0 auto; width: 44%; height: 44%; }
+@media (min-width: 56rem) {
+  #galerie .galerie { --unite: clamp(5.5rem, 8.4vw, 7.5rem); grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  #galerie .galerie__photo, #galerie .galerie__photo:nth-child(n) { grid-column: auto; grid-row: auto; }
+  #galerie .galerie__photo:nth-child(1) { grid-column: 1 / 8; grid-row: 1 / 5; }
+  #galerie .galerie__photo:nth-child(2) { grid-column: 8 / 13; grid-row: 1 / 3; }
+  #galerie .galerie__photo:nth-child(3) { grid-column: 8 / 13; grid-row: 3 / 5; }
+  #galerie .galerie__photo:nth-child(4) { grid-column: 1 / 4; grid-row: 5 / 7; }
+  #galerie .galerie__photo:nth-child(5) { grid-column: 4 / 7; grid-row: 5 / 7; }
+  #galerie .galerie__photo:nth-child(6) { grid-column: 7 / 10; grid-row: 5 / 7; }
+  #galerie .galerie__photo:nth-child(7) { grid-column: 10 / 13; grid-row: 5 / 7; }
+}
+
+/* Planche sans papier blanc : fond transparent, cases cernées d'un trait bleu (la couleur de « Médias ») */
+#galerie .galerie { padding: 0; background: none; box-shadow: none; width: min(100% - var(--marge-g) - var(--marge-d), calc(var(--max) - var(--marge-g) - var(--marge-d))); }
+#galerie .galerie__photo { border: 3px solid var(--bd-bleu); background: var(--noir-2); }
+
+/* ==========================================================
+   Cadre des titres : même forme que l'autocollant jaune de « Prochaine date »
+   (cadre plein et épais, coupé en biais à droite, légèrement penché), chacun dans sa couleur.
+   ========================================================== */
+.bloc__titre, .annonce__h, .booking-fenetre__titre, .mentions__titre {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: .14em .6em .08em .5em;
+  background: var(--accent, var(--bd-rouge));
+  color: var(--sur-accent, var(--blanc));
+  font-family: var(--groovy);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  overflow-wrap: anywhere;
+}
+.bloc__titre::after, .annonce__h::after, .booking-fenetre__titre::after { content: none; }
+#groupe, #ecouter, #galerie, #reseaux { --rt: 2deg; }
+#ecouter, #reseaux { --rt: -2deg; }
+.dates-zone { --accent: var(--bd-rouge); --sur-accent: var(--blanc); }
+.dates-zone .annonce__h { margin-inline: auto; transform: rotate(-2deg); }
+.booking-fenetre__titre, .mentions__titre { --accent: var(--bd-rouge); transform: rotate(-2deg); margin-bottom: 1.25rem; }
+.mentions__titre { font-size: clamp(1.9rem, 8vw, 2.4rem); }
+@media (prefers-reduced-motion: reduce) {
+  #groupe .bloc__titre, #ecouter .bloc__titre, #galerie .bloc__titre, #reseaux .bloc__titre { transform: rotate(var(--rt, 2deg)); }
+}
+
+/* « Prochaine date » : cadre blanc cassé, texte noir (plus de rouge) */
+.dates-zone .annonce__h { background: var(--blanc); color: var(--noir); }
+
+/* Menu : « Booking » en rouge, en tête de liste */
+.menu__liste .menu__booking { color: #e0373b; }
+
+/* Menu : « Booking » encadré en rouge, texte blanc (même forme que les titres) */
+.menu__liste .menu__booking {
+  width: fit-content;
+  margin: .6rem 0 .6rem .9rem;
+  padding: .3em .7em .2em .55em;
+  border: 0;
+  background: var(--bd-rouge);
+  color: var(--blanc);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  transform: rotate(-2deg);
+}
+
+/* Crédit photo discret : le nom et, sur la même ligne, deux petites icônes blanches sans couleur */
+.credit-photo { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 .35rem; }
+.credit__nom { font-size: .8125rem; color: var(--gris-3); }
+.credit__liens { gap: 0; }
+.credit__lien { width: 2rem; height: 2rem; color: var(--gris-3); }
+.credit__lien svg { width: 1rem; height: 1rem; }
+.credit__lien--insta svg { border-radius: 0; box-shadow: none; }
+@media (hover: hover) {
+  .credit__lien:hover { transform: none; color: var(--blanc); }
+  .credit__lien--insta:hover { filter: none; }
+}
+
+/* Plus de traits entre les sections ; les titres sont plus gros pour occuper l'espace */
+.bloc, .bloc + .bloc, .dates-zone, .deja { border-top: 0; border-bottom: 0; }
+.bloc__titre { font-size: clamp(2.8rem, 12.5vw, 3.8rem); margin-bottom: 1.75rem; }
+@media (min-width: 40rem) { .bloc__titre { font-size: clamp(3.4rem, 6vw, 5rem); } }
+.annonce__h { font-size: clamp(2.2rem, 9.5vw, 3rem); }
+@media (min-width: 56rem) { .annonce__h { font-size: 3.2rem; } }
+.mentions__titre { font-size: clamp(2.2rem, 9vw, 2.8rem); }
+
+/* « Prochaine date » : titre plus petit que les titres de section */
+.annonce__h { font-size: clamp(1.4rem, 6vw, 1.8rem); }
+@media (min-width: 56rem) { .annonce__h { font-size: 1.9rem; } }
+
+/* ==========================================================
+   SYSTÈME TYPOGRAPHIQUE ET ESPACEMENTS (prend le pas sur les réglages précédents)
+   Une seule échelle pour tout le site : on n'invente plus de taille au cas par cas.
+   Polices : Anton pour les titres et noms (affiche), Barlow Condensed pour le texte.
+   ========================================================== */
+:root {
+  /* Échelle de texte, fluide entre 360 px et 1200 px d'écran */
+  --fs-titre: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);    /* titres de section : 28 → 40 px */
+  --fs-h2: clamp(1.25rem, 1.1rem + .6vw, 1.5rem);         /* sous-titres : Prochaine date, encarts : 20 → 24 px */
+  --fs-h3: clamp(1.25rem, 1.1rem + .6vw, 1.5rem);         /* noms (membres, morceaux, vidéos) : 20 → 24 px */
+  --fs-lead: clamp(1.25rem, 1.05rem + .9vw, 1.625rem);    /* accroche d'une section : 20 → 26 px */
+  --fs-corps: 1.0625rem;                                  /* texte courant : 17 px */
+  --fs-petit: .875rem;                                    /* notes, légendes : 14 px */
+  --fs-label: .75rem;                                     /* étiquettes en capitales : 12 px */
+  /* Échelle d'espacements (multiples de 8 px) */
+  --s1: .5rem;
+  --s2: 1rem;
+  --s3: 1.5rem;
+  --s4: 2.5rem;
+  --s5: 4rem;
+  --section-y: clamp(3rem, 2rem + 4vw, 5rem);             /* respiration au-dessus et au-dessous d'une section */
+  --mesure: 38rem;                                        /* largeur maximale d'un paragraphe */
+}
+
+/* Sections : même respiration partout, le titre à 24 px de son contenu */
+.bloc, .dates-zone { padding-block: var(--section-y); }
+.dates-zone { padding-bottom: var(--s4); }
+.bloc__titre, .annonce__h, .booking-fenetre__titre, .mentions__titre {
+  line-height: 1.05;
+  letter-spacing: .02em;
+}
+.bloc__titre { font-size: var(--fs-titre); margin: 0 0 var(--s3); }
+.annonce__h { font-size: var(--fs-h2); margin-bottom: var(--s2); }
+.booking-fenetre__titre, .mentions__titre { font-size: var(--fs-titre); margin-bottom: var(--s3); }
+@media (min-width: 40rem) { .bloc__titre { font-size: var(--fs-titre); } }
+@media (min-width: 56rem) { .annonce__h { font-size: var(--fs-h2); } }
+
+/* Textes : accroche, corps, chute */
+.presentation { gap: var(--s2); max-width: var(--mesure); }
+.presentation__accroche { font-size: var(--fs-lead) !important; line-height: 1.15 !important; }
+.presentation__texte { font-size: var(--fs-corps); line-height: 1.55; }
+.presentation__chute { font-size: var(--fs-h3) !important; line-height: 1.15 !important; }
+.intro, .booking-fenetre__texte, .mentions p, .mentions li { font-size: var(--fs-corps); line-height: 1.55; max-width: var(--mesure); }
+.mentions p, .mentions li { font-size: var(--fs-petit); }
+
+/* Noms : membres, morceaux, vidéos */
+.membre__nom, .piste__titre, .video__titre { font-size: var(--fs-h3); line-height: 1.1; }
+.embed__nom { font-size: var(--fs-petit); }
+
+/* Étiquettes et petites notes */
+.membre__role, .fiche__role, .hero__style, .confiance__titre, .prochaine__label, .membres__astuce, .reso__nom {
+  font-size: var(--fs-label);
+}
+.credit__nom, .embed__info, .pied, .pied p, .lien-discret { font-size: var(--fs-petit); }
+
+/* Rythme vertical dans une section : un seul pas entre blocs */
+.bloc__entete { margin-bottom: 0; }
+.pistes, .videos, .galerie, .membres, .embeds { margin-top: var(--s3); }
+.membres { gap: var(--s2); }
+
+/* ==========================================================
+   Lecteur « planche de BD » : cadre plat violet (la couleur de la section), ombre dure décalée,
+   bouton rond blanc, titre en capitales, durée sur un autocollant jaune coupé en biais
+   (comme la date). La forme d'onde se remplit en jaune pendant la lecture.
+   ========================================================== */
+.piste {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0 var(--s2);
+  align-items: center;
+  padding: var(--s2) var(--s2) var(--s2) var(--s2);
+  overflow: visible;
+  border: 3px solid var(--bd-prune);
+  border-radius: .35rem;
+  background: var(--noir-2);
+  box-shadow: 6px 6px 0 var(--bd-prune);
+  transition: box-shadow .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease);
+}
+.piste.est-lecture { border-color: var(--jaune); box-shadow: 6px 6px 0 var(--jaune); transform: translate(-2px, -2px); }
+.piste__lampe, .piste__grille, .piste__lire::before { display: none; }
+.piste__lire, .piste.est-lecture .piste__lire {
+  width: 3.25rem; height: 3.25rem;
+  border: 0;
+  background: var(--blanc);
+  color: var(--noir);
+  box-shadow: 3px 3px 0 var(--bd-prune);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), background-color .2s var(--ease);
+}
+.piste.est-lecture .piste__lire { background: var(--jaune); box-shadow: 3px 3px 0 var(--noir); }
+.piste__lire:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--bd-prune); }
+.piste__lire svg { width: 1.05rem; height: 1.2rem; }
+.piste__corps { gap: .35rem; }
+.piste__titre { font-family: var(--groovy); font-weight: 400; font-size: var(--fs-h3); letter-spacing: .03em; text-transform: uppercase; color: var(--blanc); text-shadow: none; }
+.onde { height: 2.5rem; }
+.piste__temps {
+  position: static;
+  min-width: 0;
+  padding: .2em .65em .12em .5em;
+  border-radius: 0;
+  background: var(--jaune);
+  box-shadow: none;
+  color: var(--noir);
+  font-family: var(--groovy);
+  font-weight: 400;
+  font-size: var(--fs-petit);
+  line-height: 1;
+  letter-spacing: .04em;
+  text-shadow: none;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%);
+  transform: rotate(2deg);
+}
+@media (max-width: 29rem) {
+  .piste { gap: 0 .75rem; padding: .85rem; }
+  .piste__lire, .piste.est-lecture .piste__lire { width: 2.9rem; height: 2.9rem; }
+  .piste__titre { font-size: var(--fs-lead); }
+}
+@media (prefers-reduced-motion: reduce) { .piste.est-lecture { transform: none; } }
+
+/* ==========================================================
+   Réseaux sociaux : deux « sections » (Instagram, Facebook) qu'on fait glisser de gauche à droite.
+   Même langage que le lecteur : cadre plat vert (la couleur de la section), ombre dure décalée.
+   Le logo de chaque réseau sert d'onglet.
+   ========================================================== */
+.reso__onglets { display: flex; gap: var(--s2); margin-top: var(--s3); }
+.reso__onglet {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .55rem 1rem .5rem .8rem;
+  border: 3px solid var(--bd-vert); border-radius: .35rem; background: none; color: var(--blanc);
+  font-family: var(--groovy); font-size: var(--fs-petit); letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.reso__onglet svg { display: block; width: 1.4rem; height: 1.4rem; }
+.reso__onglet.est-actif { background: var(--bd-vert); color: var(--noir); box-shadow: 3px 3px 0 var(--blanc); transform: translate(-1px, -1px); }
+.reso__onglet:focus-visible { outline: 2px solid var(--blanc); outline-offset: 3px; }
+
+.embeds {
+  display: flex; align-items: flex-start; gap: var(--s3); max-width: none; margin-top: var(--s3);
+  padding: 0 var(--retrait) .9rem; scroll-padding-inline: var(--retrait);
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.embeds::-webkit-scrollbar { display: none; }
+.embed {
+  flex: 0 0 min(86vw, 26rem); scroll-snap-align: start;
+  border: 3px solid var(--bd-vert); border-radius: .35rem; background: var(--noir-2); box-shadow: 6px 6px 0 var(--bd-vert); overflow: hidden;
+}
+.embed__tete { border-bottom: 3px solid var(--bd-vert); }
+.embed__nom { font-family: var(--groovy); font-weight: 400; }
+.embed__ouvrir { border-radius: 0; border: 0; background: var(--jaune); color: var(--noir); padding: .3em .8em .2em .65em; clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%); transform: rotate(2deg); }
+@media (hover: hover) { .embed__ouvrir:hover { background: var(--blanc); } }
+@media (min-width: 40rem) { .embeds { grid-template-columns: none; max-width: none; } }
+
+/* ==========================================================
+   UNE SEULE LANGUE VISUELLE (prend le pas sur les réglages précédents)
+   1. Tout contenu encadré : même cadre 3 px, même ombre dure décalée, même coin, dans la couleur de sa section.
+   2. Le jaune ne sert qu'à l'information du moment : la date et la durée d'un morceau.
+   3. Un seul bouton (rectangle au coin légèrement arrondi) ; seuls les titres et l'autocollant de date sont penchés.
+   ========================================================== */
+:root { --cadre: 3px; --ombre: 5px; --rayon: .35rem; }
+:focus-visible { outline-color: var(--blanc); }
+.bouton:focus-visible, .barre__booking:focus-visible, .piste__lire:focus-visible, .onde:has(.onde__curseur:focus-visible) { outline-color: var(--blanc); }
+
+/* Cadre commun : lecteur, encarts des réseaux, photos */
+.piste, .embed, #galerie .galerie__photo, .reso__onglet {
+  border: var(--cadre) solid var(--accent, var(--bd-ocre));
+  border-radius: var(--rayon);
+  background: var(--noir-2);
+}
+.piste, .embed, #galerie .galerie__photo { box-shadow: var(--ombre) var(--ombre) 0 var(--accent, var(--bd-ocre)); }
+#ecouter .piste__lire { box-shadow: 3px 3px 0 var(--accent); }
+.piste.est-lecture { border-color: var(--accent); box-shadow: var(--ombre) var(--ombre) 0 var(--accent); transform: translate(-2px, -2px); }
+.piste.est-lecture .piste__lire { background: var(--blanc); box-shadow: 3px 3px 0 var(--accent); }
+.embed__tete { border-bottom: var(--cadre) solid var(--accent); }
+
+/* Photos : un peu d'air entre les cases pour que les ombres ne se touchent pas */
+#galerie .galerie { gap: .9rem; padding: 0 var(--ombre) var(--ombre) 0; }
+
+/* Onglets des réseaux : même cadre, remplis quand ils sont choisis */
+.reso__onglet { border-radius: var(--rayon); }
+.reso__onglet.est-actif { background: var(--accent); color: var(--noir); box-shadow: none; transform: none; }
+
+/* « Ouvrir » : un simple lien blanc, plus d'autocollant jaune ; la durée reste sur son autocollant, sans pencher */
+.embed__ouvrir { padding: 0; border: 0; border-bottom: 1px solid var(--blanc); border-radius: 0; background: none; color: var(--blanc); clip-path: none; transform: none; }
+@media (hover: hover) { .embed__ouvrir:hover { background: none; color: var(--gris-3); border-color: var(--gris-3); } }
+.piste__temps { transform: none; }
+
+/* Boutons : même coin que les cadres ; au survol, l'ombre dure reprend la couleur de la section */
+.bouton, .barre__booking, .fleche-btn, .visionneuse__fermer, .menu__fermer, .booking-fenetre__fermer { border-radius: var(--rayon); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .bouton:hover, .barre__booking:hover { box-shadow: 4px 4px 0 var(--accent, var(--bd-rouge)); }
+}
+.menu__liste .menu__booking { transform: none; }
+
+/* Fenêtre Booking : plus étroite, à la mesure de son court texte */
+#booking-fenetre { width: min(84vw, 20rem); }
+#booking-fenetre .booking-fenetre__contenu { padding: 2rem 1.25rem 1.5rem; gap: var(--s2); }
+.booking-fenetre__logo { display: block; width: 8.5rem; height: auto; margin: 0 auto .25rem; }
+
+/* Fenêtre Booking : même cadre que le reste du site (3 px rouge, ombre dure), tout centré sur un seul axe */
+#booking-fenetre {
+  width: min(86vw, 21rem);
+  border: var(--cadre) solid var(--bd-rouge);
+  border-radius: var(--rayon);
+  background: var(--noir-2);
+  box-shadow: var(--ombre) var(--ombre) 0 var(--bd-rouge), 0 1.5rem 3.5rem rgb(0 0 0 / .6);
+}
+#booking-fenetre .booking-fenetre__contenu { justify-items: center; text-align: center; gap: var(--s2); padding: var(--s4) var(--s3) var(--s3); }
+#booking-fenetre .booking-fenetre__logo { width: 7.5rem; margin: 0; }
+#booking-fenetre .booking-fenetre__titre { margin: 0; font-size: var(--fs-h2); }
+#booking-fenetre .booking-fenetre__texte { max-width: 17rem; margin: 0; text-wrap: balance; color: var(--gris-2); }
+#booking-fenetre .booking-fenetre__bouton { margin-top: var(--s1); }
+#booking-fenetre .booking-fenetre__fermer { top: .35rem; right: .35rem; }
+
+/* Fond plus vif : voile plus léger et vignette plus douce, pour que les nappes de couleur de chaque section
+   (violet, bleu, vert, ocre, rouge) ressortent davantage ; le texte reste lisible sur ces teintes. */
+.fond::after {
+  background-color: rgb(6 6 6 / .6);
+  background-image:
+    radial-gradient(ellipse 90% 75% at 50% 45%, transparent 30%, rgb(0 0 0 / .55) 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / .5), transparent 16%, transparent 78%, rgb(0 0 0 / .6)),
+    linear-gradient(112deg, transparent 18%, rgb(255 150 60 / .12) 30%, transparent 44%),
+    linear-gradient(68deg, transparent 56%, rgb(255 110 40 / .1) 70%, transparent 84%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* « Ils nous ont fait confiance » : le titre se rapproche du bandeau de logos */
+.confiance__titre { margin-bottom: var(--s1); }
+
+/* ==========================================================
+   Itinéraire, partage et mode « Ce soir »
+   ========================================================== */
+.date__actions { display: flex; gap: var(--s2); margin-top: .35rem; }
+.date__action { padding: 0; border: 0; background: none; font: inherit; font-size: var(--fs-petit); color: var(--gris-3); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+@media (hover: hover) { .date__action:hover { color: var(--blanc); } }
+.date__action:focus-visible { outline: 2px solid var(--blanc); outline-offset: 3px; }
+
+/* Bandeau du jour : le jaune est réservé à l'information du moment */
+.ce-soir {
+  position: absolute; z-index: 30; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .25rem var(--s2);
+  padding: calc(.6rem + env(safe-area-inset-top)) var(--marge-d) .6rem var(--marge-g);
+  background: var(--jaune); color: var(--noir);
+  font-family: var(--groovy); font-size: var(--fs-petit); letter-spacing: .06em; text-transform: uppercase; text-align: center;
+}
+.ce-soir[hidden] { display: none; }
+.ce-soir__label::after { content: " ★"; }
+.ce-soir__lien { color: var(--noir); font-weight: 400; text-decoration: underline; text-underline-offset: .22em; }
+.ce-soir__lien:focus-visible { outline: 2px solid var(--noir); outline-offset: 3px; }
