@@ -1,2 +1,0 @@
-Déposez ici le dossier de presse ou la fiche technique (PDF),
-puis renseignez leur chemin dans content/site.js (contact.dossierPresse / contact.ficheTechnique).
