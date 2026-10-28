@@ -3490,7 +3490,7 @@ img { -webkit-touch-callout: none; }
    La photo et le logo se calent sur la hauteur de l'écran (svh) et les espaces sont resserrés.
    ========================================================== */
 @media (max-width: 55.99rem) and (min-height: 541px) {
-  .hero__media { aspect-ratio: auto; height: clamp(10rem, 30svh, 17rem); }
+  .hero__media { aspect-ratio: auto; height: clamp(13rem, 38svh, 24rem); }
   .hero__logo { width: min(62vw, 19rem); margin-top: max(-13vw, -4.5rem); }
   .hero__style { margin-top: .5rem; }
   .dates-zone { padding-top: var(--s2); padding-bottom: var(--s3); }
@@ -3499,3 +3499,29 @@ img { -webkit-touch-callout: none; }
   .confiance { padding-top: var(--s2); }
   .confiance__titre { margin-bottom: .25rem; }
 }
+
+/* Logo d’en-tête : un léger voile sombre sur la photo, derrière lui, pour qu’il reste lisible */
+.hero__contenu::before {
+  content: "";
+  position: absolute;
+  inset: -3rem -1rem -.5rem;
+  z-index: 0;
+  background: radial-gradient(ellipse 62% 62% at 50% 42%, rgb(0 0 0 / .5), rgb(0 0 0 / .22) 55%, transparent 78%);
+  pointer-events: none;
+}
+.hero__logo, .hero__style { position: relative; z-index: 1; }
+.hero__logo { z-index: 70; }
+
+/* ==========================================================
+   Fond noir, avec de grosses bulles de couleur floues sur les bords gauche et droit, une paire par catégorie.
+   Les paires se fondent l’une dans l’autre au défilement. Simples dégradés radiaux : diffus, sans filtre coûteux.
+   ========================================================== */
+.fond__img { background-color: transparent; background-repeat: no-repeat; }
+.fond__img--dates   { background-image: radial-gradient(ellipse 80% 34% at 0% 24%, rgb(179 41 44 / .62), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 76%, rgb(179 41 44 / .5), transparent 72%); }
+.fond__img--groupe  { background-image: radial-gradient(ellipse 80% 34% at 0% 70%, rgb(209 147 63 / .55), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 26%, rgb(209 147 63 / .5), transparent 72%); }
+.fond__img--ecouter { background-image: radial-gradient(ellipse 80% 34% at 0% 26%, rgb(135 80 122 / .68), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 72%, rgb(135 80 122 / .58), transparent 72%); }
+.fond__img--galerie { background-image: radial-gradient(ellipse 80% 34% at 0% 68%, rgb(42 90 154 / .7), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 28%, rgb(42 90 154 / .6), transparent 72%); }
+.fond__img--reseaux { background-image: radial-gradient(ellipse 80% 34% at 0% 30%, rgb(102 160 59 / .55), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 74%, rgb(102 160 59 / .48), transparent 72%); }
+
+/* Téléphone : la photo n’est plus agrandie, pour que les cinq membres restent le plus possible dans le cadre */
+@media (hover: none) and (pointer: coarse) { .diapo { transform: scale(1.02); } }
