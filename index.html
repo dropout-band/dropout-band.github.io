@@ -36,6 +36,7 @@
         var absent = Date.now() - Number(localStorage.getItem("dropout-vu") || 0) > 5 * 60 * 1000;
         var reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (!reduit && !location.hash && !p.has("agenda") && (absent || p.has("intro"))) document.documentElement.classList.add("intro-actif");
+        else if (!reduit) document.documentElement.classList.add("entree"); // pas d’écran de démarrage : les éléments de l’en-tête apparaissent en douceur (style.css, .entree)
       } catch (e) { /* on affiche le site directement */ }
     })();
   </script>
