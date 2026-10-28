@@ -617,6 +617,15 @@ function initFond() {
   maj();
 }
 
+/* ---------- Animations en pause hors de l'écran ---------- */
+// Les animations qui tournent en continu (scène, photo d'en-tête, indicateur de défilement) ne coûtent rien
+// quand elles ne sont pas visibles : le CSS les met en pause avec la classe .hors-ecran.
+function pauseHorsEcran() {
+  if (!("IntersectionObserver" in window)) return;
+  const obs = new IntersectionObserver((entrees) => entrees.forEach((e) => e.target.classList.toggle("hors-ecran", !e.isIntersecting)), { rootMargin: "80px" });
+  $$(".scene, .hero__media, .hero__suite, .confiance__fenetre, .oeil").forEach((el) => obs.observe(el));
+}
+
 /* ---------- Premier écran : ligne de style et profondeur ---------- */
 // La ligne « Rock alternatif · Ardèche » apparaît lettre par lettre une fois le logo posé
 // (après l'écran de démarrage s'il y en a un). Le texte complet reste lu tel quel par les
@@ -636,7 +645,7 @@ function animerTexteHero() {
 // La photo glisse un peu moins vite que la page (quelques pour cent de sa hauteur)
 function initParallaxeHero() {
   const media = $(".hero__media");
-  if (!media || mouvementReduit()) return;
+  if (!media || mouvementReduit() || matchMedia("(hover: none) and (pointer: coarse)").matches) return; // téléphone : pas de parallaxe (mode fluide)
   let demande = 0;
   const maj = () => {
     demande = 0;
@@ -938,7 +947,7 @@ function rendreMentions() {
       '<p><strong>Contact par courriel.</strong> Si vous écrivez au groupe, votre adresse et votre message ne servent qu’à vous répondre ; ils ne sont ni transmis ni conservés au-delà de l’échange.</p>' +
       '<p><strong>Vos droits.</strong> Conformément au RGPD et à la loi Informatique et Libertés, vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à ' + lienMail + '. En cas de difficulté, vous pouvez saisir la CNIL (<a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">cnil.fr</a>).</p></section>' +
     '<section><h3>Liens externes</h3><p>Le site renvoie vers des sites tiers (réseaux sociaux, partenaires, salles). Le groupe n’est pas responsable de leur contenu.</p></section>' +
-    '<section><h3>Crédits</h3><p>Site conçu par Mikael G. pour Drop Out. Police Bricolage Grotesque (licence SIL Open Font), hébergée sur le site lui-même.</p></section>' +
+    '<section><h3>Crédits</h3><p>Site conçu par Mikael G. pour Drop Out. Polices Anton et Barlow Condensed (licence SIL Open Font), hébergées sur le site lui-même.</p></section>' +
     (l.misAJour ? '<p class="mentions__maj">Dernière mise à jour : ' + esc(l.misAJour) + '</p>' : "");
 
   $("[data-retirer-accords]", corps).addEventListener("click", () => {
@@ -1134,6 +1143,7 @@ rendreMembres();
 initFlechesMembres();
 rendreGalerie(rendreVideos());
 rendrePartenaires();
+pauseHorsEcran();
 couleurAuDefilement();
 initFiches();
 initBooking();

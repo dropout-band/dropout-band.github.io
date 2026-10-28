@@ -3442,3 +3442,33 @@ body { font-weight: 500; font-size: 1.1875rem; line-height: 1.5; font-optical-si
 .ce-soir__label::after { content: " ★"; }
 .ce-soir__lien { color: var(--noir); font-weight: 400; text-decoration: underline; text-underline-offset: .22em; }
 .ce-soir__lien:focus-visible { outline: 2px solid var(--noir); outline-offset: 3px; }
+
+/* ==========================================================
+   Téléphone : mode fluide. On coupe ce qui coûte le plus à dessiner quand on fait défiler la page
+   (flou d'arrière-plan recalculé à chaque image, filtres sur de grandes photos, calques plein écran animés,
+   grains de poussière animés). Le décor reste le même ; seuls ces effets sont retirés.
+   ========================================================== */
+@media (hover: none) and (pointer: coarse) {
+  /* Barre du haut : fond simplement plus opaque, sans flou */
+  .barre, .barre::before, .menu::backdrop, .fiche::backdrop, .booking-fenetre::backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .barre { background: rgb(10 10 10 / calc(var(--p) * .94)); }
+  .menu::backdrop, .booking-fenetre::backdrop { background: rgb(0 0 0 / .85); }
+  /* Photo d'en-tête : ni filtre, ni zoom permanent, ni décalage au défilement */
+  .diapo { filter: none; animation: none; translate: none; will-change: auto; }
+  /* Fond coloré : les nappes se fondent toujours d'une section à l'autre, mais ne dérivent plus et ne dépassent plus de l'écran */
+  .fond__img { animation: none; inset: 0; will-change: opacity; }
+  /* Scène : plus de grains de poussière */
+  .scene__poussiere { display: none; }
+}
+
+/* ==========================================================
+   Compatibilité et fluidité (Safari iPhone, Chrome, Brave, Firefox, Samsung Internet…)
+   ========================================================== */
+/* Anciens Safari (avant iOS 16) : « overflow: clip » n'existe pas, on coupe autrement le débordement horizontal */
+@supports not (overflow: clip) { body, main { overflow-x: hidden; } }
+/* Pas de délai ni de zoom au double-toucher sur les boutons et les liens */
+a, button, summary, label, [role="button"], [role="switch"], [role="tab"] { touch-action: manipulation; }
+/* Une animation qui tourne en continu est mise en pause quand elle n'est plus à l'écran */
+.hors-ecran, .hors-ecran * { animation-play-state: paused !important; }
+/* Les images ne se glissent pas à la main et ne s'agrandissent pas au toucher long sur iPhone */
+img { -webkit-touch-callout: none; }
