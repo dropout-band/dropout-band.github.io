@@ -3525,3 +3525,10 @@ img { -webkit-touch-callout: none; }
 
 /* Téléphone : la photo n’est plus agrandie, pour que les cinq membres restent le plus possible dans le cadre */
 @media (hover: none) and (pointer: coarse) { .diapo { transform: scale(1.02); } }
+
+/* Indication de défilement (téléphone) : une petite flèche discrète, collée en bas de l'écran */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  .hero__suite { bottom: calc(env(safe-area-inset-bottom, 0px) + .2rem); width: 2.5rem; height: 2rem; }
+  .hero__suite-fleche { width: 1.2rem; height: .85rem; filter: none; }
+  .hero__suite-fleche path { opacity: .6; }
+}
