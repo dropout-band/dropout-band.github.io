@@ -17,7 +17,7 @@
  *
  * Après avoir ajouté des fichiers essentiels, augmentez VERSION.
  */
-const VERSION = "v155";
+const VERSION = "v157";
 const CACHE_PAGES = `dropout-pages-${VERSION}`;
 const CACHE_MEDIAS = `dropout-medias-${VERSION}`;
 const DELAI_RESEAU = 4000; // ms avant de se rabattre sur le cache
@@ -27,6 +27,7 @@ const ESSENTIELS = [
   "app/",
   "assets/css/application.css",
   "assets/js/installer.js",
+  "assets/js/aide-installation.js",
   "assets/js/oeil.js",
   "assets/js/intro.js",
   "assets/js/navigation.js",

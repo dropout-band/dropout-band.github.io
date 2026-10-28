@@ -5,6 +5,7 @@
 // L'application installée s'ouvre sur l'accueil du site (start_url du manifeste), pas ici.
 
 import { initOeil } from "./oeil.js";
+import { aideInstallation } from "./aide-installation.js";
 
 const $ = (s) => document.querySelector(s);
 const bouton = $("[data-telecharger]");
@@ -12,10 +13,6 @@ const etat = $("[data-etat]");
 const aide = $("[data-aide]");
 
 const autonome = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-const estIos = () =>
-  /iphone|ipad|ipod/i.test(navigator.userAgent) ||
-  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS se présente comme un Mac
-
 initOeil(); // le point du logo cligne quand il est à l'arrêt
 
 // Déjà dans l'application : cette page n'a plus d'intérêt, direction le site
@@ -25,23 +22,6 @@ if (autonome()) location.replace("../");
 if ("serviceWorker" in navigator && (location.protocol === "https:" || ["localhost", "127.0.0.1"].includes(location.hostname))) {
   navigator.serviceWorker.register("../sw.js").catch((e) => console.warn("Service worker non enregistré :", e));
 }
-
-const AIDE_IOS = `
-  <h2>Sur iPhone</h2>
-  <ol>
-    <li>Ouvrez cette page dans Safari.</li>
-    <li>Touchez le bouton Partager (le carré avec une flèche vers le haut), en bas de l’écran.</li>
-    <li>Choisissez « Sur l’écran d’accueil », puis « Ajouter ».</li>
-  </ol>
-  <p>L’icône Drop Out apparaît alors parmi vos applications.</p>`;
-
-const AIDE_GENERALE = `
-  <h2>Installer l’application</h2>
-  <ol>
-    <li>Ouvrez le menu du navigateur (⋮ ou ⋯).</li>
-    <li>Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».</li>
-  </ol>
-  <p>Selon l’appareil et le navigateur, cette option peut ne pas exister. Le site reste utilisable normalement.</p>`;
 
 let invite = null;
 addEventListener("beforeinstallprompt", (e) => {
@@ -67,6 +47,7 @@ bouton.addEventListener("click", async () => {
   }
   // Pas d'installation directe possible : on explique, sans promettre ce qui ne marchera pas
   etat.textContent = window.isSecureContext ? "" : "L’installation fonctionne sur le site en ligne (https), pas sur cette adresse.";
-  aide.innerHTML = estIos() ? AIDE_IOS : AIDE_GENERALE;
+  const mode = aideInstallation();
+  aide.innerHTML = `<h2>${mode.titre}</h2>${mode.html}`;
   aide.hidden = false;
 });
