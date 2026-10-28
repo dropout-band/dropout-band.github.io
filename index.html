@@ -17,7 +17,7 @@
         var p = new URLSearchParams(location.search);
         var absent = Date.now() - Number(localStorage.getItem("dropout-vu") || 0) > 5 * 60 * 1000;
         var reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!reduit && !location.hash && !p.has("agenda") && (absent || p.has("intro"))) document.documentElement.classList.add("intro-actif");
+        if (!reduit && !location.hash && !p.has("agenda") && !p.has("annonce") && (absent || p.has("intro"))) document.documentElement.classList.add("intro-actif");
         else if (!reduit) document.documentElement.classList.add("entree"); // pas d’écran de démarrage : les éléments de l’en-tête apparaissent en douceur (style.css, .entree)
       } catch (e) { /* on affiche le site directement */ }
     })();
@@ -249,6 +249,23 @@
     <div class="mentions" data-mentions-carte tabindex="-1">
       <h2 class="mentions__titre" id="mentions-titre">Mentions légales</h2>
       <div class="mentions__corps" data-mentions-corps></div>
+    </div>
+  </dialog>
+
+  <!-- Annonce d'une date : l'affiche, le nom, la date, le lieu et les boutons. Ouverte par la notification (?annonce=…)
+       ou par « Voir l'annonce » dans le bloc « Prochaine date » (rempli par main.js). -->
+  <dialog class="annonce-fenetre" id="annonce-fenetre" aria-labelledby="annonce-titre">
+    <button type="button" class="booking-fenetre__fermer" aria-label="Fermer" data-annonce-fermer>✕</button>
+    <div class="annonce-fenetre__contenu" data-annonce-carte tabindex="-1">
+      <img class="annonce-fenetre__affiche" data-annonce-affiche alt="" hidden>
+      <div class="annonce-fenetre__texte">
+        <p class="annonce-fenetre__etiquette">★ Nouvelle date</p>
+        <h2 class="annonce-fenetre__titre" id="annonce-titre" data-annonce-titre></h2>
+        <p class="annonce-fenetre__date" data-annonce-date></p>
+        <p class="annonce-fenetre__lieu" data-annonce-lieu></p>
+        <p class="annonce-fenetre__info" data-annonce-info hidden></p>
+        <div class="annonce-fenetre__actions" data-annonce-actions></div>
+      </div>
     </div>
   </dialog>
 

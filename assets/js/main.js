@@ -1,6 +1,6 @@
 import contenu from "../../content/site.js";
 import { esc, urlSure, attrsLien, aRenseigner, brouillon, apercuConcerts, mouvementReduit, toast, copier } from "./outils.js";
-import { itineraireUrl, chargerConcerts, trier, rendreConcerts, tuilesAffiches, telechargerIcs, donneesStructurees, formatEnregistrement } from "./concerts.js";
+import { itineraireUrl, heureFr, chargerConcerts, trier, rendreConcerts, tuilesAffiches, telechargerIcs, donneesStructurees, formatEnregistrement } from "./concerts.js";
 import { initPwa } from "./pwa.js";
 import { initAlertes } from "./alertes.js";
 import { initOeil } from "./oeil.js";
@@ -311,6 +311,45 @@ function ouvrirAgendaDepuisLien() {
   dlg.showModal();
 }
 
+// Encart « annonce » : l'affiche, le nom, la date, le lieu et les boutons (itinéraire, billetterie, agenda, partage).
+// Ouvert par la notification (?annonce=date|lieu) ou par « Voir l'annonce » dans le bloc « Prochaine date ».
+function ouvrirAnnonce(c) {
+  const dlg = $("#annonce-fenetre");
+  if (!dlg || !c) return;
+  const [a, m, j] = c.date.split("-").map(Number);
+  const quand = new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date(Date.UTC(a, m - 1, j, 12)));
+  const lieu = [c.lieu, c.ville && c.ville !== c.lieu ? c.ville : ""].filter(Boolean).join(", ");
+  const img = $("[data-annonce-affiche]", dlg);
+  if (c.affiche) { img.src = urlSure(c.affiche) + "-1200.webp"; img.alt = "Affiche : " + (c.nom || lieu); img.hidden = false; } else { img.removeAttribute("src"); img.hidden = true; }
+  $("[data-annonce-titre]", dlg).textContent = c.nom || c.lieu;
+  $("[data-annonce-date]", dlg).textContent = quand.charAt(0).toUpperCase() + quand.slice(1) + (c.heure ? " · " + heureFr(c.heure) : "");
+  $("[data-annonce-lieu]", dlg).textContent = c.nom ? lieu : (c.ville && c.ville !== c.lieu ? c.ville : "");
+  const info = $("[data-annonce-info]", dlg);
+  info.textContent = c.info || ""; info.hidden = !c.info;
+  const json = esc(JSON.stringify(c));
+  const lien = c.lien && c.statut !== "annule" ? urlSure(c.lien) : "";
+  $("[data-annonce-actions]", dlg).innerHTML =
+    '<a class="bouton bouton--plein" href="' + esc(itineraireUrl(c)) + '" target="_blank" rel="noopener noreferrer">Itinéraire</a>' +
+    (lien ? '<a class="bouton bouton--trait" href="' + esc(lien) + '"' + attrsLien(lien) + '>' + esc(c.lienTexte || "Billetterie") + '</a>' : "") +
+    '<button type="button" class="bouton bouton--trait" data-ics="' + json + '">Ajouter à l’agenda</button>' +
+    '<button type="button" class="bouton bouton--trait" data-partager-date="' + json + '">Partager</button>';
+  if (!dlg.open) dlg.showModal();
+  $("[data-annonce-carte]", dlg).focus({ preventScroll: true });
+}
+function ouvrirAnnonceDepuisLien() {
+  const id = new URLSearchParams(location.search).get("annonce");
+  if (!id || !programme) return;
+  const url = new URL(location.href);
+  url.searchParams.delete("annonce");
+  history.replaceState(null, "", url.pathname + url.search + url.hash); // pas de réouverture au rechargement
+  const c = [...programme.aVenir, ...programme.passes].find((x) => x.date + "|" + x.lieu === id);
+  if (c) ouvrirAnnonce(c);
+}
+(() => {
+  const dlg = $("#annonce-fenetre");
+  dlg?.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-annonce-fermer]")) dlg.close(); });
+})();
+
 // Mode « Ce soir » : le jour d'un concert, un bandeau en haut de page avec le lieu, l'heure et l'itinéraire.
 function rendreCeSoir({ aVenir, aujourdhui }) {
   const zone = $("[data-ce-soir]");
@@ -356,6 +395,7 @@ async function rendreProgramme() {
     etat.textContent = notes.join(" ");
     etat.hidden = !notes.length;
     ouvrirAgendaDepuisLien();
+    ouvrirAnnonceDepuisLien();
   } catch (e) {
     console.error("[concerts] Programme illisible :", e);
     zone.innerHTML = `
@@ -691,6 +731,8 @@ document.addEventListener("click", (e) => {
   if (e.target.closest("[data-agenda-ajouter]")) setTimeout(() => $("#agenda-ajout").close(), 300); // fenêtre refermée après l'ajout
   const affiche = e.target.closest("[data-affiche]");
   if (affiche) { ouvrirAffiche(affiche); return; }
+  const ann = e.target.closest("[data-annonce]");
+  if (ann) { try { ouvrirAnnonce(JSON.parse(ann.dataset.annonce)); } catch { /* données illisibles */ } return; }
   const part = e.target.closest("[data-partager-date]");
   if (part) { partagerDate(JSON.parse(part.dataset.partagerDate)); return; }
   const ics = e.target.closest("[data-ics]");

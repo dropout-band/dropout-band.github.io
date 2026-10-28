@@ -31,9 +31,9 @@ const heureFr = (h) => (h ? h.replace(":", " h ").replace(/ h 00$/, " h") : "");
 function messageDe(c, plusieurs = false) {
   const quand = jourCourt(c.date) + (c.heure ? " à " + heureFr(c.heure) : "");
   return {
-    titre: plusieurs ? "Nouvelles dates — Drop Out" : "Nouvelle date — Drop Out",
+    titre: plusieurs ? "Nouvelles dates — Drop Out" : (c.nom || "Nouvelle date — Drop Out"),
     texte: `${quand} · ${[c.lieu, c.ville && c.ville !== c.lieu ? c.ville : ""].filter(Boolean).join(", ")}`,
-    url: `${site}?agenda=${encodeURIComponent(cle(c))}#dates`,
+    url: `${site}?annonce=${encodeURIComponent(cle(c))}#dates`,
     image: c.affiche ? `${site}${c.affiche}-1200.webp` : "",
     itineraire: c.lieu ? "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent([c.lieu, c.ville].filter(Boolean).join(", ")) : "",
   };
@@ -42,7 +42,8 @@ function messageDe(c, plusieurs = false) {
 let messages = [];
 const iDate = args.indexOf("--date"), iNouv = args.indexOf("--nouvelles");
 if (iDate >= 0) {
-  const c = lireConcerts(new URL("../data/concerts.json", import.meta.url)).find((x) => x.date === args[iDate + 1]);
+  const iLieu = args.indexOf("--lieu");
+  const c = lireConcerts(new URL("../data/concerts.json", import.meta.url)).find((x) => x.date === args[iDate + 1] && (iLieu < 0 || x.lieu === args[iLieu + 1]));
   if (!c) { console.error("Aucun concert à cette date dans data/concerts.json."); process.exit(1); }
   messages = [messageDe(c)];
 } else if (iNouv >= 0) {

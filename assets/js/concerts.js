@@ -48,6 +48,7 @@ function normaliser(brut) {
     return ok;
   }).map((c) => ({
     date: c.date,
+    nom: String(c.nom ?? "").trim(),
     heure: c.heure ? c.heure.padStart(5, "0") : "",
     lieu: String(c.lieu).trim(),
     ville: String(c.ville ?? "").trim(),
@@ -120,6 +121,8 @@ function blocProchain(c, aujourdhui) {
       ${affiche}
       <div class="prochaine__corps">
         <p class="prochaine__label">${c.date === aujourdhui ? "C’est ce soir" : "Prochain concert"}${libelleStatut(c)}</p>
+        ${c.nom ? `<p class="prochaine__nom">${esc(c.nom)}</p>` : ""}
+        <button type="button" class="prochaine__voir" data-annonce="${esc(JSON.stringify(c))}">★ Voir l’annonce</button>
         <p class="visuellement-cache">${esc(fmtComplet.format(d))}</p>
         <h3 class="prochaine__date" id="prochain-quand" aria-hidden="true">${esc(quand)}</h3>
         <p class="prochaine__lieu">${lieu}</p>

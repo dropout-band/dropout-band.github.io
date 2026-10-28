@@ -3663,3 +3663,41 @@ html.entree .hero__suite { animation: entree-fondu .5s ease 1s backwards; }
 
 /* Alertes activées : texte lisible sur le jaune */
 .alertes.est-active .alertes__texte { color: var(--noir); }
+
+/* ==========================================================
+   Annonce d'une date : un encart avec l'affiche, le nom, la date, le lieu et les boutons.
+   Même langage que le reste : cadre épais rouge, ombre dure, étiquette jaune pour la date (l'info du moment).
+   ========================================================== */
+.prochaine__nom { margin: 0; font-family: var(--groovy); font-size: var(--fs-h3); letter-spacing: .03em; text-transform: uppercase; line-height: 1.1; color: var(--blanc); }
+.prochaine__voir { justify-self: start; padding: 0; border: 0; background: none; font: inherit; font-size: var(--fs-petit); color: var(--jaune); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; text-align: left; }
+.prochaine__voir:focus-visible { outline: 2px solid var(--blanc); outline-offset: 3px; }
+
+.annonce-fenetre {
+  position: fixed; inset: 0; width: min(92vw, 24rem); height: fit-content; max-height: 94svh; margin: auto; padding: 0; overflow: visible;
+  border: var(--cadre) solid var(--bd-rouge); border-radius: var(--rayon); background: var(--noir-2); color: var(--blanc);
+  box-shadow: var(--ombre) var(--ombre) 0 var(--bd-rouge), 0 1.5rem 3.5rem rgb(0 0 0 / .6);
+}
+.annonce-fenetre:not([open]) { display: none; }
+.annonce-fenetre::backdrop { background: rgb(8 8 8 / .85); }
+html:has(.annonce-fenetre[open]) { overflow: hidden; }
+.annonce-fenetre__contenu { display: grid; max-height: calc(94svh - 6px); overflow-y: auto; }
+.annonce-fenetre__contenu:focus { outline: none; }
+.annonce-fenetre__affiche { display: block; width: 100%; max-height: 52svh; object-fit: contain; background: var(--noir); }
+.annonce-fenetre__texte { display: grid; gap: .6rem; padding: 1.25rem 1.25rem 1.4rem; }
+.annonce-fenetre__etiquette { margin: 0; font-family: var(--titre); font-weight: 600; font-size: var(--fs-label); letter-spacing: .18em; text-transform: uppercase; color: var(--gris-3); }
+.annonce-fenetre__titre { margin: 0; font-family: var(--groovy); font-weight: 400; font-size: var(--fs-titre); line-height: 1.05; letter-spacing: .02em; text-transform: uppercase; }
+.annonce-fenetre__date {
+  justify-self: start; margin: .1rem 0; padding: .25em .7em .15em .55em; background: var(--jaune); color: var(--noir);
+  font-family: var(--groovy); font-size: var(--fs-h3); line-height: 1.05; text-transform: uppercase; letter-spacing: .02em;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .3em) 100%, 0 100%); transform: rotate(-1.5deg);
+}
+.annonce-fenetre__lieu { margin: 0; font-size: var(--fs-corps); font-weight: 700; color: var(--blanc); }
+.annonce-fenetre__info { margin: 0; font-size: var(--fs-petit); color: var(--gris-3); }
+.annonce-fenetre__actions { display: grid; gap: .5rem; margin-top: .4rem; }
+.annonce-fenetre__actions .bouton { width: 100%; }
+@media (orientation: landscape) and (max-height: 540px) {
+  .annonce-fenetre { width: min(94vw, 44rem); }
+  .annonce-fenetre__contenu { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); }
+  .annonce-fenetre__affiche { height: 100%; max-height: none; object-fit: cover; }
+  .annonce-fenetre__actions { grid-template-columns: 1fr 1fr; }
+}
