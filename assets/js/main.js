@@ -636,26 +636,13 @@ function initFlechesMembres() {
 
 /* visionneuse */
 
-// la photo (ou l'affiche) grandit depuis sa miniature jusqu'au milieu de l'écran, comme la fiche d'un membre, et y retourne à la fermeture.
-// si la miniature est en noir et blanc, elle prend ses couleurs en grandissant. mise à l'échelle uniforme + clip-path : la photo n'est jamais déformée
-let miniatureOuverte = null, fermetureEnCours = false;
-function departVisionneuse(img, miniature) {
-  const a = miniature.getBoundingClientRect(), b = img.getBoundingClientRect();
-  if (!a.width || !b.width) return null;
-  const s = Math.max(a.width / b.width, a.height / b.height); // échelle qui couvre la miniature
-  const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
-  const rx = Math.max(0, (b.width - a.width / s) / 2), ry = Math.max(0, (b.height - a.height / s) / 2);
-  return { transform: `translate(${dx}px, ${dy}px) scale(${s})`, clipPath: `inset(${ry}px ${rx}px)` };
-}
+// ouverture simple : la photo (ou l'affiche) apparaît en fondu au centre de l'écran. la miniature s'affiche tout de suite (déjà chargée), puis la grande la remplace
 function ouvrirAffiche(bouton) {
   const dlg = $("#visionneuse");
   const img = $("[data-visionneuse-img]");
   const mini = bouton.querySelector("img");
-  miniatureOuverte = mini || null; fermetureEnCours = false;
-  img.getAnimations().forEach((an) => an.cancel());
-  // la miniature s'affiche tout de suite (déjà chargée) puis la grande la remplace ; le rapport largeur/hauteur est fixé pour que la taille ne bouge pas
   const grande = bouton.dataset.affiche;
-  img.style.setProperty("--ratio", mini && mini.naturalWidth ? mini.naturalWidth / mini.naturalHeight : "");
+  img.style.setProperty("--ratio", mini && mini.naturalWidth ? mini.naturalWidth / mini.naturalHeight : ""); // taille fixée : elle ne bouge pas quand la grande version arrive
   img.src = mini?.currentSrc || grande;
   img.alt = mini?.alt || "";
   $("[data-visionneuse-legende]").textContent = bouton.dataset.legende || "";
@@ -663,33 +650,15 @@ function ouvrirAffiche(bouton) {
   if (mini?.currentSrc && grande && mini.currentSrc !== grande) {
     const pre = new Image();
     pre.src = grande;
-    pre.decode().then(() => { if (dlg.open && miniatureOuverte === mini) img.src = grande; }).catch(() => { /* la miniature reste affichée */ });
+    pre.decode().then(() => { if (dlg.open) img.src = grande; }).catch(() => { /* la miniature reste affichée */ });
   }
-  if (mouvementReduit() || !mini) return;
-  const depart = departVisionneuse(img, mini);
-  if (!depart) return;
-  img.animate([depart, { transform: "none", clipPath: "inset(0px 0px)" }], { duration: 420, easing: "cubic-bezier(.2, .8, .2, 1)" });
-  const f = getComputedStyle(mini).filter;
-  if (f && f !== "none") img.animate([{ filter: f }, { filter: "none" }], { duration: 700, easing: "ease-out", fill: "backwards" });
 }
-function fermerAffiche() {
-  const dlg = $("#visionneuse");
-  if (!dlg.open || fermetureEnCours) return;
-  const img = $("[data-visionneuse-img]");
-  const fin = () => { img.getAnimations().forEach((an) => an.cancel()); fermetureEnCours = false; dlg.close(); };
-  const mini = miniatureOuverte;
-  const depart = !mouvementReduit() && mini && document.contains(mini) ? departVisionneuse(img, mini) : null;
-  if (!depart) { fin(); return; }
-  fermetureEnCours = true;
-  img.animate([{ transform: "none", clipPath: "inset(0px 0px)" }, depart], { duration: 300, easing: "cubic-bezier(.55, 0, .9, .45)", fill: "forwards" }).finished.then(fin, fin);
-}
-// fond, bouton « Fermer » et échap : même fermeture animée
+// fond, bouton « Fermer » : fermeture directe (échap aussi, géré par le navigateur)
 document.addEventListener("click", (e) => {
   const dlg = $("#visionneuse");
   if (!dlg?.open) return;
-  if (e.target === dlg || e.target.closest(".visionneuse__fermer")) { e.preventDefault(); fermerAffiche(); }
+  if (e.target === dlg || e.target.closest(".visionneuse__fermer")) { e.preventDefault(); dlg.close(); }
 }, true);
-$("#visionneuse")?.addEventListener("cancel", (e) => { e.preventDefault(); fermerAffiche(); });
 
 /* projecteurs de « À l'affiche » */
 // --allume (0 à 1) est posée sur la scène : au chargement elle monte d'un coup avec un scintillement de néon (après l'intro), puis suit le défilement.
@@ -786,7 +755,13 @@ function initFond() {
       const descend = prochaine === undefined ? 1 : 1 - lisse((ref - hauts[prochaine]) / zone + 0.5);
       poids[i] = monte * descend;
     });
-    images.forEach((im, i) => im.style.setProperty("--o", (poids[i] || 0).toFixed(3)));
+    images.forEach((im, i) => {
+      const o = (poids[i] || 0).toFixed(3);
+      if (im._o === o) return; // inchangé : pas de recalcul de style
+      im._o = o;
+      im.style.setProperty("--o", o);
+      im.style.visibility = Number(o) > 0.004 ? "" : "hidden"; // nappe invisible : sortie de l'affichage (économise plusieurs calques plein écran)
+    });
   };
   const planifier = () => { if (!demande) demande = requestAnimationFrame(maj); };
   addEventListener("scroll", planifier, { passive: true });
@@ -800,7 +775,7 @@ function initFond() {
 function pauseHorsEcran() {
   if (!("IntersectionObserver" in window)) return;
   const obs = new IntersectionObserver((entrees) => entrees.forEach((e) => e.target.classList.toggle("hors-ecran", !e.isIntersecting)), { rootMargin: "80px" });
-  $$(".scene, .hero__media, .hero__suite, .confiance__fenetre, .oeil").forEach((el) => obs.observe(el));
+  $$(".scene, .hero__media, .hero__suite, .confiance__fenetre, .oeil, .titre-neon, .entete-neon, .prochaine--attente").forEach((el) => obs.observe(el)); // les néons et le glitch ne tournent que s'ils sont à l'écran
 }
 
 /* premier écran : ligne de style et profondeur */
@@ -973,11 +948,14 @@ function apparitionsAuDefilement() {
     // on lit toutes les positions d'abord, puis on écrit (pas d'aller-retour de mise en page)
     const zoneEl = h * 0.2, lectures = elements.map(({ el, rang }) => ({ el, rang, r: el.getBoundingClientRect() }));
     for (const { el, rang, r } of lectures) {
-      if (!r.height) { el.style.setProperty("--ain", "1"); el.style.setProperty("--aout", "1"); continue; }
-      const ain = lisse(borne((h - r.top - rang * h * 0.035) / zoneEl));
-      const aout = lisse(borne((r.bottom - rang * h * 0.01) / zoneEl));
-      el.style.setProperty("--ain", ain.toFixed(3));
-      el.style.setProperty("--aout", aout.toFixed(3));
+      let ain = "1.000", aout = "1.000";
+      if (r.height) {
+        ain = lisse(borne((h - r.top - rang * h * 0.035) / zoneEl)).toFixed(3);
+        aout = lisse(borne((r.bottom - rang * h * 0.01) / zoneEl)).toFixed(3);
+      }
+      // on n'écrit que ce qui a changé : un élément hors écran garde sa valeur, donc aucun recalcul de style pour lui
+      if (el._ain !== ain) { el._ain = ain; el.style.setProperty("--ain", ain); }
+      if (el._aout !== aout) { el._aout = aout; el.style.setProperty("--aout", aout); }
     }
   };
   const planifier = () => { if (!demande) demande = requestAnimationFrame(maj); };

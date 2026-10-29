@@ -3690,8 +3690,15 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
 .fond__img--galerie::after { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'9'%20height%3D'9'%3E%3Crect%20width%3D'2.2'%20height%3D'2.2'%20fill%3D'rgb(84%2C134%2C206)'%20fill-opacity%3D'0.3'%2F%3E%3C%2Fsvg%3E"); }
 .fond__img--reseaux::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(124%2C184%2C84)'%20fill-opacity%3D'0.42'%2F%3E%3C%2Fsvg%3E"); }
 .fond__img--reseaux::after { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'9'%20height%3D'9'%3E%3Crect%20width%3D'2.2'%20height%3D'2.2'%20fill%3D'rgb(124%2C184%2C84)'%20fill-opacity%3D'0.3'%2F%3E%3C%2Fsvg%3E"); }
-/* téléphone : encore plus discrète, elle passe derrière le texte */
-@media (max-width: 55.99rem) { .fond__img::before, .fond__img::after { opacity: .6; } }
+/* téléphone : trame plus discrète et plus légère à dessiner. on bake la transparence dans la tuile (plus de calque en opacité sur un masque) et on retire la 2e trame, plus fine : deux fois moins de calques plein écran à composer pendant le défilement */
+@media (max-width: 55.99rem) {
+  .fond__img::after { display: none; }
+  .fond__img--dates::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(190%2C32%2C44)'%20fill-opacity%3D'0.25'%2F%3E%3C%2Fsvg%3E"); }
+  .fond__img--groupe::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(215%2C155%2C75)'%20fill-opacity%3D'0.25'%2F%3E%3C%2Fsvg%3E"); }
+  .fond__img--ecouter::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(168%2C118%2C158)'%20fill-opacity%3D'0.25'%2F%3E%3C%2Fsvg%3E"); }
+  .fond__img--galerie::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(84%2C134%2C206)'%20fill-opacity%3D'0.25'%2F%3E%3C%2Fsvg%3E"); }
+  .fond__img--reseaux::before { background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'13'%20height%3D'13'%3E%3Crect%20width%3D'3.4'%20height%3D'3.4'%20fill%3D'rgb(124%2C184%2C84)'%20fill-opacity%3D'0.25'%2F%3E%3C%2Fsvg%3E"); }
+}
 
 /* la phrase en bande de « Le groupe » est animée à l'apparition (data-anim), dont la transform remplaçait son inclinaison : on la lui redonne via --r, comme celle de Compos */
 .presentation__chute { --r: -1.5deg; }
@@ -3774,3 +3781,29 @@ html.video-fond .hero__media { filter: none; }
 
 /* « À l'affiche » : néons plus loin du titre (« Suivez-nous » garde sa distance) */
 .dates-zone .entete-neon { gap: clamp(2.3rem, 5.4vw + .8rem, 4.2rem); }
+
+/* la flèche de défilement masquée (opacity 0) ne doit pas continuer à animer */
+.hero__suite.est-cache, .hero__suite.est-cache * { animation-play-state: paused !important; }
+
+/* visionneuse : simple fondu, photo centrée */
+@media (prefers-reduced-motion: no-preference) {
+  .visionneuse[open] img { animation: visionneuse-fondu .25s ease both; }
+}
+@keyframes visionneuse-fondu { from { opacity: 0; } }
+
+/* bandeau des logos : les bords s'estompent avec deux dégradés posés dessus, pas avec un masque (un masque sur une piste très large qui défile donnait des carrés noirs sur certains téléphones) */
+.confiance__fenetre { position: relative; -webkit-mask-image: none; mask-image: none; }
+.confiance__fenetre::before, .confiance__fenetre::after { content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; width: 12%; pointer-events: none; }
+.confiance__fenetre::before { left: 0; background: linear-gradient(to right, var(--noir), transparent); }
+.confiance__fenetre::after { right: 0; background: linear-gradient(to left, var(--noir), transparent); }
+@media (prefers-reduced-motion: reduce) { .confiance__fenetre::before, .confiance__fenetre::after { display: none; } }
+
+/* clip d'en-tête : le fondu vers le noir est un dégradé posé par-dessus, plus un masque sur la vidéo (un masque oblige à retraiter chaque image du clip : lourd, donc saccades sur certains téléphones) */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  html.video-fond .hero__media { -webkit-mask-image: none; mask-image: none; }
+  html.video-fond .hero__media::after { content: ""; background: linear-gradient(to bottom, transparent 50%, var(--noir) 99%); background-size: auto; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  html.video-fond .hero__media { -webkit-mask-image: none; mask-image: none; }
+  html.video-fond .hero__media::after { content: ""; background: linear-gradient(to right, var(--noir), transparent 30%); background-size: auto; }
+}
