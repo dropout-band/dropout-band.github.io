@@ -1,8 +1,10 @@
-// Serveur de notifications Drop Out (Cloudflare Worker, offre gratuite).
+// serveur de notifications drop out (cloudflare worker, offre gratuite)
 //  POST /abonner     { endpoint, keys }  : enregistre l'appareil (appelé par le site)
 //  POST /desabonner  { endpoint }        : le retire (appelé par le site)
+//  GET  /actus                          : dernières publications de la page facebook (API meta), 15 min en cache
+//  POST /mkl-contact { email, message }  : formulaire MKL.studio du pied de page, transmis par courriel (adresse gardée en secret ici)
 //  POST /envoyer     { titre, texte, url, curseur } + mot de passe : envoie une notification (appelé par tools/notifier.mjs)
-// Données gardées : l'adresse technique du service de push de l'appareil et ses deux clés. Ni nom, ni courriel, ni IP.
+// données gardées : l'adresse technique du service de push de l'appareil et ses deux clés. ni nom, ni courriel, ni ip
 import { envoyer } from "./webpush.js";
 
 const PAR_LOT = 40; // l'offre gratuite limite à 50 appels externes par requête : on envoie par lots
@@ -15,7 +17,7 @@ async function identifiant(endpoint) {
   return [...new Uint8Array(h)].map((o) => o.toString(16).padStart(2, "0")).join("");
 }
 
-// Comparaison à temps constant du mot de passe d'envoi
+// comparaison à temps constant du mot de passe d'envoi
 async function motDePasseValide(recu, attendu) {
   if (!recu || !attendu) return false;
   const [a, b] = await Promise.all([recu, attendu].map((t) => crypto.subtle.digest("SHA-256", new TextEncoder().encode(t))));
@@ -25,16 +27,41 @@ async function motDePasseValide(recu, attendu) {
   return diff === 0;
 }
 
+// dernières publications de la page facebook, via l'API graph de meta.
+// secrets FB_TOKEN (jeton de page longue durée) et FB_PAGE (identifiant numérique), voir LISEZ-MOI.md.
+// le jeton ne quitte jamais le serveur : le site ne reçoit que du texte, des photos et des liens publics
+async function actus(env, cors) {
+  if (!env.FB_TOKEN || !env.FB_PAGE) return json({ erreur: "non configuré" }, 503, cors);
+  const cache = caches.default;
+  const cle = new Request("https://cache.drop-out.invalid/actus");
+  const garde = await cache.match(cle);
+  if (garde) return new Response(garde.body, { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=300", ...cors } });
+  const api = new URL(`https://graph.facebook.com/v21.0/${encodeURIComponent(env.FB_PAGE)}/posts`);
+  api.search = new URLSearchParams({ fields: "message,created_time,permalink_url,full_picture", limit: "8", access_token: env.FB_TOKEN });
+  let rep;
+  try { rep = await fetch(api); } catch { return json({ erreur: "Meta injoignable" }, 502, cors); }
+  if (!rep.ok) return json({ erreur: "Meta a refusé la demande (jeton expiré ?)" }, 502, cors);
+  const brut = await rep.json();
+  const https = (v) => (/^https:\/\/[^\s]{4,2000}$/.test(String(v || "")) ? String(v) : "");
+  const publications = (brut.data || [])
+    .map((p) => ({ texte: String(p.message || "").slice(0, 1200), date: String(p.created_time || ""), url: https(p.permalink_url), image: https(p.full_picture) }))
+    .filter((p) => p.url && (p.texte || p.image));
+  const corps = JSON.stringify({ publications });
+  await cache.put(cle, new Response(corps, { headers: { "Content-Type": "application/json", "Cache-Control": "max-age=900" } }));
+  return new Response(corps, { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=300", ...cors } });
+}
+
 export default {
   async fetch(requete, env) {
     const url = new URL(requete.url);
     const cors = {
       "Access-Control-Allow-Origin": env.ORIGINE,
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       Vary: "Origin",
     };
     if (requete.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+    if (requete.method === "GET" && url.pathname === "/actus") return actus(env, cors);
     if (requete.method === "GET") return new Response("Drop Out — notifications", { headers: { "Content-Type": "text/plain; charset=utf-8" } });
     if (requete.method !== "POST") return json({ erreur: "méthode" }, 405, cors);
 
@@ -43,7 +70,39 @@ export default {
     let corps;
     try { corps = JSON.parse(texte); } catch { return json({ erreur: "JSON illisible" }, 400, cors); }
 
-    // ----- Abonnement et désabonnement : appelés depuis le site, uniquement -----
+    // formulaire MKL.studio (pied de page) : le message part par courriel à l'adresse secrète MKL_EMAIL.
+    // secrets RESEND_KEY (clé de l'API resend) et MKL_EMAIL (l'adresse qui reçoit), facultatif MKL_FROM.
+    // l'adresse n'est ni dans le site ni dans le dépôt, seulement dans ces secrets
+    if (url.pathname === "/mkl-contact") {
+      if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "refusé" }, 403, cors);
+      if (!env.RESEND_KEY || !env.MKL_EMAIL) return json({ erreur: "non configuré" }, 503, cors);
+      const email = String(corps.email || "").trim().slice(0, 200);
+      const message = String(corps.message || "").trim().slice(0, 2000);
+      if (corps.piege) return json({ ok: true }, 200, cors); // champ piège rempli : c'est un robot, on fait comme si de rien n'était
+      if (Number(corps.delai) < 2500) return json({ erreur: "trop rapide" }, 429, cors); // un humain met plus de 2,5 s
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ erreur: "adresse invalide" }, 400, cors);
+      if (message.length < 10) return json({ erreur: "message trop court" }, 400, cors);
+      // plafond de 20 messages par jour pour tout le site
+      const cle = "mkl:" + new Date().toISOString().slice(0, 10);
+      const dejaEnvoyes = Number(await env.ABONNES.get(cle)) || 0;
+      if (dejaEnvoyes >= 20) return json({ erreur: "trop de messages aujourd'hui" }, 429, cors);
+      const rep = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + env.RESEND_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: env.MKL_FROM || "MKL.studio <onboarding@resend.dev>",
+          to: [env.MKL_EMAIL],
+          reply_to: email,
+          subject: "Message via le site Drop Out : " + email.replace(/[\r\n]+/g, " "),
+          text: "De : " + email + "\n\n" + message,
+        }),
+      }).catch(() => null);
+      if (!rep || !rep.ok) return json({ erreur: "envoi impossible" }, 502, cors);
+      await env.ABONNES.put(cle, String(dejaEnvoyes + 1), { expirationTtl: 172800 });
+      return json({ ok: true }, 200, cors);
+    }
+
+    // abonnement et désabonnement : appelés depuis le site, uniquement
     if (url.pathname === "/abonner" || url.pathname === "/desabonner") {
       if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "origine" }, 403, cors);
       const endpoint = String(corps.endpoint || "");
@@ -58,7 +117,7 @@ export default {
       return json({ ok: true }, 200, cors);
     }
 
-    // ----- Envoi : protégé par un mot de passe -----
+    // envoi : protégé par un mot de passe
     if (url.pathname === "/envoyer") {
       const mdp = (requete.headers.get("Authorization") || "").replace(/^Bearer /, "");
       if (!(await motDePasseValide(mdp, env.ADMIN))) return json({ erreur: "refusé" }, 401, {});
@@ -67,8 +126,9 @@ export default {
         titre: String(corps.titre || "Drop Out").slice(0, 80),
         texte: String(corps.texte || "").slice(0, 200),
         url: https(corps.url),
-        image: https(corps.image), // affiche (Android)
-        itineraire: https(corps.itineraire), // bouton « Itinéraire » (Android)
+        image: https(corps.image), // affiche (android)
+        itineraire: https(corps.itineraire), // bouton « Itinéraire » (android)
+        agenda: https(corps.agenda), // bouton « Ajouter à l'agenda » (android) : lien google agenda pré-rempli
       };
       const liste = await env.ABONNES.list({ limit: PAR_LOT, cursor: corps.curseur || undefined });
       const options = { clePublique: env.VAPID_PUBLIC, jwkPrivee: JSON.parse(env.VAPID_PRIVEE), contact: env.CONTACT };

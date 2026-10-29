@@ -1,5 +1,5 @@
-// Notifications « push » : chiffrement du message (RFC 8291, aes128gcm) et signature VAPID (RFC 8292).
-// Uniquement l'API WebCrypto, disponible telle quelle dans Cloudflare Workers et dans Node 20+.
+// notifications push : chiffrement du message (RFC 8291, aes128gcm) et signature VAPID (RFC 8292).
+// uniquement l'API webcrypto, dispo telle quelle dans cloudflare workers et node 20+
 
 const enc = new TextEncoder();
 
@@ -23,7 +23,7 @@ async function hkdf(sel, secret, info, octets) {
   return new Uint8Array(await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt: sel, info }, cle, octets * 8));
 }
 
-// Chiffre `texte` pour un abonnement { keys: { p256dh, auth } } ; renvoie le corps de la requête d'envoi.
+// chiffre `texte` pour un abonnement { keys: { p256dh, auth } } ; renvoie le corps de la requête d'envoi
 export async function chiffrer(abonnement, texte) {
   const cleNavigateur = b64u.depuis(abonnement.keys.p256dh); // 65 octets
   const secretAuth = b64u.depuis(abonnement.keys.auth); // 16 octets
@@ -45,7 +45,7 @@ export async function chiffrer(abonnement, texte) {
   return concat(sel, tailleBloc, new Uint8Array([clePubServeur.length]), clePubServeur, chiffre);
 }
 
-// En-tête d'autorisation VAPID : prouve au service de push (Google, Apple, Mozilla) que l'envoi vient du site.
+// en-tête d'autorisation VAPID : prouve au service de push (google, apple, mozilla) que l'envoi vient du site
 export async function enteteVapid(endpoint, clePublique, jwkPrivee, contact) {
   const audience = new URL(endpoint).origin;
   const entete = b64u.vers(enc.encode(JSON.stringify({ typ: "JWT", alg: "ES256" })));
@@ -55,7 +55,7 @@ export async function enteteVapid(endpoint, clePublique, jwkPrivee, contact) {
   return `vapid t=${entete}.${charge}.${b64u.vers(signature)}, k=${clePublique}`;
 }
 
-// Envoie un message à un abonnement. Renvoie le code HTTP du service de push (201 : accepté ; 404/410 : abonnement mort).
+// envoie un message à un abonnement ; renvoie le code http du service de push (201 : accepté, 404/410 : abonnement mort)
 export async function envoyer(abonnement, message, { clePublique, jwkPrivee, contact }) {
   const corps = await chiffrer(abonnement, JSON.stringify(message));
   const rep = await fetch(abonnement.endpoint, {

@@ -1,10 +1,8 @@
-// Petits utilitaires partagés.
+// petits utilitaires
 
 const params = new URLSearchParams(location.search);
 
-// Mode brouillon : repères « à renseigner » visibles en local
-// (ordinateur ou téléphone sur le même réseau), ou avec ?brouillon.
-// ?brouillon=0 permet de voir le rendu public en local.
+// mode brouillon : repères « à renseigner » visibles en local ou avec ?brouillon (?brouillon=0 pour voir le rendu public)
 const hoteLocal =
   ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) ||
   /^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname) ||
@@ -22,13 +20,13 @@ export function esc(valeur) {
   })[c]);
 }
 
-// Lien externe sûr : uniquement http(s), mailto, tel ou chemin relatif.
+// liens sûrs seulement : http(s), mailto, tel ou chemin relatif
 export function urlSure(url) {
   const u = String(url ?? "").trim();
   if (!u) return "";
   if (/^(https?:|mailto:|tel:)/i.test(u)) return u;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(u)) return ""; // javascript:, data:… refusés
-  return u.replace(/^\/+/, ""); // chemin relatif (compatible sous-dossier GitHub Pages)
+  if (/^[a-z][a-z0-9+.-]*:/i.test(u)) return ""; // javascript:, data: etc. refusés
+  return u.replace(/^\/+/, ""); // chemin relatif (ok en sous-dossier)
 }
 
 export function estExterne(url) {
@@ -39,7 +37,7 @@ export function attrsLien(url) {
   return estExterne(url) ? ' target="_blank" rel="noopener"' : "";
 }
 
-// Repère visible uniquement en mode brouillon.
+// repère visible seulement en brouillon
 export function aRenseigner(texte, balise = "span") {
   return brouillon && texte ? `<${balise} class="a-renseigner">À renseigner — ${esc(texte)}</${balise}>` : "";
 }
@@ -59,7 +57,7 @@ export async function copier(texte) {
     await navigator.clipboard.writeText(texte);
     return true;
   } catch {
-    // Repli pour les contextes sans API presse-papiers (http local, anciens navigateurs)
+    // repli sans API presse-papiers (http local, vieux navigateurs)
     const zone = document.createElement("textarea");
     zone.value = texte;
     zone.setAttribute("readonly", "");
@@ -67,7 +65,7 @@ export async function copier(texte) {
     document.body.append(zone);
     zone.select();
     let ok = false;
-    try { ok = document.execCommand("copy"); } catch { ok = false; }
+    try { ok = document.execCommand("copy"); } catch { /* refusé : ok reste false */ }
     zone.remove();
     return ok;
   }

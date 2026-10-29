@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1269 247" width="1269" height="247" role="img" aria-labelledby="title desc">
+  <title id="title">MKL.studio — logo animé</title>
+  <desc id="desc">Logo blanc sur fond noir. Deux accolades lisses encadrent un point qui devient carré en quatre secondes. Le nom MKL.studio est en pixel art ; de temps en temps, les lettres de « studio » se changent en signes qui défilent, une lettre après l’autre, avant de se fixer.</desc>
+  <style>
+    .static-symbol, .static-studio { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .animated-symbol, .animated-studio, .animated-braces { display: none; }
+      .static-symbol, .static-studio { display: inline; }
+    }
+  </style>
+  <g id="code-symbol" class="static-symbol" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="butt" stroke-linejoin="round">
+    <path id="left-brace" d="M94 42 C68 42 66 55 66 76 L66 91 C66 112 57 122 42 124 C57 126 66 136 66 157 L66 172 C66 193 68 206 94 206"/>
+    <use href="#left-brace" transform="translate(302 0) scale(-1 1)"/>
+  </g>
+  <!-- les deux accolades se métamorphosent en spirale vers le point, puis reviennent à leur forme (toutes les 2 secondes) -->
+  <g class="animated-braces" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="butt" stroke-linejoin="round">
+    <g transform="translate(151 124)"><g><animateTransform attributeName="transform" type="rotate" values="0;0;360;360;720;720" keyTimes="0;.30;.58;.64;.92;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.2 1;0 0 1 1;0.3 0 0.2 1;0 0 1 1"/><g><animateTransform attributeName="transform" type="scale" values="1;1;.1;.1;1;1" keyTimes="0;.30;.58;.64;.92;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.2 1;0 0 1 1;0.3 0 0.2 1;0 0 1 1"/><g transform="translate(-151 -124)"><path d="M94 42 C68 42 66 55 66 76 L66 91 C66 112 57 122 42 124 C57 126 66 136 66 157 L66 172 C66 193 68 206 94 206"/></g></g></g></g>
+    <g transform="translate(151 124)"><g><animateTransform attributeName="transform" type="rotate" values="0;0;360;360;720;720" keyTimes="0;.30;.58;.64;.92;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.2 1;0 0 1 1;0.3 0 0.2 1;0 0 1 1"/><g><animateTransform attributeName="transform" type="scale" values="1;1;.1;.1;1;1" keyTimes="0;.30;.58;.64;.92;1" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.2 1;0 0 1 1;0.3 0 0.2 1;0 0 1 1"/><g transform="translate(-151 -124)"><path d="M94 42 C68 42 66 55 66 76 L66 91 C66 112 57 122 42 124 C57 126 66 136 66 157 L66 172 C66 193 68 206 94 206" transform="translate(302 0) scale(-1 1)"/></g></g></g></g>
+  </g>
+  <g class="animated-symbol">
+    <!-- rebond : petit saut de la boule -->
+    <g><animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 -16;0 0;0 -5;0 0;0 0" keyTimes="0;.87;.91;.945;.965;.985;1" dur="4s" repeatCount="indefinite"/>
+    <!-- clignement : la boule s’aplatit deux fois (comme l’œil du logo du groupe) -->
+    <g transform="translate(151 124)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1 1;1 .08;1 1;1 1;1 .08;1 1;1 1" keyTimes="0;.78;.805;.83;.85;.87;.895;1" dur="4s" repeatCount="indefinite"/>
+    <g transform="translate(-151 -124)"><rect x="122" y="95" width="58" height="58" rx="29" fill="#fff">
+    <animate attributeName="rx" values="29;29;0;0;29" keyTimes="0;0.12;0.5;0.62;1" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animateTransform attributeName="transform" type="rotate" values="0 151 124;0 151 124;90 151 124;90 151 124;180 151 124" keyTimes="0;0.12;0.5;0.62;1" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+    <animate attributeName="opacity" values="1;1;.55;1;1" keyTimes="0;0.3;0.5;0.62;1" dur="4s" repeatCount="indefinite"/>
+  </rect></g></g></g></g></g>
+  <rect class="static-symbol" x="122" y="95" width="58" height="58" fill="#fff"/>
+  <path id="wordmark" fill="#fff" d="M410 66h21v1h-21z M523 66h22v2h-22z M524 68h21v2h-21z M523 70h22v12h-22z M332 66h21v21h-21z M506 82h39v5h-39z M409 67h22v21h-22z M332 87h22v1h-22z M506 87h22v1h-22z M506 88h21v10h-21z M332 88h41v17h-41z M389 88h42v17h-42z M491 98h36v7h-36z M456 66h21v44h-21z M491 105h20v5h-20z M332 105h99v10h-99z M332 115h22v1h-22z M456 110h55v10h-55z M456 120h54v1h-54z M456 121h41v6h-41z M456 127h55v1h-55z M456 128h56v6h-56z M456 134h22v1h-22z M490 134h22v1h-22z M371 115h21v22h-21z M491 135h21v6h-21z M491 141h37v7h-37z M505 148h23v11h-23z M569 66h22v95h-22z M505 159h40v5h-40z M523 164h22v16h-22z M524 180h21v1h-21z M409 115h22v67h-22z M332 116h21v66h-21z M456 135h21v47h-21z M673 160h22v22h-22z M569 161h79v21h-79z M523 181h22v1h-22z"/>
+  <!-- « studio » : de temps en temps, chaque lettre devient à son tour un rouleau de signes (style « matrix »), vers le bas ou vers le haut, puis se fixe sur la vraie lettre ; la lettre suivante démarre un peu après -->
+  <defs>
+    <filter id="flou-rouleau" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="0 3.2"/></filter>
+    <clipPath id="slot0"><rect x="704" y="48" width="87" height="140"/></clipPath>
+    <clipPath id="slot1"><rect x="799" y="48" width="73" height="140"/></clipPath>
+    <clipPath id="slot2"><rect x="880" y="48" width="92" height="140"/></clipPath>
+    <clipPath id="slot3"><rect x="980" y="48" width="108" height="140"/></clipPath>
+    <clipPath id="slot4"><rect x="1096" y="48" width="50" height="140"/></clipPath>
+    <clipPath id="slot5"><rect x="1154" y="48" width="142" height="140"/></clipPath>
+  </defs>
+  <g class="animated-studio" font-family="'MS Gothic','Osaka-Mono','Noto Sans Mono CJK JP','Noto Sans JP',monospace" font-size="118" fill="#fff">
+    <path fill="#fff" d="M736 94h57v8h-57z M737 102h56v2h-56z M736 104h57v6h-57z M720 110h73v5h-73z M720 115h21v13h-21z M720 128h63v6h-63z M724 134h59v1h-59z M721 134h1v1h-1z M736 135h47v6h-47z M736 141h48v1h-48z M736 142h63v4h-63z M737 146h63v2h-63z M778 148h22v1h-22z M779 149h21v12h-21z M749 161h23v1h-23z M777 161h23v1h-23z M720 162h80v2h-80z M720 164h79v1h-79z M720 165h80v1h-80z M720 166h69v1h-69z M720 167h63v15h-63z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.50;0.60"/></path>
+    <g clip-path="url(#slot0)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.50;0.60"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 590" dur="0.9s" repeatCount="indefinite"/><text x="768" y="-414">ﾊ</text><text x="768" y="-296">ﾐ</text><text x="768" y="-178">ﾋ</text><text x="768" y="-60">ｳ</text><text x="768" y="58">ｼ</text><text x="768" y="176">ﾊ</text></g>
+    </g>
+    <path fill="#fff" d="M826 66h22v28h-22z M813 94h55v1h-55z M813 95h54v8h-54z M813 103h55v11h-55z M813 114h54v1h-54z M826 115h22v46h-22z M826 161h41v1h-41z M826 162h42v4h-42z M827 166h41v1h-41z M843 167h25v13h-25z M843 180h24v1h-24z M843 181h25v1h-25z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.57;0.67"/></path>
+    <g clip-path="url(#slot1)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.57;0.67"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 -590" dur="0.9s" repeatCount="indefinite"/><text x="836" y="176">ｱ</text><text x="836" y="294">ﾎ</text><text x="836" y="412">0</text><text x="836" y="530">ﾃ</text><text x="836" y="648">1</text><text x="836" y="766">ｱ</text></g>
+    </g>
+    <path fill="#fff" d="M893 94h22v67h-22z M951 94h21v67h-21z M893 161h79v5h-79z M896 166h76v1h-76z M894 166h1v1h-1z M909 167h63v5h-63z M910 172h62v10h-62z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.64;0.74"/></path>
+    <g clip-path="url(#slot2)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.64;0.74"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 590" dur="0.9s" repeatCount="indefinite"/><text x="926" y="-414">ﾂ</text><text x="926" y="-296">ｵ</text><text x="926" y="-178">7</text><text x="926" y="-60">ﾘ</text><text x="926" y="58">ｴ</text><text x="926" y="176">ﾂ</text></g>
+    </g>
+    <path fill="#fff" d="M1059 59h21v34h-21z M1058 93h22v1h-22z M1015 94h65v5h-65z M1014 99h66v2h-66z M1015 101h65v2h-65z M1014 103h66v7h-66z M998 110h82v5h-82z M998 115h22v46h-22z M1059 115h21v46h-21z M998 161h82v6h-82z M1015 167h65v15h-65z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.71;0.81"/></path>
+    <g clip-path="url(#slot3)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.71;0.81"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 -590" dur="0.9s" repeatCount="indefinite"/><text x="1034" y="176">ｶ</text><text x="1034" y="294">ｷ</text><text x="1034" y="412">2</text><text x="1034" y="530">ﾏ</text><text x="1034" y="648">ｹ</text><text x="1034" y="766">ｶ</text></g>
+    </g>
+    <path fill="#fff" d="M1107 59h21v21h-21z M1108 80h20v1h-20z M1107 94h21v88h-21z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.78;0.88"/></path>
+    <g clip-path="url(#slot4)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.78;0.88"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 590" dur="0.9s" repeatCount="indefinite"/><text x="1121" y="-414">ﾒ</text><text x="1121" y="-296">ﾅ</text><text x="1121" y="-178">9</text><text x="1121" y="-60">ｾ</text><text x="1121" y="58">ﾑ</text><text x="1121" y="176">ﾒ</text></g>
+    </g>
+    <path fill="#fff" d="M1170 94h49v5h-49z M1170 99h50v11h-50z M1154 110h83v5h-83z M1214 115h23v1h-23z M1154 115h21v46h-21z M1215 116h22v45h-22z M1154 161h83v5h-83z M1154 166h78v1h-78z M1170 167h50v3h-50z M1170 170h49v2h-49z M1170 172h50v5h-50z M1170 177h49v5h-49z"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="visible;hidden;visible" keyTimes="0;0.85;0.95"/></path>
+    <g clip-path="url(#slot5)" visibility="hidden"><animate attributeName="visibility" dur="4s" repeatCount="indefinite" calcMode="discrete" values="hidden;visible;hidden" keyTimes="0;0.85;0.95"/>
+      <g text-anchor="middle" filter="url(#flou-rouleau)"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 -590" dur="0.9s" repeatCount="indefinite"/><text x="1225" y="176">ﾗ</text><text x="1225" y="294">ﾈ</text><text x="1225" y="412">3</text><text x="1225" y="530">ﾀ</text><text x="1225" y="648">ﾇ</text><text x="1225" y="766">ﾗ</text></g>
+    </g>
+  </g>
+  <path class="static-studio" fill="#fff" d="M1107 59h21v21h-21z M1108 80h20v1h-20z M1059 59h21v34h-21z M826 66h22v28h-22z M1058 93h22v1h-22z M813 94h55v1h-55z M1170 94h49v5h-49z M1015 94h65v5h-65z M1014 99h66v2h-66z M736 94h57v8h-57z M813 95h54v8h-54z M1015 101h65v2h-65z M737 102h56v2h-56z M1170 99h50v11h-50z M1014 103h66v7h-66z M736 104h57v6h-57z M813 103h55v11h-55z M1154 110h83v5h-83z M720 110h73v5h-73z M998 110h82v5h-82z M813 114h54v1h-54z M1214 115h23v1h-23z M720 115h21v13h-21z M720 128h63v6h-63z M724 134h59v1h-59z M721 134h1v1h-1z M736 135h47v6h-47z M736 141h48v1h-48z M736 142h63v4h-63z M737 146h63v2h-63z M778 148h22v1h-22z M893 94h22v67h-22z M951 94h21v67h-21z M998 115h22v46h-22z M1059 115h21v46h-21z M1154 115h21v46h-21z M826 115h22v46h-22z M1215 116h22v45h-22z M779 149h21v12h-21z M749 161h23v1h-23z M777 161h23v1h-23z M826 161h41v1h-41z M720 162h80v2h-80z M720 164h79v1h-79z M893 161h79v5h-79z M1154 161h83v5h-83z M826 162h42v4h-42z M720 165h80v1h-80z M998 161h82v6h-82z M720 166h69v1h-69z M896 166h76v1h-76z M1154 166h78v1h-78z M894 166h1v1h-1z M827 166h41v1h-41z M1170 167h50v3h-50z M909 167h63v5h-63z M1170 170h49v2h-49z M1170 172h50v5h-50z M843 167h25v13h-25z M843 180h24v1h-24z M1107 94h21v88h-21z M720 167h63v15h-63z M1015 167h65v15h-65z M910 172h62v10h-62z M1170 177h49v5h-49z M843 181h25v1h-25z"/>
+</svg>

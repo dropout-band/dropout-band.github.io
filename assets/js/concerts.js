@@ -1,4 +1,4 @@
-// Programme des concerts : chargement, tri (heure de Paris), affichage.
+// programme des concerts : chargement, tri (heure de Paris), affichage
 import { esc, urlSure, attrsLien, apercuConcerts, FLECHE } from "./outils.js";
 
 const FUSEAU = "Europe/Paris";
@@ -8,7 +8,7 @@ const STATUTS = {
   annule: "Annulé",
 };
 
-// Date et heure actuelles à Paris, quel que soit le fuseau de l'appareil.
+// date et heure à Paris, quel que soit le fuseau de l'appareil
 export function maintenantParis() {
   const p = Object.fromEntries(
     new Intl.DateTimeFormat("en-CA", {
@@ -19,21 +19,22 @@ export function maintenantParis() {
   return { date: `${p.year}-${p.month}-${p.day}`, heure: `${p.hour}:${p.minute}` };
 }
 
-// Les dates du fichier sont des dates calendaires françaises :
-// on les formate en UTC à midi pour éviter tout décalage de jour.
+// les dates du fichier sont des dates françaises : on les formate en UTC à midi pour éviter un décalage de jour
 function dateCivile(iso) {
   const [a, m, j] = iso.split("-").map(Number);
   return new Date(Date.UTC(a, m - 1, j, 12));
 }
 const fmt = (options) => new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", ...options });
-const fmtJourSemaine = fmt({ weekday: "long" });
 const fmtMoisCourt = fmt({ month: "short" });
 const fmtComplet = fmt({ weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+// largeur et hauteur de l'affiche (data/concerts.json : ratio), pour réserver sa place avant le chargement
+const dimsAffiche = (c) => (c && c.ratio ? ` width="480" height="${Math.round(480 / c.ratio)}" style="aspect-ratio:${c.ratio}"` : "");
 
 export function heureFr(h) {
   if (!h) return "";
   const [hh, mm] = h.split(":");
-  return `${Number(hh)} h${mm && mm !== "00" ? ` ${mm}` : ""}`;
+  return `${Number(hh)}\u00a0h${mm && mm !== "00" ? `\u00a0${mm}` : ""}`;
 }
 
 function normaliser(brut) {
@@ -69,8 +70,7 @@ export function trier(concerts) {
   return { aVenir, passes, prochain, aujourdhui };
 }
 
-// Chargement : le service worker sert la version réseau si possible,
-// sinon la dernière version enregistrée (signalée par un en-tête).
+// chargement : le service worker sert la version réseau si possible, sinon la dernière enregistrée (signalée par un en-tête)
 export async function chargerConcerts() {
   const url = apercuConcerts ? "data/concerts.exemple.json" : "data/concerts.json";
   const rep = await fetch(url, { cache: "no-cache" });
@@ -85,7 +85,7 @@ const libelleStatut = (c) => (c.statut ? ` <span class="statut statut--${c.statu
 const jour2 = (d) => String(d.getUTCDate()).padStart(2, "0");
 const lienActif = (c) => c.lien && c.statut !== "annule";
 
-// Itinéraire : ouvre l'application de cartes de l'appareil (ou Google Maps) vers le lieu, sans rien charger au préalable.
+// itinéraire : ouvre l'appli de cartes de l'appareil (ou google maps) vers le lieu
 export const itineraireUrl = (c) =>
   "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent([c.lieu, c.ville].filter(Boolean).join(", "));
 const peutAller = (c) => c.lieu && c.statut !== "annule";
@@ -98,8 +98,7 @@ const descriptionAccessible = (c) => `${c.lieu}, ${fmtComplet.format(dateCivile(
 const fmtJourCourt = fmt({ weekday: "short" });
 const fmtMoisCourt2 = fmt({ month: "short" });
 
-// La carte de l'annonce : une petite affiche, la date en grand, le lieu et l'horaire.
-// Une date sans horaire affiche « Horaire à confirmer ».
+// carte de l'annonce : petite affiche, date en grand, lieu et horaire (« Horaire à confirmer » s'il n'y en a pas)
 function blocProchain(c, aujourdhui) {
   const d = dateCivile(c.date);
   const quand = c.date === aujourdhui
@@ -110,7 +109,7 @@ function blocProchain(c, aujourdhui) {
   const legende = [c.lieu, c.ville].filter(Boolean).join(", ");
   const affiche = c.affiche
     ? `<button type="button" class="prochaine__affiche" data-affiche="${esc(c.affiche)}-1200.webp" data-legende="${esc(legende)}" aria-label="Agrandir l’affiche">
-        <img src="${esc(c.affiche)}-480.webp" alt="Affiche : ${esc(descriptionAccessible(c))}" decoding="async">
+        <img src="${esc(c.affiche)}-480.webp" alt="Affiche : ${esc(descriptionAccessible(c))}"${dimsAffiche(c)} decoding="async">
       </button>`
     : "";
   const lien = lienActif(c)
@@ -138,36 +137,15 @@ function blocProchain(c, aujourdhui) {
     </article>`;
 }
 
-// Quand rien n'est annoncé : seulement « À venir… » et une affiche vide, au point d'interrogation
-// qui bouge (la carte « avec une date » reprend la même mise en page).
+// rien d'annoncé : « À venir… » et une affiche vide ; même mise en page que la carte avec une date
 function blocAttente() {
-  // Deux projecteurs de part et d'autre du titre « Prochaine date », dont les faisceaux se rejoignent
-  // sur un micro. Tout est graphique, sauf « À venir… ».
   return `
     <article class="prochaine prochaine--attente" aria-label="Aucune date annoncée pour le moment">
-      <div class="scene-cadre">
-        <svg class="scene" viewBox="0 0 360 114" aria-hidden="true" focusable="false">
-          <defs>
-            <linearGradient id="faisceau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3d6" stop-opacity=".6"/><stop offset=".8" stop-color="#ffd48a" stop-opacity=".1"/><stop offset="1" stop-color="#ffd48a" stop-opacity="0"/></linearGradient>
-            <linearGradient id="sol" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eeebe4" stop-opacity="0"/><stop offset=".5" stop-color="#eeebe4" stop-opacity=".8"/><stop offset="1" stop-color="#eeebe4" stop-opacity="0"/></linearGradient>
-          </defs>
-          <rect x="20" y="108" width="320" height="1.6" fill="url(#sol)"/>
-          <g class="scene__lampe scene__lampe--g"><polygon points="12,2 28,2 214,110 146,110" fill="url(#faisceau)"/></g>
-          <g class="scene__lampe scene__lampe--d"><polygon points="332,2 348,2 214,110 146,110" fill="url(#faisceau)"/></g>
-          <g class="scene__poussiere" fill="#fff3d6" transform="translate(0 12)"><circle cx="150" cy="70" r="1.2"/><circle cx="168" cy="52" r="1"/><circle cx="196" cy="62" r="1.3"/><circle cx="210" cy="78" r="1"/><circle cx="135" cy="80" r="1"/><circle cx="222" cy="56" r="1.1"/><circle cx="180" cy="40" r="1"/></g>
-          <g transform="translate(180 108.5) scale(.72) translate(-180 -94)"><g class="scene__micro" fill="none" stroke="#eeebe4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M180 94V62"/><path d="M166 94h28"/><path d="M180 62c0-7-7-8-7-14"/>
-            <rect x="165" y="28" width="16" height="25" rx="8" transform="rotate(-18 173 40)" fill="#151514"/>
-            <path d="M166 40l15 5.5M167 47l15 5.5" transform="rotate(-18 173 40)" stroke-width="1.3" opacity=".55"/>
-          </g></g>
-          <g class="scene__tetes" fill="#eeebe4"><rect x="8" y="-2" width="24" height="6" rx="2"/><rect x="328" y="-2" width="24" height="6" rx="2"/></g>
-        </svg>
-      </div>
-      <h3 class="prochaine__stay">À venir…</h3>
+      <h3 class="prochaine__stay"><span class="attente__texte" data-texte="Prochainement">Prochainement</span></h3>
     </article>`;
 }
 
-// Une ligne de la liste des dates à venir (sous la carte du prochain concert).
+// une ligne de la liste des dates à venir (sous la carte du prochain concert)
 export function ligneDate(c) {
   const d = dateCivile(c.date);
   const meta = [esc(c.ville), heureFr(c.heure)].filter(Boolean).join(" · ");
@@ -189,8 +167,7 @@ export function ligneDate(c) {
     </li>`;
 }
 
-// Annonce centrée sous l'en-tête : affiche + billet du prochain concert,
-// ou la carte vide « À venir… » quand rien n'est annoncé.
+// annonce centrée sous l'en-tête : affiche + billet du prochain concert, ou la carte vide
 export function rendreConcerts(conteneur, listeSuivantes, { aVenir, prochain, aujourdhui }) {
   conteneur.innerHTML = prochain ? blocProchain(prochain, aujourdhui) : blocAttente();
 
@@ -199,7 +176,7 @@ export function rendreConcerts(conteneur, listeSuivantes, { aVenir, prochain, au
   listeSuivantes.hidden = !autres.length;
 }
 
-// Affiches des dates passées : une tuile par affiche (une affiche peut couvrir plusieurs dates).
+// affiches des dates passées : une tuile par affiche (une affiche peut couvrir plusieurs dates)
 const fmtCourt = (iso) => iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(2, 4);
 export function tuilesAffiches(passes) {
   const groupes = new Map();
@@ -214,13 +191,13 @@ export function tuilesAffiches(passes) {
     return `
       <li class="affiche">
         <button type="button" data-affiche="${esc(base)}-1200.webp" data-legende="${esc(legende)}">
-          <img src="${esc(base)}-480.webp" alt="${esc(alt)}" loading="lazy" decoding="async">
+          <img src="${esc(base)}-480.webp" alt="${esc(alt)}"${dimsAffiche(dates[0])} loading="lazy" decoding="async">
         </button>
       </li>`;
   }).join("");
 }
 
-// Fichier agenda (.ics) généré localement, heure de Paris.
+// fichier .ics généré dans le navigateur, heure de Paris
 export function telechargerIcs(c, nomGroupe) {
   const echap = (t) => String(t).replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
   const compact = (iso) => iso.replaceAll("-", "");
@@ -257,7 +234,7 @@ export function telechargerIcs(c, nomGroupe) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// Données structurées (moteurs de recherche) pour les dates à venir.
+// données structurées pour les moteurs de recherche (dates à venir)
 export function donneesStructurees(aVenir, nomGroupe) {
   document.querySelector("script[data-jsonld-concerts]")?.remove();
   if (!aVenir.length || apercuConcerts) return;
@@ -280,4 +257,4 @@ export function donneesStructurees(aVenir, nomGroupe) {
 
 export const formatEnregistrement = (ts) =>
   new Intl.DateTimeFormat("fr-FR", { timeZone: FUSEAU, day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })
-    .format(new Date(ts)).replace(":", " h ");
+    .format(new Date(ts)).replace(":", "\u00a0h\u00a0");

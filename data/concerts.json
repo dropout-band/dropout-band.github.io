@@ -8,7 +8,8 @@
       "info": "Clôture du concours de court métrage.",
       "lien": "",
       "statut": "",
-      "affiche": "assets/affiches/2026-10-24-lussas"
+      "affiche": "assets/affiches/2026-10-24-lussas",
+      "ratio": 0.8
     },
     {
       "date": "2026-08-29",
@@ -18,7 +19,8 @@
       "info": "Place du Chambon, de 17 h à minuit.",
       "lien": "",
       "statut": "entree-libre",
-      "affiche": "assets/affiches/2026-08-29-tintamayres"
+      "affiche": "assets/affiches/2026-08-29-tintamayres",
+      "ratio": 0.707
     },
     {
       "date": "2026-07-24",
@@ -28,7 +30,8 @@
       "info": "",
       "lien": "",
       "statut": "",
-      "affiche": "assets/affiches/2026-ete-tournee"
+      "affiche": "assets/affiches/2026-ete-tournee",
+      "ratio": 0.707
     },
     {
       "date": "2026-06-21",
@@ -48,7 +51,8 @@
       "info": "",
       "lien": "",
       "statut": "",
-      "affiche": "assets/affiches/2025-08-09-meyras"
+      "affiche": "assets/affiches/2025-08-09-meyras",
+      "ratio": 0.707
     }
   ]
 }

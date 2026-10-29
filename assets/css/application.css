@@ -74,3 +74,18 @@
   .appli { max-width: 40rem; }
   .appli .hero__logo { width: 28rem; }
 }
+
+/* fond rouge profond, avec des halos aux coins et une trame de points qui s'estompe vers le centre */
+.page-appli { background: #0a0506; position: relative; overflow-x: hidden; }
+.page-appli::before, .page-appli::after { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.page-appli::before {
+  background:
+    radial-gradient(circle 55vmax at 0% 100%, rgb(150 18 28 / .6), transparent 70%),
+    radial-gradient(circle 50vmax at 100% 0%, rgb(120 12 22 / .5), transparent 70%);
+}
+.page-appli::after {
+  background: radial-gradient(circle, rgb(200 40 52 / .55) 0 2px, transparent 2.8px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(circle 32vmax at 0% 100%, #000 10%, transparent 100%), radial-gradient(circle 30vmax at 100% 0%, #000 10%, transparent 100%);
+  mask-image: radial-gradient(circle 32vmax at 0% 100%, #000 10%, transparent 100%), radial-gradient(circle 30vmax at 100% 0%, #000 10%, transparent 100%);
+}
+.page-appli .appli { position: relative; z-index: 1; }

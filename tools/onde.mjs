@@ -1,12 +1,12 @@
-// Prépare un morceau pour le lecteur du site (facultatif — nécessite « lamejs »).
-// Installation unique :   npm install --prefix tools
-// Utilisation :           node tools/onde.mjs <morceau.wav> <nom> [--duree=30] [--debut=75] [--kbps=192] [--sans-mp3]
-//   --duree=30  ne garde qu'un extrait de 30 s (fondu au début et à la fin).
-//   --debut=75  début de l'extrait, en secondes ; sans lui, le passage le plus intense est choisi.
-// Exemple :               node tools/onde.mjs ~/Musique/mon-morceau.wav mon-morceau --duree=30
-//   → assets/audio/mon-morceau.mp3   (léger, lisible partout)
-//   → assets/audio/mon-morceau.json  (forme d'onde : le dessin affiché dans le lecteur)
-// Ensuite, dans content/site.js (section musique) :
+// prépare un morceau pour le lecteur du site (facultatif, demande lamejs).
+// installation unique : npm install --prefix tools
+// usage : node tools/onde.mjs <morceau.wav> <nom> [--duree=30] [--debut=75] [--kbps=192] [--sans-mp3]
+//   --duree=30  garde un extrait de 30 s (fondu au début et à la fin)
+//   --debut=75  début de l'extrait en secondes ; sans lui, le passage le plus intense est choisi
+// exemple : node tools/onde.mjs ~/Musique/mon-morceau.wav mon-morceau --duree=30
+//   assets/audio/mon-morceau.mp3   (léger, lisible partout)
+//   assets/audio/mon-morceau.json  (forme d'onde affichée dans le lecteur)
+// ensuite dans content/site.js (musique) :
 //   titres: [{ titre: "Mon morceau", fichier: "assets/audio/mon-morceau.mp3", onde: "assets/audio/mon-morceau.json" }]
 import { createRequire } from "node:module";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -23,7 +23,7 @@ const kbps = nombre("kbps") || 192;
 const sortie = join(dirname(fileURLToPath(import.meta.url)), "..", "assets", "audio");
 mkdirSync(sortie, { recursive: true });
 
-/* ---------- Lecture du WAV (PCM 16/24/32 bits ou flottant 32 bits) ---------- */
+/* lecture du wav (pcm 16/24/32 bits ou flottant 32 bits) */
 const buf = readFileSync(source);
 if (buf.toString("ascii", 0, 4) !== "RIFF" || buf.toString("ascii", 8, 12) !== "WAVE") throw new Error("Ce fichier n'est pas un WAV.");
 let fmt = null, debut = 0, taille = 0;
@@ -48,7 +48,7 @@ const lire = (i) => {
 const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 console.log(`${fmt.canaux} canal(aux), ${fmt.hz} Hz, ${fmt.bits} bits${flottant ? " (flottant)" : ""}, ${mmss(totalComplet / fmt.hz)}`);
 
-/* ---------- Extrait (facultatif) ---------- */
+/* extrait (facultatif) */
 const dureeExtrait = nombre("duree"), debutExtrait = nombre("debut");
 const extrait = Number.isFinite(dureeExtrait) && dureeExtrait > 0;
 let total = totalComplet;
@@ -57,7 +57,7 @@ if (extrait) {
   if (Number.isFinite(debutExtrait)) {
     depart = Math.min(Math.max(0, Math.round(debutExtrait * fmt.hz)), totalComplet - longueur);
   } else {
-    // Sans --debut : la fenêtre la plus intense (énergie moyenne la plus forte)
+    // sans --debut : la fenêtre la plus intense (énergie moyenne la plus forte)
     const bloc = Math.round(fmt.hz / 2), nb = Math.floor(totalComplet / bloc), energie = [];
     for (let b = 0; b < nb; b++) {
       let somme = 0, n = 0;
@@ -76,11 +76,11 @@ if (extrait) {
   console.log(`Extrait : de ${mmss(depart / fmt.hz)} à ${mmss((depart + total) / fmt.hz)} (${(total / fmt.hz).toFixed(1)} s)`);
 }
 const duree = total / fmt.hz;
-// Fondu : 0,4 s à l'entrée, 2 s à la sortie (extrait seulement)
+// fondu : 0,4 s à l'entrée, 2 s à la sortie (extrait seulement)
 const fonduEntree = extrait ? Math.round(0.4 * fmt.hz) : 0, fonduSortie = extrait ? Math.round(2 * fmt.hz) : 0;
 const gain = (i) => Math.min(1, fonduEntree ? i / fonduEntree : 1, fonduSortie ? (total - i) / fonduSortie : 1);
 
-/* ---------- Forme d'onde : 300 pics normalisés ---------- */
+/* forme d'onde : 300 pics normalisés */
 const N = 300, pics = new Array(N).fill(0);
 for (let b = 0; b < N; b++) {
   const a = Math.floor((b * total) / N), z = Math.floor(((b + 1) * total) / N);
@@ -97,11 +97,11 @@ const normalises = pics.map((v) => Math.round(Math.pow(v / global, 0.75) * 100) 
 writeFileSync(join(sortie, `${nom}.json`), JSON.stringify({ duree: Math.round(duree * 10) / 10, pics: normalises }));
 console.log(`assets/audio/${nom}.json`);
 
-/* ---------- MP3 ---------- */
+/* mp3 */
 if (options.includes("--sans-mp3")) process.exit(0);
 let lame;
 try {
-  // Le point d'entrée de lamejs est cassé sous Node : on charge sa version « tout-en-un ».
+  // le point d'entrée de lamejs est cassé sous node : on charge sa version tout-en-un
   const require = createRequire(import.meta.url);
   lame = new Function(readFileSync(require.resolve("lamejs/lame.all.js"), "utf8") + "; return lamejs;")();
 } catch {

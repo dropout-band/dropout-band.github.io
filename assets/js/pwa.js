@@ -1,5 +1,4 @@
-// PWA : service worker et aide « Ajouter à l'écran d'accueil ».
-// Aucune sollicitation à l'arrivée : l'action reste dans le pied de page et le menu.
+// pwa : service worker et aide à l'installation. pas de pop-up à l'arrivée, l'action est dans le pied de page et le menu
 
 import { aideInstallation } from "./aide-installation.js";
 
@@ -30,13 +29,20 @@ async function installer() {
 }
 
 export function initPwa() {
+  // en local : pas de service worker, on retire les anciens et leurs caches (cf. LOCAL dans sw.js)
+  if (/^(localhost|127.|192.168.|10.|172.(1[6-9]|2d|3[01]).)/.test(location.hostname)) {
+    navigator.serviceWorker?.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+    window.caches?.keys().then((ns) => ns.forEach((n) => caches.delete(n)));
+    window.addEventListener("beforeinstallprompt", (e) => e.preventDefault());
+    return;
+  }
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
-    // Chemin relatif : fonctionne aussi dans un sous-dossier GitHub Pages.
+    // chemin relatif pour marcher aussi dans un sous-dossier github pages
     navigator.serviceWorker.register("sw.js").catch((e) => console.warn("Service worker non enregistré :", e));
   }
 
   window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault(); // on garde la demande pour le bouton discret
+    e.preventDefault(); // on garde l'événement pour le bouton du pied de page
     demandeInstallation = e;
   });
   window.addEventListener("appinstalled", () => { demandeInstallation = null; majBoutons(); });

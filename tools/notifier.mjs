@@ -1,10 +1,10 @@
-// Envoie une notification à tous les abonnés.
-//   node tools/notifier.mjs "Titre" "Texte" [adresse-à-ouvrir]     un message libre
-//   node tools/notifier.mjs --date 2026-11-21                      annonce le concert de cette date (affiche, lieu, itinéraire)
-//   node tools/notifier.mjs --nouvelles ancien.json                annonce les dates absentes de l'ancien fichier (utilisé par GitHub)
-//   ajouter --essai pour voir ce qui serait envoyé, sans rien envoyer
-// Réglages : variables NOTIF_SERVEUR, NOTIF_MDP et NOTIF_SITE, ou le fichier notifications/.secret.json :
-//   { "serveur": "https://drop-out-notifications.xxx.workers.dev", "mdp": "le-mot-de-passe-ADMIN", "site": "https://monnom.github.io/drop-out/" }
+// envoie une notification à tous les abonnés.
+//   node tools/notifier.mjs "Titre" "Texte" [adresse]     message libre
+//   node tools/notifier.mjs --date 2026-11-21              annonce le concert de cette date (affiche, lieu, itinéraire)
+//   node tools/notifier.mjs --nouvelles ancien.json        annonce les dates absentes de l'ancien fichier (utilisé par github)
+//   --essai pour voir ce qui serait envoyé sans rien envoyer
+// réglages : variables NOTIF_SERVEUR, NOTIF_MDP et NOTIF_SITE, ou notifications/.secret.json :
+//   { "serveur": "https://drop-out-notifications.xxx.workers.dev", "mdp": "mot-de-passe-ADMIN", "site": "https://monnom.github.io/drop-out/" }
 import { readFileSync } from "node:fs";
 
 const args = process.argv.slice(2);
@@ -27,7 +27,31 @@ const jourCourt = (iso) => {
 };
 const heureFr = (h) => (h ? h.replace(":", " h ").replace(/ h 00$/, " h") : "");
 
-// Un concert devient un message : titre, texte, lien dans l'appli, affiche, itinéraire.
+// lien « Ajouter à Google Agenda » : l'événement arrive rempli (titre, date, heure de Paris, lieu), il reste à valider.
+// mêmes règles que le .ics du site : 2 h sans autre indication, journée entière sans heure
+function lienAgenda(c) {
+  const compact = (iso) => iso.replaceAll("-", "");
+  const lendemain = (iso) => new Date(Date.parse(iso + "T12:00:00Z") + 864e5).toISOString().slice(0, 10);
+  let dates;
+  if (c.heure) {
+    const [h, m] = c.heure.split(":").map(Number), pad = (x) => String(x).padStart(2, "0");
+    const fin = h + 2;
+    dates = `${compact(c.date)}T${pad(h)}${pad(m)}00/${compact(fin >= 24 ? lendemain(c.date) : c.date)}T${pad(fin % 24)}${pad(m)}00`;
+  } else {
+    dates = `${compact(c.date)}/${compact(lendemain(c.date))}`;
+  }
+  const p = new URLSearchParams({
+    action: "TEMPLATE",
+    text: `Drop Out — ${c.nom || c.lieu}`,
+    dates,
+    ctz: "Europe/Paris",
+    location: [c.lieu, c.ville].filter(Boolean).join(", "),
+    details: [c.info, c.lien].filter(Boolean).join("\n"),
+  });
+  return "https://calendar.google.com/calendar/render?" + p.toString();
+}
+
+// un concert devient un message : titre, texte, lien dans l'appli, affiche, agenda, itinéraire
 function messageDe(c, plusieurs = false) {
   const quand = jourCourt(c.date) + (c.heure ? " à " + heureFr(c.heure) : "");
   return {
@@ -35,11 +59,12 @@ function messageDe(c, plusieurs = false) {
     texte: `${quand} · ${[c.lieu, c.ville && c.ville !== c.lieu ? c.ville : ""].filter(Boolean).join(", ")}`,
     url: `${site}?annonce=${encodeURIComponent(cle(c))}#dates`,
     image: c.affiche ? `${site}${c.affiche}-1200.webp` : "",
+    agenda: lienAgenda(c), // bouton « Ajouter à l'agenda » (android)
     itineraire: c.lieu ? "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent([c.lieu, c.ville].filter(Boolean).join(", ")) : "",
   };
 }
 
-let messages = [];
+let messages;
 const iDate = args.indexOf("--date"), iNouv = args.indexOf("--nouvelles");
 if (iDate >= 0) {
   const iLieu = args.indexOf("--lieu");
@@ -53,7 +78,7 @@ if (iDate >= 0) {
     .filter((c) => !avant.has(cle(c)) && c.date >= aujourdhui && c.statut !== "annule")
     .sort((a, b) => a.date.localeCompare(b.date));
   if (!nouvelles.length) { console.log("Aucune nouvelle date à annoncer."); process.exit(0); }
-  // Une seule notification, même si plusieurs dates arrivent : la première, avec le total dans le texte
+  // une seule notification même si plusieurs dates arrivent : la première, avec le total dans le texte
   const m = messageDe(nouvelles[0], nouvelles.length > 1);
   if (nouvelles.length > 1) m.texte += ` (et ${nouvelles.length - 1} autre${nouvelles.length > 2 ? "s" : ""})`;
   messages = [m];

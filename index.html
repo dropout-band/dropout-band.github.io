@@ -1,16 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Drop Out — rock alternatif, Ardèche</title>
+  <title>Drop Out</title>
   <meta name="description" content="Drop Out, groupe de rock alternatif ardéchois à cinq : deux voix, deux guitares, basse et batterie. Concerts, affiches et booking.">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="color-scheme" content="dark">
-  <!-- Écran de démarrage (fond noir + logo) : affiché si l'on n'a pas été sur le site depuis plus de
-       5 minutes (heure de dernière présence : assets/js/intro.js). Pas de démarrage animé avec
-       « réduire les animations », ni avec une ancre ou ?agenda dans l'adresse (lien d'une notification).
-       ?intro le force, ?intro=lent le ralentit. -->
+  <!--
+     écran de démarrage (fond noir + logo) : affiché si on n'est pas venu depuis plus de 5 min (dernière présence : assets/js/intro.js).
+     pas d'intro avec animations réduites, ni avec une ancre ou ?agenda (lien de notification). ?intro la force, ?intro=lent la ralentit
+  -->
   <script>
     (function () {
       try {
@@ -18,7 +18,12 @@
         var absent = Date.now() - Number(localStorage.getItem("dropout-vu") || 0) > 5 * 60 * 1000;
         var reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (!reduit && !location.hash && !p.has("agenda") && !p.has("annonce") && (absent || p.has("intro"))) document.documentElement.classList.add("intro-actif");
-        else if (!reduit) document.documentElement.classList.add("entree"); // pas d’écran de démarrage : les éléments de l’en-tête apparaissent en douceur (style.css, .entree)
+        else if (!reduit) document.documentElement.classList.add("entree");
+        // ordinateur : pas de clip, diaporama de trois photos en noir et blanc (main.js, initDiaporama). ailleurs :
+        // clip en fond de l'en-tête : sans limite d'animations ni de données, on ne montre pas la photo, directement la première image du clip puis le clip.
+        // main.js retire cette classe si le clip ne démarre pas
+        var co = navigator.connection;
+        if (!matchMedia("(min-width: 56rem) and (hover: hover)").matches && !reduit && !(co && (co.saveData || /(^|-)2g$|3g/.test(co.effectiveType || "")))) document.documentElement.classList.add("video-fond");
       } catch (e) { /* on affiche le site directement */ }
     })();
   </script>
@@ -44,20 +49,32 @@
   <meta name="mobile-web-app-capable" content="yes">
 
   <link rel="preload" href="assets/logo/logo-blanc-600.webp" as="image" type="image/webp">
-  <link rel="preload" as="image" type="image/webp" href="assets/img/hero-groupe-1400.webp"
+  <link rel="preload" as="image" type="image/webp" media="(min-width: 56rem) and (hover: hover)" href="assets/img/hero-groupe-1400.webp"
         imagesrcset="assets/img/hero-groupe-800.webp 800w, assets/img/hero-groupe-1400.webp 1400w, assets/img/hero-groupe-2000.webp 2000w" imagesizes="100vw" fetchpriority="high">
+  <!-- image d'attente du clip (c'est elle l'élément le plus gros affiché) : préchargée seulement là où le clip est utilisé -->
+  <link rel="preload" as="image" type="image/webp" href="assets/video/fond-mobile-poster.webp" media="(max-width: 55.99rem) and (orientation: portrait)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" href="assets/video/fond-poster.webp" media="(orientation: landscape) and (not ((min-width: 56rem) and (hover: hover)))" fetchpriority="high">
   <link rel="preload" href="assets/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/barlow-condensed-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 
   <script>document.documentElement.classList.replace('no-js', 'js');</script>
+  <link rel="modulepreload" href="assets/js/outils.js">
+  <link rel="modulepreload" href="assets/js/concerts.js">
+  <link rel="modulepreload" href="assets/js/pwa.js">
+  <link rel="modulepreload" href="assets/js/alertes.js">
+  <link rel="modulepreload" href="assets/js/oeil.js">
+  <link rel="modulepreload" href="assets/js/intro.js">
+  <link rel="modulepreload" href="assets/js/navigation.js">
+  <link rel="modulepreload" href="assets/js/aide-installation.js">
+  <link rel="modulepreload" href="content/site.js">
   <script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
-  <!-- Barre de progression : une fine ligne blanche tout en haut, qui suit l'avancée dans la page -->
+  <!-- barre de progression : fine ligne blanche tout en haut -->
   <div class="progression" data-progression role="progressbar" aria-label="Avancement dans la page" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
 
-  <!-- Fond : une nappe de couleur floue par section (orange pour la première vue, puis la teinte de chaque section) -->
+  <!-- fond : une nappe floue par section -->
   <div class="fond" aria-hidden="true">
     <i class="fond__img fond__img--dates"></i>
     <i class="fond__img fond__img--groupe"></i>
@@ -66,12 +83,12 @@
     <i class="fond__img fond__img--reseaux"></i>
   </div>
 
-  <!-- Écran de démarrage : fond uni, logo seul (affiché seulement avec html.intro-actif) -->
+  <!-- écran de démarrage : fond uni, logo seul (seulement avec html.intro-actif) -->
   <div class="demarrage" id="intro" aria-hidden="true">
     <img class="demarrage__logo" src="assets/logo/logo-blanc-600.webp" width="1214" height="668" alt="">
   </div>
 
-  <!-- Barre fixe : apparaît au défilement ; le gros logo vient s'y poser -->
+  <!-- barre fixe : apparaît au défilement, le gros logo vient s'y poser -->
   <div class="barre" data-barre>
     <button type="button" class="barre__menu" data-menu-ouvrir aria-label="Menu" aria-haspopup="dialog"><span></span><span></span><span></span></button>
     <a class="barre__logo" href="#haut" aria-label="Drop Out — haut de page" data-barre-logo>
@@ -81,39 +98,26 @@
   </div>
 
   <main>
-    <!-- En-tête : photo, logo, ligne de style -->
+    <!-- en-tête : photo, logo, ligne de style -->
     <header class="hero" id="haut">
-      <!-- Le jour d'un concert : bandeau avec le lieu, l'heure et l'itinéraire (rempli par main.js) -->
+      <!-- le jour d'un concert : bandeau avec lieu, heure et itinéraire (rempli par main.js) -->
       <aside class="ce-soir" data-ce-soir hidden></aside>
-      <!-- Diaporama : les photos s'enchaînent en fondu. Pour en ajouter une,
-           copiez un <img class="diapo"> : les photos sont centrées et agrandies
-           par le CSS (.diapo dans style.css). -->
+      <!-- diaporama : fondu entre les photos. pour en ajouter une, copier un <img class="diapo" > (cadrage dans .diapo, style.css) -->
       <div class="hero__media" data-diaporama>
-        <img class="diapo est-active"
-          src="assets/img/hero-groupe-1400.webp"
-          srcset="assets/img/hero-groupe-800.webp 800w, assets/img/hero-groupe-1400.webp 1400w, assets/img/hero-groupe-2000.webp 2000w"
+        <!-- clip en fond : ajouté par main.js (initVideoFond) si la connexion et les réglages s'y prêtent. la photo reste dessous tant que le clip n'est pas prêt ou s'il ne se lance pas -->
+        <video class="hero__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-video-fond></video>
+        <!-- la photo ne se charge pas quand le clip sert de fond (téléphone, tablette) : elle arrive seulement si le clip échoue (main.js) -->
+        <img class="diapo est-active" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+          data-src="assets/img/hero-groupe-1400.webp"
+          data-srcset="assets/img/hero-groupe-800.webp 800w, assets/img/hero-groupe-1400.webp 1400w, assets/img/hero-groupe-2000.webp 2000w"
           sizes="100vw" width="2000" height="1241"
-         
           alt="Les cinq membres de Drop Out réunis sur scène, cornes du diable levées, une basse en l’air"
           fetchpriority="high" decoding="async">
-        <img class="diapo"
-          src="assets/img/hero-scene-1400.webp"
-          srcset="assets/img/hero-scene-800.webp 800w, assets/img/hero-scene-1400.webp 1400w, assets/img/hero-scene-2000.webp 2000w"
-          sizes="100vw" width="2000" height="1156"
-         
-          alt="Drop Out en concert : deux guitares, batterie, chanteuse et basse sur scène"
-          loading="lazy" decoding="async">
-        <img class="diapo"
-          src="assets/img/hero-plein-air-1400.webp"
-          srcset="assets/img/hero-plein-air-800.webp 800w, assets/img/hero-plein-air-1400.webp 1400w, assets/img/hero-plein-air-2000.webp 2000w"
-          sizes="100vw" width="2000" height="1333"
-         
-          alt="Drop Out en concert en plein air : basse, chanteuse au micro et guitare devant la banderole du groupe"
-          loading="lazy" decoding="async">
+        <script>(function () { var i = document.querySelector(".diapo"); if (!document.documentElement.classList.contains("video-fond")) { i.srcset = i.dataset.srcset; i.src = i.dataset.src; i.dataset.charge = "1"; } })();</script>
+        <noscript><img class="diapo est-active" src="assets/img/hero-groupe-1400.webp" srcset="assets/img/hero-groupe-800.webp 800w, assets/img/hero-groupe-1400.webp 1400w, assets/img/hero-groupe-2000.webp 2000w" sizes="100vw" width="2000" height="1241" alt="Les cinq membres de Drop Out réunis sur scène"></noscript>
       </div>
       <div class="hero__contenu">
-        <!-- Logo en deux calques : le logo sans le point du grand rond, et le point
-             seul (« l'œil »), animé en CSS. Voir .logo__oeil dans style.css. -->
+        <!-- logo en deux calques : le logo sans le point du grand rond, et le point seul (l'œil), animé en css (.logo__oeil) -->
         <h1 class="hero__logo">
           <span class="logo">
             <img class="logo__base"
@@ -126,20 +130,24 @@
         </h1>
         <p class="hero__style" data-texte="groupe.style"></p>
       </div>
-      <!-- Indicateur de défilement : invite à descendre vers les dates -->
+      <!-- indicateur de défilement : invite à descendre vers les dates -->
       <a class="hero__suite" href="#dates" data-hero-suite aria-label="Faire défiler la page vers le bas">
         <svg class="hero__suite-fleche" aria-hidden="true" width="28" height="20" viewBox="0 0 28 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="f1" d="m5 5 9 9 9-9"/></svg>
         <span class="hero__suite-trait" aria-hidden="true"></span>
       </a>
     </header>
 
-    <!-- Dates : annonce centrée (prochaine date ou « À venir… »), puis dates passées -->
+    <!-- dates : annonce centrée (prochaine date ou « À venir »), puis dates passées -->
     <section class="dates-zone" id="dates" aria-labelledby="dates-titre">
       <div class="annonce">
-        <div class="annonce__entete"><h2 class="annonce__h" id="dates-titre">Prochaine date</h2></div>
-        <!-- Alertes : visibles seulement sur les navigateurs qui les gèrent (Android) -->
+        <div class="annonce__entete entete-neon" data-neon-scroll>
+          <span class="neon-lampe neon-lampe--g" aria-hidden="true"><i></i><i></i><i></i></span>
+          <h2 class="annonce__h" id="dates-titre">À l’affiche</h2>
+          <span class="neon-lampe neon-lampe--d" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+        <!-- alertes : seulement sur les navigateurs qui les gèrent (android) -->
         <div class="alertes" data-alertes-zone hidden>
-          <span class="alertes__texte" id="alertes-texte">Être prévenu des nouvelles dates</span>
+          <span class="alertes__texte" id="alertes-texte">Prévenez-moi !</span>
           <button type="button" class="interrupteur" role="switch" aria-checked="false" aria-labelledby="alertes-texte" data-alertes>
             <span class="interrupteur__bouton" aria-hidden="true"></span>
           </button>
@@ -152,23 +160,23 @@
         <ol class="dates annonce__suivantes" data-dates-suivantes aria-label="Dates à venir" hidden></ol>
       </div>
 
-      <!-- Ils nous ont fait confiance : bandeau de logos défilant, sans fond (masqué si la liste est vide) -->
+      <!-- ils nous ont fait confiance : logos défilants, sans fond (masqué si la liste est vide) -->
       <section class="confiance" aria-labelledby="confiance-titre" data-confiance hidden>
         <h2 class="confiance__titre" id="confiance-titre">Ils nous ont fait confiance</h2>
         <div class="confiance__fenetre"><div class="confiance__piste" data-confiance-piste></div></div>
       </section>
 
-      <!-- Dates passées et leurs affiches -->
+      <!-- dates passées et leurs affiches -->
       <div class="deja" data-deja hidden>
         <h3 class="deja__titre">Événements passés</h3>
-        <!-- Affiches collées sur le mur -->
+        <!-- affiches collées sur le mur -->
         <div class="defile" data-defile>
           <ul class="defile__piste" data-affiches></ul>
         </div>
       </div>
     </section>
 
-    <!-- Le groupe -->
+    <!-- le groupe -->
     <section class="bloc" id="groupe" aria-labelledby="groupe-titre">
       <div class="conteneur">
         <div class="bloc__entete">
@@ -180,70 +188,98 @@
         </div>
       </div>
       <div class="conteneur"><div class="presentation" data-presentation hidden></div></div>
+      <div class="conteneur"><p class="membres__astuce">Touchez une tuile pour l’ouvrir</p></div>
       <ul class="membres" data-membres tabindex="0" aria-label="Les membres du groupe"></ul>
-      <div class="conteneur"><p class="membres__astuce">Touchez une tuile pour l’ouvrir</p><p class="credit-photo" data-credit-groupe></p></div>
+      <div class="conteneur"><p class="credit-photo" data-credit-groupe></p></div>
     </section>
 
-    <!-- Écouter : morceaux, plateformes (masqué si rien n'est renseigné) -->
+    <!-- compos : morceaux, plateformes (masqué si rien n'est renseigné) -->
     <section class="bloc" id="ecouter" aria-labelledby="ecouter-titre" data-bloc-ecouter hidden>
       <div class="conteneur">
-        <h2 class="bloc__titre" id="ecouter-titre">Écouter</h2>
+        <h2 class="bloc__titre" id="ecouter-titre">Compos</h2>
         <p class="ecouter__texte" data-ecouter-texte hidden></p>
+        <p class="presentation__chute ecouter__chute" data-ecouter-chute hidden></p>
         <ul class="pistes" data-pistes></ul>
         <ul class="ecoute" data-ecoute aria-label="Écouter Drop Out en ligne"></ul>
       </div>
     </section>
 
-    <!-- Médias : le clip, puis une rangée de photos (masqué si tout est vide) -->
+    <!-- médias : slider de photos, puis le clip sous son titre (masqué si tout est vide) -->
     <section class="bloc" id="galerie" aria-labelledby="galerie-titre" data-bloc-galerie>
       <div class="conteneur">
         <h2 class="bloc__titre" id="galerie-titre">Médias</h2>
+      </div>
+      <div class="slider" data-slider>
+        <ul class="galerie" data-galerie tabindex="0" aria-label="Photos du groupe"></ul>
+        <button type="button" class="fleche-btn slider__fleche slider__fleche--prec" data-slide="-1" aria-label="Photos précédentes">←</button>
+        <button type="button" class="fleche-btn slider__fleche slider__fleche--suiv" data-slide="1" aria-label="Photos suivantes">→</button>
+        <p class="slider__compteur" data-compteur aria-live="polite"></p>
+      </div>
+      <div class="conteneur medias__clip" data-clip>
+        <h2 class="bloc__titre" id="clip-titre">Clip</h2>
         <div class="videos" data-videos></div>
       </div>
-      <ul class="galerie" data-galerie tabindex="0" aria-label="Photos du groupe"></ul>
     </section>
 
-    <!-- Réseaux sociaux : icônes + dernière publication Facebook (après accord) -->
+    <!-- réseaux : icônes + dernière publication facebook (après accord) -->
     <section class="bloc" id="reseaux" aria-labelledby="reseaux-titre" data-bloc-actus>
       <div class="conteneur">
-        <h2 class="bloc__titre" id="reseaux-titre">Réseaux sociaux</h2>
+        <h2 class="bloc__titre" id="reseaux-titre">Actus</h2>
       </div>
-      <!-- Deux petits encarts (Facebook, Instagram) : rien n'est chargé chez eux avant l'accord du visiteur -->
+      <!-- deux petits encarts (facebook, instagram) : rien n'est chargé chez eux avant l'accord du visiteur -->
       <div class="conteneur"><div class="reso__onglets" role="tablist" aria-label="Choisir un réseau" data-reso-onglets></div></div>
       <div class="embeds" data-embeds></div>
+      <!-- actus : dernières publications de la page facebook, en articles (remplace les encarts si le serveur répond) -->
+      <div class="conteneur"><div class="actus" data-actus hidden></div></div>
+      <!-- suivez-nous : titre (même style que « À l'affiche »), puis les icônes -->
+      <div class="conteneur suivez" data-suivez hidden>
+        <div class="annonce__entete entete-neon" data-neon-scroll>
+          <span class="neon-lampe neon-lampe--g" aria-hidden="true"><i></i><i></i><i></i></span>
+          <h2 class="annonce__h" id="suivez-titre">Suivez-nous</h2>
+          <span class="neon-lampe neon-lampe--d" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+        <ul class="icones" data-reseaux aria-labelledby="suivez-titre"></ul>
+      </div>
     </section>
   </main>
 
-  <footer class="pied conteneur">
-    <p>© <span data-annee></span> Drop Out<span data-credit></span></p>
-    <ul class="icones" data-pied-reseaux aria-label="Réseaux sociaux"></ul>
-    <a class="lien-discret" href="app/" data-installer hidden>Télécharger l’application</a>
-    <button type="button" class="lien-discret pied__legal" data-mentions aria-haspopup="dialog">Mentions légales</button>
+  <footer class="pied">
+    <div class="pied__contenu conteneur">
+      <p class="pied__copy">© <span data-annee></span> Drop Out<span data-credit></span></p>
+      <img class="pied__logo" src="assets/logo/logo-blanc-600.webp" width="600" height="330" alt="Drop Out" loading="lazy" decoding="async">
+      <button type="button" class="pied__haut" data-haut aria-label="Remonter en haut de la page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 12l7-7 7 7"/></svg></button>
+      <div class="pied__liens">
+        <a class="lien-discret" href="app/" data-installer hidden>Télécharger l’application</a>
+        <button type="button" class="lien-discret pied__legal" data-mentions aria-haspopup="dialog">Mentions légales</button>
+      </div>
+      <p class="propulse">Propulsé par <button type="button" class="propulse__lien" data-mkl aria-haspopup="dialog" aria-label="MKL.studio : envoyer un message"><img src="assets/logo/mkl-studio.svg" width="1269" height="247" alt="MKL.studio" loading="lazy" decoding="async"></button></p>
+    </div>
   </footer>
 
   <dialog class="visionneuse" id="visionneuse" aria-label="Affiche">
-    <form method="dialog"><button class="visionneuse__fermer">Fermer ✕</button></form>
-    <img alt="" data-visionneuse-img>
+    <form method="dialog"><button type="submit" class="visionneuse__fermer">Fermer ✕</button></form>
+    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" data-visionneuse-img>
     <p class="visionneuse__legende" data-visionneuse-legende></p>
   </dialog>
 
-  <!-- Menu d'accès rapide : ouvert par les trois traits de la barre du haut -->
+  <!-- menu rapide : ouvert par les trois traits de la barre du haut -->
   <dialog class="menu" id="menu-rapide" aria-label="Menu">
     <div class="menu__panneau" tabindex="-1">
       <button type="button" class="menu__fermer" aria-label="Fermer le menu" data-menu-fermer><span></span><span></span></button>
       <nav class="menu__liste" aria-label="Accès rapide">
         <button type="button" class="menu__booking" data-menu-booking>Booking</button>
         <button type="button" data-cible="#groupe">Le groupe</button>
-        <button type="button" data-cible="#ecouter">Écouter</button>
+        <button type="button" data-cible="#ecouter">Compos</button>
         <button type="button" data-cible="#galerie">Médias</button>
-        <button type="button" data-cible="#reseaux">Réseaux sociaux</button>
+        <button type="button" data-cible="#reseaux">Actus</button>
         <button type="button" data-partager>Partager l’appli</button>
+        <ul class="menu__reseaux" data-menu-reseaux aria-label="Réseaux sociaux" hidden></ul>
       </nav>
     </div>
   </dialog>
 
-  <!-- Booking : fenêtre sur fond flou, ouverte par le bouton Booking de la barre du haut -->
-  <!-- Mentions légales et confidentialité (contenu rempli par main.js d'après content/site.js) -->
+  <!-- booking : fenêtre sur fond flou, ouverte par le bouton de la barre -->
+  <!-- mentions légales et confidentialité (rempli par main.js d'après content/site.js) -->
   <dialog class="booking-fenetre mentions-fenetre" id="mentions-fenetre" aria-labelledby="mentions-titre">
     <button type="button" class="booking-fenetre__fermer" aria-label="Fermer" data-mentions-fermer>✕</button>
     <div class="mentions" data-mentions-carte tabindex="-1">
@@ -252,12 +288,11 @@
     </div>
   </dialog>
 
-  <!-- Annonce d'une date : l'affiche, le nom, la date, le lieu et les boutons. Ouverte par la notification (?annonce=…)
-       ou par « Voir l'annonce » dans le bloc « Prochaine date » (rempli par main.js). -->
+  <!-- annonce d'une date : affiche, nom, date, lieu et boutons. ouverte par la notification (?annonce=...) ou par « Voir l'annonce » dans « Prochaine date » (rempli par main.js) -->
   <dialog class="annonce-fenetre" id="annonce-fenetre" aria-labelledby="annonce-titre">
     <button type="button" class="booking-fenetre__fermer" aria-label="Fermer" data-annonce-fermer>✕</button>
     <div class="annonce-fenetre__contenu" data-annonce-carte tabindex="-1">
-      <img class="annonce-fenetre__affiche" data-annonce-affiche alt="" hidden>
+      <img class="annonce-fenetre__affiche" data-annonce-affiche src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" hidden>
       <div class="annonce-fenetre__texte">
         <p class="annonce-fenetre__etiquette">★ Nouvelle date</p>
         <h2 class="annonce-fenetre__titre" id="annonce-titre" data-annonce-titre></h2>
@@ -283,11 +318,30 @@
     </div>
   </dialog>
 
-  <!-- Fiche d'un membre (téléphone) : s'agrandit depuis la tuile, se ferme d'un toucher à côté -->
+  <!-- MKL.studio : fenêtre avec un formulaire (adresse + message). le message passe par notre serveur qui le transmet par courriel : l'adresse de réception n'est jamais dans la page -->
+  <dialog class="booking-fenetre mkl-fenetre" id="mkl-fenetre" aria-labelledby="mkl-titre">
+    <button type="button" class="booking-fenetre__fermer" aria-label="Fermer" data-mkl-fermer>✕</button>
+    <div class="booking-fenetre__contenu" data-mkl-carte tabindex="-1">
+      <img class="mkl-fenetre__logo" src="assets/logo/mkl-studio.svg" width="1269" height="247" alt="MKL.studio" decoding="async">
+      <h2 class="booking-fenetre__titre" id="mkl-titre">Un projet ?</h2>
+      <form class="mkl-form" data-mkl-form novalidate>
+        <label class="mkl-form__champ"><span>Votre adresse e-mail</span>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" maxlength="200" placeholder="vous@exemple.fr"></label>
+        <label class="mkl-form__champ"><span>Votre message</span>
+          <textarea name="message" required rows="5" maxlength="2000" placeholder="Votre projet, en quelques lignes…"></textarea></label>
+        <input class="mkl-form__piege" type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="mkl-form__etat" data-mkl-etat role="status" aria-live="polite"></p>
+        <button type="submit" class="bouton bouton--plein mkl-form__envoi" data-mkl-envoi>Envoyer</button>
+      </form>
+      <p class="mkl-merci" data-mkl-merci role="status" hidden>Merci ! Votre message est bien parti : je vous réponds très vite.</p>
+    </div>
+  </dialog>
+
+  <!-- fiche d'un membre (téléphone) : s'agrandit depuis la tuile, se ferme d'un toucher à côté -->
   <dialog class="fiche" id="fiche-membre" aria-label="Fiche du membre">
     <div class="fiche__scene">
     <div class="fiche__carte" data-fiche-carte tabindex="-1">
-      <div class="fiche__photo"><img alt="" data-fiche-img></div>
+      <div class="fiche__photo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" data-fiche-img></div>
       <p class="fiche__role" data-fiche-role></p>
       <ul class="fiche__traits" data-fiche-traits></ul>
       <p class="fiche__nom" data-fiche-nom></p>
@@ -296,7 +350,7 @@
     </div>
   </dialog>
 
-  <!-- Ajout d'une date à l'agenda : ouvert par le lien de la notification (?agenda=…) -->
+  <!-- ajout d'une date à l'agenda : ouvert par le lien de la notification (?agenda=...) -->
   <dialog class="aide-installation agenda" id="agenda-ajout" aria-labelledby="agenda-titre">
     <h2 id="agenda-titre">Ajouter à l’agenda</h2>
     <p class="agenda__lieu" data-agenda-lieu></p>
@@ -304,14 +358,14 @@
     <p class="note">Un seul geste : le fichier s’ouvre dans l’application Agenda de votre appareil, il ne reste qu’à confirmer.</p>
     <form method="dialog">
       <button type="button" class="bouton bouton--plein" data-ics data-agenda-ajouter>Ajouter à mon agenda</button>
-      <button class="bouton bouton--trait" style="margin-top:.6rem">Plus tard</button>
+      <button type="submit" class="bouton bouton--trait agenda-plus-tard">Plus tard</button>
     </form>
   </dialog>
 
   <dialog class="aide-installation" id="aide-installation" aria-labelledby="aide-titre">
     <h2 id="aide-titre">Ajouter à l’écran d’accueil</h2>
     <div data-aide-contenu></div>
-    <form method="dialog"><button class="bouton bouton--plein">J’ai compris</button></form>
+    <form method="dialog"><button type="submit" class="bouton bouton--plein">J’ai compris</button></form>
   </dialog>
 
   <p class="toast" data-toast role="status" aria-live="polite" hidden></p>

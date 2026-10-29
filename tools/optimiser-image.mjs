@@ -1,9 +1,9 @@
-// Prépare une photo pour le site (facultatif — nécessite « sharp »).
-// Installation unique :   npm install --prefix tools
-// Utilisation :           node tools/optimiser-image.mjs <photo-source> <nom> [--nb]
-// Exemple :               node tools/optimiser-image.mjs ~/Photos/chanteuse.jpg membre-2
-//   → assets/img/membre-2-400.webp, -640.webp, -960.webp (format 4:5, cadré au centre)
-// --nb : version noir et blanc. --format=paysage : 3:2 en 640/1000/1400 px.
+// prépare une photo pour le site (facultatif, demande sharp).
+// installation unique : npm install --prefix tools
+// usage : node tools/optimiser-image.mjs <photo-source> <nom> [--nb]
+// exemple : node tools/optimiser-image.mjs ~/Photos/chanteuse.jpg membre-2
+//   assets/img/membre-2-400.webp, -640.webp, -960.webp (format 4:5, cadré au centre)
+// --nb : noir et blanc. --format=paysage : 3:2 en 640/1000/1400 px
 import { createRequire } from "node:module";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";

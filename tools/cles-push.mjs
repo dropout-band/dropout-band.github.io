@@ -1,6 +1,6 @@
-// Génère la paire de clés VAPID des notifications. À lancer une seule fois :  node tools/cles-push.mjs
-// - la clé PUBLIQUE va dans content/site.js (notifications.clePublique) et dans notifications/wrangler.toml ;
-// - la clé PRIVÉE (le JSON) se donne à Cloudflare comme secret VAPID_PRIVEE, et ne doit JAMAIS être publiée.
+// génère la paire de clés VAPID des notifications, à lancer une seule fois : node tools/cles-push.mjs
+// - la clé publique va dans content/site.js (notifications.clePublique) et dans notifications/wrangler.toml
+// - la clé privée (le json) se donne à cloudflare comme secret VAPID_PRIVEE et ne doit jamais être publiée
 import { b64u } from "../notifications/webpush.js";
 
 const paire = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);

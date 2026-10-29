@@ -1,22 +1,20 @@
-// Mode d'emploi pour mettre l'icône Drop Out sur l'écran d'accueil, adapté au navigateur du téléphone ou de la tablette.
-// Chrome, Edge, Samsung Internet (et la plupart des navigateurs Android) ouvrent directement la fenêtre d'installation
-// (événement « beforeinstallprompt », géré par pwa.js et installer.js). Les autres n'ont pas de bouton qu'un site puisse
-// déclencher : Safari et les navigateurs iPhone, Firefox, ou les navigateurs intégrés à Instagram et Facebook.
-// On leur montre alors les gestes exacts de leur navigateur.
+// mode d'emploi pour ajouter l'icône à l'écran d'accueil, selon le navigateur.
+// Chrome, Edge, Samsung Internet & co ouvrent direct la fenêtre d'install (beforeinstallprompt, voir pwa.js et installer.js).
+// Safari/iPhone, Firefox et les navigateurs d'Instagram/Facebook n'ont pas de bouton possible : on montre les gestes à faire.
 
 const ua = navigator.userAgent;
 
 export const estIos = () =>
-  /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS se présente comme un Mac
+  /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS se fait passer pour un Mac
 const estAndroid = () => /android/i.test(ua);
 const estNavigateurIntegre = () => /instagram|fban|fbav|fb_iab|line\/|snapchat|tiktok|musical_ly|twitter/i.test(ua);
 
 const liste = (...pas) => `<ol>${pas.map((p) => `<li>${p}</li>`).join("")}</ol>`;
 const note = (t) => `<p class="note">${t}</p>`;
 
-// Renvoie { titre, html } : le titre nomme le navigateur, le html donne les gestes.
+// renvoie { titre, html } : le navigateur et les gestes
 export function aideInstallation() {
-  // Navigateur intégré (ouverture d'un lien depuis Instagram, Facebook…) : l'installation y est impossible
+  // navigateur intégré (lien ouvert depuis Instagram, Facebook) : pas d'installation possible
   if (estNavigateurIntegre()) {
     return {
       titre: "Ouvrez d’abord dans votre navigateur",
@@ -79,7 +77,7 @@ export function aideInstallation() {
     };
   }
 
-  // Ordinateur ou appareil inconnu
+  // ordi ou appareil inconnu
   return {
     titre: "Installer l’application",
     html: liste("Ouvrez le menu du navigateur (⋮ ou ⋯).", "Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».") +

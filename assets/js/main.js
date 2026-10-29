@@ -17,7 +17,7 @@ if (brouillon) {
   document.documentElement.classList.add("est-brouillon");
 }
 
-/* ---------- Textes simples ---------- */
+/* textes simples */
 
 $$("[data-texte]").forEach((el) => {
   const valeur = lire(el.dataset.texte);
@@ -25,9 +25,7 @@ $$("[data-texte]").forEach((el) => {
   else el.hidden = true;
 });
 
-/* ---------- Icônes des liens externes ---------- */
-// Un seul langage visuel pour tout le site : tracé fin, monochrome, 20 px,
-// dans une zone cliquable de 44 px. L'icône est choisie d'après l'adresse.
+/* icônes des liens externes : tracé fin, monochrome, 20 px, dans une zone cliquable de 44 px. l'icône dépend de l'adresse */
 
 const trace = (contenuSvg) => `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${contenuSvg}</svg>`;
 const ICONES = {
@@ -39,8 +37,7 @@ const iconeDe = (url) => (/instagram\.com/i.test(url) ? ICONES.instagram : /face
 const lienIcone = (url, libelle) =>
   `<a class="lien-icone" href="${esc(url)}"${attrsLien(url)} aria-label="${esc(libelle)}" title="${esc(libelle)}">${iconeDe(url)}</a>`;
 
-/* ---------- Texte de présentation ---------- */
-// Accroche (1er paragraphe), paragraphes courants, chute (dernier : mis en avant).
+/* texte de présentation : accroche (1er paragraphe), paragraphes, chute (le dernier, mis en avant) */
 
 function rendrePresentation() {
   const zone = $("[data-presentation]");
@@ -51,19 +48,19 @@ function rendrePresentation() {
   zone.hidden = false;
 }
 
-/* ---------- Membres ---------- */
+/* membres */
 
 function photoMembre(ph) {
   if (!ph?.base && !ph?.src) return '<div class="membre__photo membre__photo--vide">Photo à venir</div>';
   const base = ph.base ? urlSure(ph.base) : "";
   const src = ph.src ? urlSure(ph.src) : `${base}-640.webp`;
   const srcset = ph.base ? ` srcset="${esc(`${base}-400.webp 400w, ${base}-640.webp 640w, ${base}-960.webp 960w, ${base}-1280.webp 1280w`)}"` : "";
-  return `<div class="membre__photo"><img src="${esc(src)}"${srcset} sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 46vw, 92vw"
+  return `<div class="membre__photo"><img src="${esc(src)}"${srcset} sizes="(min-width: 64rem) 22rem, (orientation: landscape) and (max-height: 540px) 19vw, 46vw"
     width="800" height="1000" alt="${esc(ph.alt || "")}" loading="lazy" decoding="async"
     style="object-position:${esc(ph.position || "50% 25%")}"></div>`;
 }
 
-// Couleur du membre (#rrggbb) et encre lisible dessus (noir ou blanc, selon la luminance).
+// couleur du membre (#rrggbb) et encre lisible dessus (noir ou blanc selon la luminance)
 function styleCouleur(hex) {
   if (!/^#[0-9a-f]{6}$/i.test(hex || "")) return "";
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -86,8 +83,8 @@ function rendreMembres() {
     </li>`).join("");
 }
 
-/* ---------- Lien « mailto: » ---------- */
-// Lien « mailto: » : objet et corps pré-remplis (le corps garde ses retours à la ligne).
+/* lien mailto */
+// mailto avec objet et corps pré-remplis (le corps garde ses retours à la ligne)
 function lienMail(c, objet, corps) {
   const email = String(c.email || "").trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "";
@@ -95,10 +92,9 @@ function lienMail(c, objet, corps) {
   return `mailto:${email}?${q.toString().replace(/\+/g, "%20")}`;
 }
 
-/* ---------- Booking ---------- */
-// Le bouton Booking de la barre du haut ouvre une fenêtre sur fond flou : le gros titre et
-// « Nous contacter », qui ouvre la messagerie avec un message de booking pré-rempli.
-// Un toucher à côté, la croix ou Échap referme la fenêtre.
+/* booking */
+// le bouton booking de la barre ouvre une fenêtre sur fond flou : gros titre et « Nous contacter » qui ouvre la messagerie avec un message pré-rempli.
+// clic à côté, croix ou échap la ferment
 
 function initBooking() {
   const dlg = $("#booking-fenetre");
@@ -113,19 +109,52 @@ function initBooking() {
   mail.addEventListener("click", () => setTimeout(() => dlg.close(), 400)); // la messagerie s'ouvre, la fenêtre se referme
 }
 
-/* ---------- Écouter : morceaux, plateformes ---------- */
-// Les morceaux sont lus depuis le site (aucun service tiers). Une vidéo YouTube
-// ne se charge qu'au clic : rien n'est envoyé à YouTube avant.
+/* formulaire de contact MKL.studio */
+// le logo MKL.studio du pied de page ouvre une fenêtre (adresse + message). le message part au serveur de notifications (route /mkl-contact)
+// qui le transmet par courriel à une adresse gardée secrète côté serveur
+function initMkl() {
+  const dlg = $("#mkl-fenetre");
+  const ouvrirs = $$("[data-mkl]");
+  if (!dlg || !ouvrirs.length) return;
+  const form = $("[data-mkl-form]", dlg), etat = $("[data-mkl-etat]", dlg), envoi = $("[data-mkl-envoi]", dlg), merci = $("[data-mkl-merci]", dlg);
+  const serveur = ((contenu.notifications || {}).serveur || "").replace(/\/$/, "");
+  let ouvertA = 0;
+  const reinitialiser = () => { form.hidden = false; merci.hidden = true; etat.textContent = ""; envoi.disabled = false; };
+  ouvrirs.forEach((b) => b.addEventListener("click", () => {
+    if (!dlg.open) { reinitialiser(); ouvertA = Date.now(); dlg.showModal(); $("[data-mkl-carte]", dlg).focus({ preventScroll: true }); }
+  }));
+  dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-mkl-fermer]")) dlg.close(); }); // fond ou croix
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = form.email.value.trim(), message = form.message.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { etat.textContent = "Cette adresse e-mail ne semble pas valide."; form.email.focus(); return; }
+    if (message.length < 10) { etat.textContent = "Votre message est un peu court."; form.message.focus(); return; }
+    if (!serveur) { etat.textContent = "L’envoi n’est pas disponible pour le moment."; return; }
+    envoi.disabled = true; etat.textContent = "Envoi en cours…";
+    try {
+      const rep = await fetch(serveur + "/mkl-contact", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, message, piege: form.site.value, delai: Date.now() - ouvertA }),
+      });
+      if (!rep.ok) throw new Error(String(rep.status));
+      form.reset(); form.hidden = true; merci.hidden = false; // remerciement à la place du formulaire
+    } catch {
+      etat.textContent = "Le message n’est pas parti. Réessayez dans un instant.";
+      envoi.disabled = false;
+    }
+  });
+}
+
+/* musique */
+// les morceaux sont lus depuis le site, aucun service tiers. une vidéo youtube ne se charge qu'au clic
 
 const formatTemps = (s) => (Number.isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}` : "–:––");
 const ICO_LIRE = '<svg aria-hidden="true" width="16" height="18" viewBox="0 0 16 18"><path d="M2 1.5v15l12-7.5z" fill="currentColor"/></svg>';
 const ICO_PAUSE = '<svg aria-hidden="true" width="16" height="18" viewBox="0 0 16 18"><path d="M2 1h4v16H2zM10 1h4v16h-4z" fill="currentColor"/></svg>';
 
-// Forme d'onde dessinée dans un canvas : barres miroir, jaunes jusqu'à la position
-// de lecture, grises ensuite. Les pics viennent d'un petit fichier JSON préparé par
-// tools/onde.mjs ; à défaut, le morceau est décodé dans le navigateur (plus lourd).
-// Le déplacement dans le morceau passe par un <input type="range"> invisible posé
-// dessus : clavier, toucher et lecteurs d'écran fonctionnent sans code en plus.
+// forme d'onde dans un canvas : barres miroir, jaunes jusqu'à la position de lecture, grises ensuite. pics lus dans un petit json préparé par tools/onde.mjs,
+// sinon le morceau est décodé dans le navigateur (plus lourd). le déplacement passe par un <input type=range> invisible posé dessus :
+// clavier, toucher et lecteurs d'écran marchent sans code en plus
 const NB_PICS = 300;
 function picsDepuisAudio(audioBuffer) {
   const c = audioBuffer.getChannelData(0), n = c.length, pics = [];
@@ -143,7 +172,7 @@ function ondeDe(canvas, audio, piste) {
   const ctx = canvas.getContext("2d");
   let pics = null, raf = 0, largeur = 0, hauteur = 0;
   const couleur = (nom) => getComputedStyle(document.documentElement).getPropertyValue(nom).trim();
-  // Avant le chargement des pics : un dessin discret, toujours le même
+  // avant le chargement des pics : un dessin discret, toujours le même
   const attente = (i) => 0.18 + 0.12 * Math.sin(i * 0.7) * Math.sin(i * 0.23 + 1);
 
   const dessiner = () => {
@@ -172,7 +201,7 @@ function ondeDe(canvas, audio, piste) {
     canvas.width = largeur; canvas.height = hauteur;
     dessiner();
   };
-  // Pendant la lecture : redessin à chaque image pour une progression fluide
+  // pendant la lecture : redessin à chaque image pour une progression fluide
   const suivre = () => {
     cancelAnimationFrame(raf);
     const pas = () => { dessiner(); if (!audio.paused) raf = requestAnimationFrame(pas); };
@@ -194,7 +223,7 @@ function ondeDe(canvas, audio, piste) {
     } catch (e) { console.warn("[onde] forme d'onde indisponible :", e.message); }
     dessiner();
   };
-  // Chargement à l'approche de la section (le décodage complet n'est utile que là)
+  // chargement à l'approche de la section (le décodage complet n'est utile que là)
   if (!("IntersectionObserver" in window)) charger();
   else {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); charger(); } }, { rootMargin: "400px 0px" });
@@ -212,6 +241,8 @@ function rendreMusique() {
   bloc.hidden = false;
   const intro = $("[data-ecouter-texte]");
   if (m.texte) { intro.textContent = m.texte; intro.hidden = false; }
+  const chute = $("[data-ecouter-chute]");
+  if (m.chute) { chute.textContent = m.chute; chute.hidden = false; }
 
   $("[data-pistes]").innerHTML = titres.map((t) => `
     <li class="piste">
@@ -258,17 +289,42 @@ function rendreMusique() {
   $("[data-ecoute]").innerHTML = liens.map((l) => `<li><a class="bouton bouton--trait" href="${esc(l.url)}"${attrsLien(l.url)}>${esc(l.nom)}</a></li>`).join("");
 }
 
-/* ---------- Clip vidéo (dans « Médias ») ---------- */
+/* clip vidéo (dans « Médias ») */
+
+const listeVideos = () => ((contenu.musique || {}).videos || []).filter((v) => urlSure(v.fichier));
+const nbVideos = () => listeVideos().length;
 
 function rendreVideos() {
-  const videos = ((contenu.musique || {}).videos || []).filter((v) => urlSure(v.fichier));
+  const videos = listeVideos();
   const zone = $("[data-videos]");
-  // Lecteur du navigateur, vidéo hébergée sur le site : rien n'est téléchargé avant l'appui sur lecture
-  // (preload="none"), et la vignette est l'affiche si elle est renseignée.
+  // lecteur du navigateur, vidéo hébergée sur le site : rien n'est téléchargé avant la lecture (preload none), la vignette est l'affiche
   zone.innerHTML = videos.map((v) => `
     <div class="video">
+      <canvas class="video__halo" width="32" height="18" aria-hidden="true"></canvas>
+      <span class="video__rec" aria-hidden="true"><i></i>REC</span>
       <video controls playsinline preload="${v.affiche ? "none" : "metadata"}"${v.affiche ? ` poster="${esc(urlSure(v.affiche))}"` : ""} src="${esc(urlSure(v.fichier))}" aria-label="${esc(v.titre || "Clip de Drop Out")}"></video>
     </div>`).join("");
+  // halo : les couleurs du clip (copiées en 32×18) s'étalent floutées derrière le lecteur. avant la lecture c'est l'affiche qui les donne, pendant la lecture une image toutes les 120 ms
+  $$(".video", zone).forEach((bloc, i) => {
+    const vid = $("video", bloc), toile = $("canvas", bloc), ctx = toile.getContext("2d");
+    const peindre = (src) => { try { ctx.drawImage(src, 0, 0, 32, 18); } catch { /* image pas encore prête */ } };
+    if (videos[i].affiche) { const im = new Image(); im.onload = () => peindre(im); im.src = urlSure(videos[i].affiche); }
+    let derniere = 0, tour = 0;
+    const boucle = (t) => {
+      if (t - derniere > 120) { derniere = t; peindre(vid); }
+      tour = vid.paused || vid.ended ? 0 : requestAnimationFrame(boucle);
+    };
+    vid.addEventListener("play", () => { if (!tour && !mouvementReduit()) tour = requestAnimationFrame(boucle); });
+    // badge REC en haut à droite pendant la lecture
+    const rec = (lecture) => bloc.classList.toggle("est-lecture", lecture);
+    vid.addEventListener("play", () => rec(true));
+    vid.addEventListener("pause", () => rec(false));
+    vid.addEventListener("ended", () => rec(false));
+    vid.addEventListener("seeked", () => peindre(vid));
+    vid.addEventListener("loadeddata", () => peindre(vid));
+  });
+  // aperçu en noir et blanc, en couleur au toucher et dès que la lecture démarre (cf. .video video dans le css)
+  $$("video", zone).forEach((vid) => vid.addEventListener("play", () => vid.classList.add("a-joue"), { once: true }));
   // une seule source sonore à la fois
   $$("video", zone).forEach((vid) => vid.addEventListener("play", () => {
     $$("audio").forEach((a) => a.pause());
@@ -278,22 +334,29 @@ function rendreVideos() {
   return videos.length;
 }
 
-/* ---------- Réseaux sociaux (icônes) ---------- */
+/* réseaux sociaux (icônes) */
 
 function rendreReseaux() {
   const html = avecUrl(contenu.reseaux).map((r) => `<li>${lienIcone(r.url, `${nomGroupe} sur ${r.nom}`)}</li>`).join("");
   $$("[data-reseaux], [data-pied-reseaux]").forEach((ul) => { ul.innerHTML = html; ul.hidden = !html; });
+  $("[data-suivez]").hidden = !html;
+  const menu = $("[data-menu-reseaux]");
+  if (menu) {
+    const h = avecUrl(contenu.reseaux).filter((r) => /instagram.com|facebook.com/i.test(r.url)).map((r) => `<li>${lienIcone(r.url, `${nomGroupe} sur ${r.nom}`)}</li>`).join("");
+    menu.innerHTML = h; menu.hidden = !h;
+  }
 }
 
-/* ---------- Concerts ---------- */
+// bouton du pied de page : remonte en haut
+$("[data-haut]")?.addEventListener("click", () => scrollTo({ top: 0, behavior: mouvementReduit() ? "auto" : "smooth" }));
 
-// Dates chargées, gardées pour le lien de la notification (?agenda=…)
+/* concerts */
+
+// dates chargées, gardées pour le lien de la notification (?agenda=...)
 let programme = null;
 
-// Le lien d'une notification « nouvelle date » ouvre le site avec ?agenda=date|lieu :
-// on propose alors d'ajouter cette date à l'agenda en un geste (fichier .ics, géré par
-// le gestionnaire de clic « data-ics » plus bas). Un site ne peut pas écrire dans
-// l'agenda sans que l'utilisateur confirme : le geste de confirmation, c'est ce bouton.
+// le lien d'une notification « nouvelle date » ouvre le site avec ?agenda=date|lieu : on propose d'ajouter la date à l'agenda en un geste (.ics, géré par le clic « data-ics » plus bas).
+// un site ne peut pas écrire dans l'agenda sans confirmation : la confirmation, c'est ce bouton
 function ouvrirAgendaDepuisLien() {
   const id = new URLSearchParams(location.search).get("agenda");
   if (!id || !programme) return;
@@ -311,8 +374,8 @@ function ouvrirAgendaDepuisLien() {
   dlg.showModal();
 }
 
-// Encart « annonce » : l'affiche, le nom, la date, le lieu et les boutons (itinéraire, billetterie, agenda, partage).
-// Ouvert par la notification (?annonce=date|lieu) ou par « Voir l'annonce » dans le bloc « Prochaine date ».
+// encart annonce : affiche, nom, date, lieu et boutons (itinéraire, billetterie, agenda, partage).
+// ouvert par la notification (?annonce=date|lieu) ou par « Voir l'annonce » dans « À l'affiche »
 function ouvrirAnnonce(c) {
   const dlg = $("#annonce-fenetre");
   if (!dlg || !c) return;
@@ -350,7 +413,7 @@ function ouvrirAnnonceDepuisLien() {
   dlg?.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-annonce-fermer]")) dlg.close(); });
 })();
 
-// Mode « Ce soir » : le jour d'un concert, un bandeau en haut de page avec le lieu, l'heure et l'itinéraire.
+// mode « ce soir » : le jour d'un concert, bandeau en haut avec lieu, heure et itinéraire
 function rendreCeSoir({ aVenir, aujourdhui }) {
   const zone = $("[data-ce-soir]");
   if (!zone) return;
@@ -363,7 +426,7 @@ function rendreCeSoir({ aVenir, aujourdhui }) {
     '<a class="ce-soir__lien" href="' + esc(itineraireUrl(c)) + '" target="_blank" rel="noopener noreferrer" aria-label="Itinéraire vers ' + esc(c.lieu) + ' (nouvelle fenêtre)">Itinéraire</a>';
 }
 
-// Partager une date : feuille de partage de l'appareil, sinon copie du lien du site.
+// partager une date : feuille de partage de l'appareil, sinon copie du lien
 async function partagerDate(c) {
   const d = new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long" }).format(new Date(Date.UTC(...c.date.split("-").map((v, i) => (i === 1 ? Number(v) - 1 : Number(v))), 12)));
   const heure = c.heure ? " à " + c.heure.replace(":", " h ").replace(/ h 00$/, " h") : "";
@@ -372,7 +435,7 @@ async function partagerDate(c) {
   const url = location.origin + location.pathname;
   if (navigator.share) {
     try { await navigator.share({ title: nomGroupe + " — concert", text: texte, url }); return; }
-    catch (e) { if (e?.name === "AbortError") return; /* annulé : rien à faire ; autre erreur : on copie */ }
+    catch (e) { if (e?.name === "AbortError") return; /* annulé : rien ; autre erreur : on copie */ }
   }
   toast((await copier(texte + " " + url)) ? "Date copiée, prête à coller" : url);
 }
@@ -405,7 +468,7 @@ async function rendreProgramme() {
   }
 }
 
-// Dates passées : mur d'affiches.
+// dates passées : mur d'affiches
 function rendreDeja(passes) {
   const bloc = $("[data-deja]");
   bloc.hidden = !passes.length;
@@ -415,20 +478,19 @@ function rendreDeja(passes) {
   $("[data-defile]").hidden = !piste.children.length;
 }
 
-/* ---------- Partenaires : bandeau de logos défilant ---------- */
-// Le contenu est répété pour être plus large que l'écran et boucler sans coupure
-// (deux moitiés identiques, la piste glisse d'une moitié).
+/* partenaires : bandeau de logos défilant */
+// le contenu est répété pour être plus large que l'écran et boucler sans coupure (deux moitiés identiques, la piste glisse d'une moitié)
 
 function rendrePartenaires() {
   const bloc = $("[data-confiance]");
   const liste = (contenu.partenaires || []).filter((p) => p.nom && p.logo);
   if (!bloc || !liste.length) return;
-  // Chaque logo ouvre le site de l'organisme dans une nouvelle fenêtre. Seule la première série est
-  // atteignable au clavier et annoncée aux lecteurs d'écran ; les copies qui servent à la boucle sont masquées.
+  // chaque logo ouvre le site de l'organisme dans une nouvelle fenêtre. seule la première série est atteignable au clavier et lue par les lecteurs d'écran,
+  // les copies de la boucle sont masquées
   const logo = (p, annonce) => {
     const taille = `style="--taille:${Number(p.taille) || 1}"`;
     const url = urlSure(p.url);
-    const img = `<img src="${esc(urlSure(p.logo))}.webp" alt="${annonce && !url ? esc(p.nom) : ""}" height="120" decoding="async" ${taille}>`;
+    const img = `<img src="${esc(urlSure(p.logo))}.webp" alt="${annonce && !url ? esc(p.nom) : ""}"${p.ratio ? ` width="${Math.round(120 * p.ratio)}"` : ""} height="120" decoding="async" ${taille}>`;
     const contenuLi = url
       ? `<a href="${esc(url)}"${attrsLien(url)} ${annonce ? `aria-label="${esc(p.nom)} (nouvelle fenêtre)"` : 'tabindex="-1"'}>${img}</a>`
       : img;
@@ -444,8 +506,7 @@ function rendrePartenaires() {
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) piloterBandeau(piste, liste.length * repetitions);
 }
 
-// Le bandeau défile tout seul, mais on peut aussi le faire glisser au doigt (ou à la souris) :
-// il suit le doigt, garde son élan au lâcher, puis reprend sa course (même sens que l'animation d'origine).
+// le bandeau défile seul mais on peut le faire glisser (doigt ou souris) : il suit le doigt, garde son élan au lâcher puis reprend sa course
 function piloterBandeau(piste, n) {
   const fenetre = piste.parentElement;
   piste.classList.add("confiance__piste--doigt");
@@ -500,36 +561,61 @@ function piloterBandeau(piste, n) {
     if (!depart || e.pointerId !== depart.id) return;
     depart = null; enCours = false;
     fenetre.classList.remove("confiance__fenetre--saisie");
-    // Élan du lâcher (limité) ; s'il est quasi nul, le défilement reprend aussitôt
+    // élan du lâcher (limité) ; quasi nul : le défilement reprend aussitôt
     inertie = deplace && e.timeStamp - dernier < 100 ? Math.max(-2500, Math.min(2500, vitesse)) : 0;
   };
   fenetre.addEventListener("pointerup", fin);
   fenetre.addEventListener("pointercancel", fin);
-  // Un glissé ne doit pas ouvrir le lien sur lequel le doigt se lève
+  // un glissé ne doit pas ouvrir le lien sous le doigt
   fenetre.addEventListener("click", (e) => { if (deplace) { e.preventDefault(); e.stopPropagation(); deplace = false; } }, true);
   fenetre.addEventListener("dragstart", (e) => e.preventDefault());
   requestAnimationFrame((t) => { t0 = t; boucle(t); });
 }
 
-/* ---------- Galerie ---------- */
-// Une grille nette : la première photo en grand bandeau, les autres en tuiles régulières, agrandies au
-// toucher dans la même visionneuse que les affiches (voir le CSS : noir et blanc au repos sur ordinateur).
+/* galerie */
+// photos en slider, agrandies au toucher dans la même visionneuse que les affiches. noir et blanc au repos, couleur au toucher
 function rendreGalerie(clip) {
   const photos = (contenu.galerie || []).filter((p) => p.photo);
   const liste = $("[data-galerie]");
   if (!photos.length) { if (!clip) $("[data-bloc-galerie]").hidden = true; return; }
   liste.innerHTML = photos.map((p, i) => {
     const base = esc(urlSure(p.photo));
-    const taille = i === 0 ? "(min-width: 75rem) 72rem, 100vw" : "(min-width: 56rem) 24rem, 50vw";
+    const taille = "(min-width: 56rem) 34vw, 82vw"; // le slider montre trois photos sur ordinateur, une et demie sur téléphone
     return `<li class="galerie__photo${i === 0 ? " galerie__photo--une" : ""}">
       <button type="button" data-affiche="${base}-1600.webp" aria-label="Agrandir la photo">
-        <img src="${base}-560.webp" srcset="${base}-560.webp 560w, ${base}-1600.webp 1600w" sizes="${taille}" alt="${esc(p.alt || "")}" loading="lazy" decoding="async">
+        <img src="${base}-560.webp" srcset="${base}-560.webp 560w, ${base}-1000.webp 1000w, ${base}-1600.webp 1600w" sizes="${taille}" alt="${esc(p.alt || "")}" loading="lazy" decoding="async">
       </button>
     </li>`;
   }).join("");
 }
 
-/* ---------- Membres : flèches (ordinateur) ---------- */
+// slider : flèches (grands écrans) et glissement du doigt, qui s'aimante sur chaque photo
+function initSliderGalerie() {
+  const slider = $("[data-slider]");
+  const liste = $("[data-galerie]");
+  const [prec, suiv] = $$("[data-slide]", slider);
+  const maj = () => {
+    prec.disabled = liste.scrollLeft <= 2;
+    suiv.disabled = liste.scrollLeft + liste.clientWidth >= liste.scrollWidth - 2;
+    const photos = $$(".galerie__photo", liste);
+    const largeur = photos[0] ? photos[0].getBoundingClientRect().width + 11 : 1;
+    const vues = Math.max(1, Math.round(liste.clientWidth / largeur));
+    const debut = Math.min(photos.length, Math.round(liste.scrollLeft / largeur) + 1);
+    const fin = Math.min(photos.length, debut + vues - 1);
+    $("[data-compteur]").textContent = photos.length > vues ? (vues > 1 ? debut + "–" + fin : debut) + " / " + photos.length : "";
+  };
+  [prec, suiv].forEach((b) => b.addEventListener("click", () => {
+    const tuile = liste.querySelector(".galerie__photo");
+    const pas = tuile ? tuile.getBoundingClientRect().width + 11 : liste.clientWidth * 0.8;
+    const n = Math.max(1, Math.floor(liste.clientWidth / pas));
+    liste.scrollBy({ left: Number(b.dataset.slide) * pas * n, behavior: mouvementReduit() ? "auto" : "smooth" });
+  }));
+  liste.addEventListener("scroll", maj, { passive: true });
+  addEventListener("resize", maj, { passive: true });
+  maj();
+}
+
+/* membres : flèches (ordinateur) */
 
 function initFlechesMembres() {
   const liste = $("[data-membres]");
@@ -548,27 +634,72 @@ function initFlechesMembres() {
   maj();
 }
 
-/* ---------- Visionneuse d'affiche ---------- */
+/* visionneuse */
 
+// la photo (ou l'affiche) grandit depuis sa miniature jusqu'au milieu de l'écran, comme la fiche d'un membre, et y retourne à la fermeture.
+// si la miniature est en noir et blanc, elle prend ses couleurs en grandissant. mise à l'échelle uniforme + clip-path : la photo n'est jamais déformée
+let miniatureOuverte = null, fermetureEnCours = false;
+function departVisionneuse(img, miniature) {
+  const a = miniature.getBoundingClientRect(), b = img.getBoundingClientRect();
+  if (!a.width || !b.width) return null;
+  const s = Math.max(a.width / b.width, a.height / b.height); // échelle qui couvre la miniature
+  const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
+  const rx = Math.max(0, (b.width - a.width / s) / 2), ry = Math.max(0, (b.height - a.height / s) / 2);
+  return { transform: `translate(${dx}px, ${dy}px) scale(${s})`, clipPath: `inset(${ry}px ${rx}px)` };
+}
 function ouvrirAffiche(bouton) {
   const dlg = $("#visionneuse");
   const img = $("[data-visionneuse-img]");
-  img.src = bouton.dataset.affiche;
-  img.alt = bouton.querySelector("img")?.alt || "";
+  const mini = bouton.querySelector("img");
+  miniatureOuverte = mini || null; fermetureEnCours = false;
+  img.getAnimations().forEach((an) => an.cancel());
+  // la miniature s'affiche tout de suite (déjà chargée) puis la grande la remplace ; le rapport largeur/hauteur est fixé pour que la taille ne bouge pas
+  const grande = bouton.dataset.affiche;
+  img.style.setProperty("--ratio", mini && mini.naturalWidth ? mini.naturalWidth / mini.naturalHeight : "");
+  img.src = mini?.currentSrc || grande;
+  img.alt = mini?.alt || "";
   $("[data-visionneuse-legende]").textContent = bouton.dataset.legende || "";
   dlg.showModal();
+  if (mini?.currentSrc && grande && mini.currentSrc !== grande) {
+    const pre = new Image();
+    pre.src = grande;
+    pre.decode().then(() => { if (dlg.open && miniatureOuverte === mini) img.src = grande; }).catch(() => { /* la miniature reste affichée */ });
+  }
+  if (mouvementReduit() || !mini) return;
+  const depart = departVisionneuse(img, mini);
+  if (!depart) return;
+  img.animate([depart, { transform: "none", clipPath: "inset(0px 0px)" }], { duration: 420, easing: "cubic-bezier(.2, .8, .2, 1)" });
+  const f = getComputedStyle(mini).filter;
+  if (f && f !== "none") img.animate([{ filter: f }, { filter: "none" }], { duration: 700, easing: "ease-out", fill: "backwards" });
 }
+function fermerAffiche() {
+  const dlg = $("#visionneuse");
+  if (!dlg.open || fermetureEnCours) return;
+  const img = $("[data-visionneuse-img]");
+  const fin = () => { img.getAnimations().forEach((an) => an.cancel()); fermetureEnCours = false; dlg.close(); };
+  const mini = miniatureOuverte;
+  const depart = !mouvementReduit() && mini && document.contains(mini) ? departVisionneuse(img, mini) : null;
+  if (!depart) { fin(); return; }
+  fermetureEnCours = true;
+  img.animate([{ transform: "none", clipPath: "inset(0px 0px)" }, depart], { duration: 300, easing: "cubic-bezier(.55, 0, .9, .45)", fill: "forwards" }).finished.then(fin, fin);
+}
+// fond, bouton « Fermer » et échap : même fermeture animée
+document.addEventListener("click", (e) => {
+  const dlg = $("#visionneuse");
+  if (!dlg?.open) return;
+  if (e.target === dlg || e.target.closest(".visionneuse__fermer")) { e.preventDefault(); fermerAffiche(); }
+}, true);
+$("#visionneuse")?.addEventListener("cancel", (e) => { e.preventDefault(); fermerAffiche(); });
 
-/* ---------- Projecteurs de « Prochaine date » : ils s'allument, puis s'éteignent en défilant ---------- */
-// --allume (0 à 1) est posée sur la scène : au chargement elle monte d'un coup avec un scintillement de
-// néon (une fois l'écran de démarrage passé), puis elle suit le défilement : les projecteurs s'éteignent
-// quand la scène sort de l'écran par le haut ou n'est pas encore arrivée par le bas ; quand on revient, ils se
-// rallument comme à l'arrivée (délai, puis scintillement). Sans animations : toujours allumés.
+/* projecteurs de « À l'affiche » */
+// --allume (0 à 1) est posée sur la scène : au chargement elle monte d'un coup avec un scintillement de néon (après l'intro), puis suit le défilement.
+// éteints quand la scène sort de l'écran ou n'est pas encore arrivée, rallumés au retour (délai puis scintillement). sans animations : toujours allumés
 function initProjecteurs() {
   if (mouvementReduit()) return;
   const SCINTILLE = [[0, 0], [.08, 1], [.16, .15], [.26, .85], [.34, .25], [.5, 1], [.62, .7], [1, 1]]; // [avancée, intensité]
-  const DELAI = 500; // ms d'obscurité avant que les projecteurs ne s'allument
-  let debut = 0, demande = 0;
+  const DELAI = 1100; // ms d'obscurité : ils sont les derniers à apparaître au chargement (après logo, titre, annonce, partenaires et flèche)
+  const DECALAGE = 350; // celui de droite s'allume 0,35 s après celui de gauche
+  let demande = 0;
   const allumage = (t) => {
     for (let i = 1; i < SCINTILLE.length; i++) {
       const [t1, v1] = SCINTILLE[i], [t0, v0] = SCINTILLE[i - 1];
@@ -576,22 +707,30 @@ function initProjecteurs() {
     }
     return 1;
   };
+  // chaque néon (scène de « À l'affiche », tirets de « Suivez-nous ») a son propre état
+  const etats = new WeakMap();
   const tick = (maintenant) => {
     demande = 0;
-    const cadre = $(".scene-cadre");
-    if (!cadre) return;
-    const r = cadre.getBoundingClientRect(), H = innerHeight, zone = H * 0.3;
-    const lisse = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
-    const defilement = lisse((r.bottom - 30) / zone) * lisse((H - r.top - 30) / zone);
-    // Scène (presque) sortie de l'écran : projecteurs éteints, ils se rallumeront (délai + scintillement) au retour
-    if (defilement < 0.1) { debut = 0; cadre.style.setProperty("--allume", "0"); return; }
-    let demarre = 0;
-    if (!document.documentElement.classList.contains("intro-actif")) {
-      if (!debut) debut = maintenant;
-      demarre = allumage(Math.min(1, Math.max(0, (maintenant - debut - DELAI) / 700)));
-    }
-    cadre.style.setProperty("--allume", (demarre * defilement).toFixed(3));
-    if (demarre < 1) demande = requestAnimationFrame(tick);
+    let encore = false;
+    $$(".scene-cadre, [data-neon-scroll]").forEach((cadre) => {
+      const st = etats.get(cadre) || etats.set(cadre, { debut: 0 }).get(cadre);
+      const r = cadre.getBoundingClientRect(), H = innerHeight, zone = H * 0.3;
+      const lisse = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+      const defilement = lisse((r.bottom - 30) / zone) * lisse((H - r.top - 30) / zone);
+      const regler = (g, d) => { cadre.style.setProperty("--allume-g", g.toFixed(3)); cadre.style.setProperty("--allume-d", d.toFixed(3)); cadre.style.setProperty("--allume", Math.max(g, d).toFixed(3)); };
+      // presque sorti de l'écran : éteint, il se rallumera au retour
+      if (defilement < 0.1) { st.debut = 0; regler(0, 0); return; }
+      let g = 0, d = 0;
+      if (!document.documentElement.classList.contains("intro-actif")) {
+        if (!st.debut) st.debut = maintenant;
+        const depuis = maintenant - st.debut - (cadre.matches(".scene-cadre, .dates-zone [data-neon-scroll]") ? DELAI : 250); // ailleurs que sur la scène du haut, pas besoin d'attendre la fin du chargement
+        g = allumage(Math.min(1, Math.max(0, depuis / 450)));
+        d = allumage(Math.min(1, Math.max(0, (depuis - DECALAGE) / 450)));
+      }
+      regler(g * defilement, d * defilement);
+      if (g < 1 || d < 1) encore = true;
+    });
+    if (encore) demande = requestAnimationFrame(tick);
   };
   const planifier = () => { if (!demande) demande = requestAnimationFrame(tick); };
   addEventListener("scroll", planifier, { passive: true });
@@ -601,9 +740,8 @@ function initProjecteurs() {
   planifier();
 }
 
-/* ---------- Barre de progression de lecture ---------- */
-// Une fine ligne blanche en haut de l'écran : sa longueur suit l'avancée dans la page (0 à 100 %).
-// Annoncée aux lecteurs d'écran comme une barre de progression (aria-valuenow).
+/* barre de progression de lecture */
+// fine ligne blanche en haut de l'écran dont la longueur suit l'avancée dans la page (0 à 100 %), annoncée comme barre de progression (aria-valuenow)
 function initProgression() {
   const barre = $("[data-progression]");
   if (!barre) return;
@@ -624,10 +762,9 @@ function initProgression() {
   maj();
 }
 
-/* ---------- Fond : une teinte par section ---------- */
-// Cinq nappes de couleur floues, une par section (orange en haut, puis ocre, violet, bleu, vert : la
-// couleur du titre de chaque section). On passe de l'une à l'autre en fondu quand le milieu de l'écran
-// franchit le haut d'une section. Sans animations : la première nappe reste fixe.
+/* fond : une teinte par section */
+// cinq nappes floues, une par section (rouge, ocre, violet, bleu, vert : la couleur du titre). fondu de l'une à l'autre quand le milieu de l'écran franchit le haut d'une section.
+// sans animations la première reste fixe
 const SECTIONS_FOND = [".dates-zone", "#groupe", "#ecouter", "#galerie", "#reseaux"];
 function initFond() {
   const images = $$(".fond__img");
@@ -638,12 +775,13 @@ function initFond() {
   const maj = () => {
     demande = 0;
     const ref = scrollY + innerHeight * 0.5, zone = innerHeight * 0.7;
-    // haut de chaque section (une section masquée ou vide, comme « Écouter » sans musique, est ignorée)
+    // haut de chaque section (une section masquée ou vide, comme la musique sans morceaux, est ignorée)
     const hauts = SECTIONS_FOND.map((s) => { const e = $(s); if (!e || e.hidden) return null; const r = e.getBoundingClientRect(); return r.height ? r.top + scrollY : null; });
     const actives = hauts.map((h, i) => i).filter((i) => hauts[i] !== null);
     const poids = new Array(images.length).fill(0);
     actives.forEach((i, rang) => {
-      const monte = rang === 0 ? 1 : lisse((ref - hauts[i]) / zone + 0.5);
+      // la première nappe (rouge) aussi : elle n'apparaît qu'à l'arrivée de « À l'affiche », sinon elle se voit à travers le fondu de la photo ou du clip d'en-tête
+      const monte = lisse((ref - hauts[i]) / zone + (rang === 0 ? 0.12 : 0.5));
       const prochaine = actives[rang + 1];
       const descend = prochaine === undefined ? 1 : 1 - lisse((ref - hauts[prochaine]) / zone + 0.5);
       poids[i] = monte * descend;
@@ -657,19 +795,17 @@ function initFond() {
   maj();
 }
 
-/* ---------- Animations en pause hors de l'écran ---------- */
-// Les animations qui tournent en continu (scène, photo d'en-tête, indicateur de défilement) ne coûtent rien
-// quand elles ne sont pas visibles : le CSS les met en pause avec la classe .hors-ecran.
+/* animations en pause hors de l'écran */
+// celles qui tournent en continu (scène, photo d'en-tête, flèche) ne coûtent rien hors écran : le css les met en pause avec .hors-ecran
 function pauseHorsEcran() {
   if (!("IntersectionObserver" in window)) return;
   const obs = new IntersectionObserver((entrees) => entrees.forEach((e) => e.target.classList.toggle("hors-ecran", !e.isIntersecting)), { rootMargin: "80px" });
   $$(".scene, .hero__media, .hero__suite, .confiance__fenetre, .oeil").forEach((el) => obs.observe(el));
 }
 
-/* ---------- Premier écran : ligne de style et profondeur ---------- */
-// La ligne « Rock alternatif · Ardèche » apparaît lettre par lettre une fois le logo posé
-// (après l'écran de démarrage s'il y en a un). Le texte complet reste lu tel quel par les
-// lecteurs d'écran. Sans animations : le texte est simplement là.
+/* premier écran : ligne de style et profondeur */
+// la ligne « Rock alternatif · Ardèche » apparaît lettre par lettre une fois le logo posé (après l'intro s'il y en a une).
+// les lecteurs d'écran lisent le texte complet. sans animations : le texte est juste là
 function animerTexteHero() {
   const p = $(".hero__style");
   if (!p || p.hidden || mouvementReduit()) return;
@@ -677,15 +813,14 @@ function animerTexteHero() {
   if (!texte) return;
   const base = document.documentElement.classList.contains("intro-actif") ? 1.5 : 0.4;
   let i = 0;
-  p.setAttribute("aria-label", texte);
-  p.innerHTML = texte.split(" ").map((mot) => `<span class="mot" aria-hidden="true">${[...mot].map((c) => `<span class="lettre" style="--i:${i++}">${esc(c)}</span>`).join("")}</span>`).join(" ");
+  p.innerHTML = `<span class="sr-seul">${esc(texte)}</span>` + texte.split(" ").map((mot) => `<span class="mot" aria-hidden="true">${[...mot].map((c) => `<span class="lettre" style="--i:${i++}">${esc(c)}</span>`).join("")}</span>`).join(" ");
   p.style.setProperty("--base", `${base}s`);
 }
 
-// La photo glisse un peu moins vite que la page (quelques pour cent de sa hauteur)
+// la photo glisse un peu moins vite que la page (quelques % de sa hauteur)
 function initParallaxeHero() {
   const media = $(".hero__media");
-  if (!media || mouvementReduit() || matchMedia("(hover: none) and (pointer: coarse)").matches) return; // téléphone : pas de parallaxe (mode fluide)
+  if (!media || mouvementReduit() || matchMedia("(hover: none) and (pointer: coarse)").matches) return; // téléphone : pas de parallaxe
   let demande = 0;
   const maj = () => {
     demande = 0;
@@ -695,11 +830,21 @@ function initParallaxeHero() {
   maj();
 }
 
-/* ---------- Diaporama du premier écran ---------- */
-// Une photo toutes les 6,5 s, en fondu ; arrêt si l'onglet est caché. Le fondu ne déplace rien : il reste actif même si l'on limite les
-// animations (seul le léger zoom est alors coupé, côté CSS).
+/* diaporama du premier écran */
+// une photo toutes les 5,5 s en fondu, arrêt si l'onglet est caché. le fondu reste actif même avec animations réduites (seul le zoom est coupé, côté css).
+// ordinateur seulement : deux photos s'ajoutent à la première (sur téléphone et tablette, le clip sert de fond)
+const DIAPOS_ORDINATEUR = [
+  { fichier: "hero-scene", h: 1156, alt: "Drop Out en concert : deux guitares, batterie, chanteuse et basse sur scène" },
+  { fichier: "hero-plein-air", h: 1333, alt: "Drop Out en concert en plein air : basse, chanteuse au micro et guitare devant la banderole du groupe" },
+];
 function initDiaporama() {
   const cadre = $("[data-diaporama]");
+  if (matchMedia("(min-width: 56rem) and (hover: hover)").matches && !$$(".diapo", cadre)[1]) {
+    $$(".diapo", cadre).at(-1)?.insertAdjacentHTML("afterend", DIAPOS_ORDINATEUR.map((d) => `
+        <img class="diapo" src="assets/img/${d.fichier}-1400.webp"
+          srcset="assets/img/${d.fichier}-800.webp 800w, assets/img/${d.fichier}-1400.webp 1400w, assets/img/${d.fichier}-2000.webp 2000w"
+          sizes="100vw" width="2000" height="${d.h}" alt="${d.alt}" loading="lazy" decoding="async">`).join(""));
+  }
   const diapos = $$(".diapo", cadre);
   if (diapos.length < 2) return;
   const DUREE = 5500; // une photo toutes les 5,5 s
@@ -720,12 +865,42 @@ function initDiaporama() {
   };
 
   document.addEventListener("visibilitychange", programmer);
-  // Précharge la photo suivante pendant que la première est affichée.
+  // précharge la photo suivante
   diapos[1].loading = "eager";
   programmer();
 }
 
-/* ---------- Interactions ---------- */
+/* clip en fond du premier écran */
+// vidéo muette en boucle (assets/video/) qui se fond par-dessus les photos quand elle est prête. pas chargée si animations ou données sont limitées, ni sur connexion lente : la photo reste seule.
+// en pause quand le premier écran n'est plus visible ou que l'onglet est caché (batterie)
+function initVideoFond() {
+  const video = $("[data-video-fond]");
+  // le choix d'afficher le clip est pris dès le chargement (classe video-fond posée dans le <head>)
+  if (!video || !document.documentElement.classList.contains("video-fond")) return;
+  const abandon = () => { // la photo reprend sa place (on la charge maintenant)
+    document.documentElement.classList.remove("video-fond");
+    video.remove();
+    const photo = $(".diapo");
+    if (photo && !photo.dataset.charge) { photo.srcset = photo.dataset.srcset; photo.src = photo.dataset.src; photo.dataset.charge = "1"; }
+  };
+  const demarrer = () => {
+  const delai = setTimeout(abandon, 6000);
+  const etroit = matchMedia("(max-width: 55.99rem) and (orientation: portrait)").matches; // cadre de l'en-tête sur téléphone (4 : 3,3)
+  video.src = etroit ? "assets/video/fond-mobile.mp4" : "assets/video/fond.mp4";
+  let visible = true;
+  const maj = () => { if (visible && !document.hidden) video.play().catch(() => {}); else video.pause(); };
+  video.addEventListener("playing", () => { clearTimeout(delai); video.classList.add("est-prete"); }, { once: true });
+  video.addEventListener("error", () => { clearTimeout(delai); abandon(); }, { once: true });
+  document.addEventListener("visibilitychange", maj);
+  if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { visible = e.isIntersecting; maj(); }).observe(video);
+  maj();
+  };
+  // la vidéo ne se charge qu'après le chargement de la page (l'image d'attente reste affichée entre-temps)
+  if (document.readyState === "complete") setTimeout(demarrer, 600);
+  else addEventListener("load", () => setTimeout(demarrer, 600), { once: true });
+}
+
+/* interactions */
 
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-agenda-ajouter]")) setTimeout(() => $("#agenda-ajout").close(), 300); // fenêtre refermée après l'ajout
@@ -742,19 +917,15 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* ---------- Apparitions et disparitions au défilement ---------- */
-// Deux niveaux, tous deux liés à la position à l'écran (donc réversibles) :
-// 1. chaque section (et le mur d'affiches) s'estompe en entrant et en sortant : --v ;
-//    la classe .est-visible suit sa présence à l'écran ;
-// 2. chaque élément (tuiles, photos, affiches, icônes…) a sa propre
-//    animation : --ain (entrée), --aout (sortie), --a (le plus faible des deux). Ils arrivent
-//    avec un léger décalage entre voisins, du côté d'où l'on vient : par le bas en
-//    descendant, par le haut en remontant — et repartent à l'inverse. Le CSS dessine l'effet
-//    selon data-anim (« monte », « gauche », « droite », « zoom »).
-// Avec « réduire les animations » : tout reste affiché, sans fondu ni mouvement.
+/* apparitions et disparitions au défilement */
+// deux niveaux, liés à la position à l'écran (donc réversibles) :
+// 1. chaque section (et le mur d'affiches) s'estompe en entrant et en sortant (--v) ; la classe .est-visible suit sa présence à l'écran
+// 2. chaque élément (tuiles, photos, affiches, icônes...) a sa propre animation : --ain (entrée), --aout (sortie), --a (le plus faible des deux).
+// ils arrivent avec un léger décalage entre voisins, par le bas en descendant, par le haut en remontant, et repartent à l'inverse. le css dessine l'effet selon data-anim (monte, gauche, droite, zoom).
+// animations réduites : tout reste affiché, sans fondu ni mouvement
 const ELEMENTS_ANIMES = [
   [".presentation > p", "monte"],
-  [".membres .membre", "cote"],
+  [".membres .membre", "monte"], // comme le texte de présentation : elles montent en fondu
   [".galerie__photo", "zoom"],
   [".affiche", "zoom"],
   [".piste, .video", "monte"],
@@ -771,23 +942,16 @@ function apparitionsAuDefilement() {
   const borne = (x) => Math.min(1, Math.max(0, x));
   let elements = [], demande = 0;
 
-  // (Re)constitue la liste des éléments animés : certains arrivent après coup (programme chargé).
+  // (re)constitue la liste des éléments animés : certains arrivent après coup (programme chargé)
   const rafraichir = () => {
     if (reduit) return;
     elements = [];
     for (const [selecteur, type] of ELEMENTS_ANIMES) {
       $$(selecteur).forEach((el, i) => {
-        // Rang dans la rangée (0, 1, 2) : sert à décaler un peu les voisins
+        // rang dans la rangée (0, 1, 2) : sert à décaler un peu les voisins
         const rang = i % 3;
-        let anim = type;
-        if (type === "cote") {
-          // Selon la colonne réelle de la tuile : colonne de gauche → arrive de la gauche,
-          // colonne de droite → arrive de la droite, colonne du milieu (3 colonnes) → par le bas.
-          const r = el.getBoundingClientRect(), centre = r.left + r.width / 2 + scrollX, milieu = document.documentElement.clientWidth / 2;
-          anim = Math.abs(centre - milieu) < r.width * 0.25 ? "monte" : centre < milieu ? "gauche" : "droite";
-        }
-        el.dataset.anim = anim;
-        elements.push({ el, rang: type === "cote" ? 0 : rang });
+        el.dataset.anim = type;
+        elements.push({ el, rang });
       });
     }
     planifier();
@@ -800,13 +964,13 @@ function apparitionsAuDefilement() {
       if (c.hidden) continue;
       const r = c.getBoundingClientRect();
       if (!r.height) continue;
-      const entree = borne((h - r.top) / zone); // 0 : sous l'écran → 1 : bien entrée
-      const sortie = borne(r.bottom / zone);    // 0 : sortie par le haut → 1 : encore là
+      const entree = borne((h - r.top) / zone); // 0 : sous l'écran, 1 : bien entrée
+      const sortie = borne(r.bottom / zone);    // 0 : sortie par le haut, 1 : encore là
       c.style.setProperty("--v", (reduit ? 1 : lisse(Math.min(entree, sortie))).toFixed(3));
       c.classList.toggle("est-visible", reduit || (entree > 0.25 && sortie > 0.05));
     }
     if (reduit) return;
-    // Éléments : on lit toutes les positions d'abord, puis on écrit (pas d'aller-retour de mise en page)
+    // on lit toutes les positions d'abord, puis on écrit (pas d'aller-retour de mise en page)
     const zoneEl = h * 0.2, lectures = elements.map(({ el, rang }) => ({ el, rang, r: el.getBoundingClientRect() }));
     for (const { el, rang, r } of lectures) {
       if (!r.height) { el.style.setProperty("--ain", "1"); el.style.setProperty("--aout", "1"); continue; }
@@ -819,18 +983,16 @@ function apparitionsAuDefilement() {
   const planifier = () => { if (!demande) demande = requestAnimationFrame(maj); };
   addEventListener("scroll", planifier, { passive: true });
   addEventListener("resize", () => { rafraichir(); }, { passive: true });
-  // Le contenu change de hauteur (programme chargé, section affichée) : on recalcule
+  // le contenu change de hauteur (programme chargé, section affichée) : on recalcule
   if ("ResizeObserver" in window) new ResizeObserver(planifier).observe(document.body);
   rafraichir();
   maj();
   return { rafraichir };
 }
 
-/* ---------- Crédit photo ---------- */
+/* crédit photo */
 
-// Pastille Instagram aux couleurs d'Instagram (dégradé jaune → orange → rose → violet → bleu, glyphe blanc)
-const BADGE_INSTAGRAM = `<svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><defs><linearGradient id="ig-degrade" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".28" stop-color="#fa7e1e"/><stop offset=".52" stop-color="#d62976"/><stop offset=".78" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6.5" fill="url(#ig-degrade)"/><g fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="4.2"/><circle cx="12" cy="12" r="3.3"/></g><circle cx="16.5" cy="7.5" r=".9" fill="#fff"/></svg>`;
-const BADGE_SITE = `<svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10.5"/><path d="M1.8 12h20.4M12 1.8c2.7 2.9 4 6.3 4 10.2s-1.3 7.3-4 10.2c-2.7-2.9-4-6.3-4-10.2s1.3-7.3 4-10.2z"/></svg>`;
+// pastille instagram aux couleurs d'instagram (dégradé jaune, orange, rose, violet, bleu, glyphe blanc)
 
 function rendreCredits() {
   const cr = contenu.credits || {};
@@ -839,17 +1001,15 @@ function rendreCredits() {
   const insta = liste.find((l) => /instagram.com/i.test(l.url)), site = liste.find((l) => l !== insta);
   const lien = (l, badge, nom, classe) => (l ? `<a class="credit__lien ${classe}" href="${esc(l.url)}"${attrsLien(l.url)} aria-label="${nom} de ${esc(cr.photos)}" title="${nom} de ${esc(cr.photos)}">${badge}</a>` : "");
   const icones = lien(insta, ICONES.instagram, "Instagram", "credit__lien--insta") + lien(site, ICONES.site, "Site web", "credit__lien--site");
-  // Le nom, puis en dessous Instagram (aux couleurs d'Instagram) et, à côté, le site web.
-  // Le pied de page garde la mention seule.
+  // le nom, puis instagram en dessous et le site web à côté. le pied de page garde la mention seule
   $("[data-credit-groupe]").innerHTML = `<span class="credit__nom">Photos © ${esc(cr.photos)}</span>${icones ? `<span class="credit__liens">${icones}</span>` : ""}`;
   $("[data-credit]").textContent = ` · Photos © ${cr.photos}`;
 }
 
-/* ---------- Réseaux sociaux : petits encarts Facebook et Instagram ---------- */
-// Conforme aux recommandations de la CNIL : rien n'est chargé depuis Facebook ou Instagram
-// (donc aucun cookie) avant un accord explicite, réseau par réseau. L'accord est mémorisé 6 mois
-// sur l'appareil et se retire en un clic (sous l'encart, ou dans les mentions légales).
-// Sans accord, le bouton « Ouvrir » (simple lien, sans cookie) mène à la page du réseau.
+/* réseaux sociaux : petits encarts facebook et instagram */
+// conforme CNIL : rien n'est chargé depuis facebook ou instagram (donc aucun cookie) avant un accord explicite, réseau par réseau.
+// l'accord est gardé 6 mois sur l'appareil et se retire en un clic (sous l'encart ou dans les mentions légales).
+// sans accord, le bouton « Ouvrir » (simple lien sans cookie) mène à la page du réseau
 
 const DUREE_ACCORD = 182 * 24 * 60 * 60 * 1000; // ≈ 6 mois
 const cleAccord = (reseau) => "dropout-" + (reseau === "facebook" ? "fb" : reseau) + "-accord";
@@ -860,12 +1020,61 @@ const ecrireAccord = (reseau, oui) => {
   try { oui ? localStorage.setItem(cleAccord(reseau), String(Date.now())) : localStorage.removeItem(cleAccord(reseau)); } catch { /* stockage indisponible */ }
 };
 
+// actus : les dernières publications facebook, lues par notre serveur (API Meta) puis affichées en articles.
+// rien n'est chargé chez meta depuis le navigateur : pas de cookie, donc pas d'accord à demander.
+// serveur non configuré ou muet : on garde les anciens encarts facebook / instagram
+async function rendreActus() {
+  const serveur = contenu.notifications?.serveur;
+  const zone = $("[data-actus]");
+  if (!serveur || !zone || !contenu.notifications?.actus) return false; // « actus: true » dans content/site.js une fois le jeton Meta posé sur le serveur
+  try {
+    const rep = await fetch(serveur.replace(/\/$/, "") + "/actus");
+    if (!rep.ok) return false;
+    const liste = ((await rep.json()).publications || []).slice(0, 6);
+    if (!liste.length) return false;
+    const jour = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(d); };
+    zone.innerHTML = liste.map((p) => {
+      const url = urlSure(p.url), image = urlSure(p.image);
+      const [titre, ...reste] = String(p.texte || "").trim().split(/\n+/);
+      const court = (t, n) => (t.length > n ? t.slice(0, n).replace(/\s+\S*$/, "") + "…" : t);
+      return `<article class="actu">${image ? `<a class="actu__image" href="${esc(url)}"${attrsLien(url)} tabindex="-1" aria-hidden="true"><img src="${esc(image)}" alt="" loading="lazy" decoding="async"></a>` : ""}
+        <div class="actu__corps">
+          <p class="actu__date">${esc(jour(p.date))}</p>
+          ${titre ? `<h3 class="actu__titre">${esc(court(titre, 90))}</h3>` : ""}
+          ${reste.join(" ").trim() || titre.length > 90 ? `<p class="actu__texte">${esc(court(reste.join(" ").trim() || titre, 220))}</p>` : ""}
+          <a class="actu__lien" href="${esc(url)}"${attrsLien(url)}>Lire sur Facebook ${FLECHE_ACTU}</a>
+        </div></article>`;
+    }).join("");
+    zone.hidden = false;
+    // une publication à la fois qu'on fait glisser, avec des points pour se repérer
+    const cartes = $$(".actu", zone);
+    if (cartes.length > 1) {
+      const points = document.createElement("div");
+      points.className = "actus__points";
+      points.setAttribute("aria-hidden", "true");
+      points.innerHTML = cartes.map(() => "<i></i>").join("");
+      zone.after(points);
+      const maj = () => {
+        const i = Math.round(zone.scrollLeft / (zone.clientWidth || 1));
+        [...points.children].forEach((p, k) => p.classList.toggle("est-actif", k === i));
+      };
+      zone.addEventListener("scroll", () => requestAnimationFrame(maj), { passive: true });
+      maj();
+    }
+    const embeds = $("[data-embeds]"); embeds?.replaceChildren(); embeds?.setAttribute("hidden", ""); // retire aussi le cadre facebook (et ce qu'il a chargé)
+    $("[data-reso-onglets]")?.setAttribute("hidden", "");
+    return true;
+  } catch { return false; }
+}
+const FLECHE_ACTU = "→";
+
 function rendreEmbeds() {
   const zone = $("[data-embeds]");
   if (!zone) return;
-  const reseaux = avecUrl(contenu.reseaux).filter((r) => /instagram\.com|facebook\.com/i.test(r.url));
+  // facebook seul : instagram n'a plus d'encart (ses icônes restent dans le menu et ailleurs)
+  const reseaux = avecUrl(contenu.reseaux).filter((r) => /facebook\.com/i.test(r.url));
   if (!reseaux.length) { $("#reseaux").hidden = true; return; }
-  reseaux.sort((a, b) => /instagram/i.test(b.url) - /instagram/i.test(a.url)); // Instagram d'abord
+  reseaux.sort((a, b) => /instagram/i.test(b.url) - /instagram/i.test(a.url)); // instagram d'abord
 
   zone.innerHTML = reseaux.map((r) => {
     const cle = /instagram\.com/i.test(r.url) ? "instagram" : "facebook";
@@ -875,10 +1084,10 @@ function rendreEmbeds() {
       '<div class="embed__zone"></div></article>';
   }).join("");
 
-  // Deux « sections » côte à côte qu'on fait glisser (défilement tactile avec accroche) ; le logo de chaque réseau
-  // sert d'onglet : il montre la section affichée et y emmène d'un toucher.
+  // deux « sections » côte à côte qu'on fait glisser (défilement tactile avec accroche) ; le logo de chaque réseau sert d'onglet : il montre la section affichée et y emmène d'un toucher
   const onglets = $("[data-reso-onglets]");
-  if (onglets) {
+  if (onglets && reseaux.length < 2) onglets.hidden = true; // un seul réseau : pas d'onglet à choisir
+  if (onglets && reseaux.length > 1) {
     onglets.innerHTML = reseaux.map((r) => {
       const cle = /instagram\.com/i.test(r.url) ? "instagram" : "facebook";
       return '<button type="button" class="reso__onglet" role="tab" data-onglet="' + cle + '" aria-selected="false">' + iconeDe(r.url) + '<span>' + esc(r.nom) + '</span></button>';
@@ -926,7 +1135,7 @@ function rendreEmbeds() {
         const compte = new URL(r.url).pathname.split("/").filter(Boolean)[0] || "";
         src = "https://www.instagram.com/" + encodeURIComponent(compte) + "/embed";
       } else {
-        // Les nouvelles pages (/p/nom-123456/) passent mieux par leur identifiant numérique.
+        // les nouvelles pages (/p/nom-123456/) passent mieux par leur identifiant numérique
         const id = r.url.match(/\/p\/[^/]*?-(\d{6,})\/?/)?.[1];
         const params = new URLSearchParams({
           href: id ? "https://www.facebook.com/profile.php?id=" + id : r.url, tabs: "timeline", width: largeur, height: 380,
@@ -942,16 +1151,16 @@ function rendreEmbeds() {
     };
 
     if (!lireAccord(cle)) { ecrireAccord(cle, false); attente(); return; }
-    // Accord déjà donné : chargement à l'approche de la section.
+    // accord déjà donné : chargement à l'approche de la section
     if (!("IntersectionObserver" in window)) { charger(); return; }
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); charger(); } }, { rootMargin: "600px 0px" });
     obs.observe(carte);
   });
 }
 
-/* ---------- Mentions légales et confidentialité ---------- */
-// Contenu fixe pour ce que fait vraiment le site (aucun cookie, aucune mesure d'audience) ; les informations
-// sur l'éditeur et l'hébergeur viennent de content/site.js (legal). Une fenêtre ouverte depuis le pied de page.
+/* mentions légales et confidentialité */
+// contenu fixe pour ce que fait vraiment le site (aucun cookie, aucune mesure d'audience) ; les infos sur l'éditeur et l'hébergeur viennent de content/site.js (legal).
+// fenêtre ouverte depuis le pied de page
 
 function rendreMentions() {
   const dlg = $("#mentions-fenetre");
@@ -1001,10 +1210,8 @@ function rendreMentions() {
   dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-mentions-fermer]")) dlg.close(); });
 }
 
-/* ---------- Membres : noir et blanc → couleur au défilement (tactile) ---------- */
-// Sans survol possible, une photo reste en noir et blanc pendant presque tout
-// son passage, et ne prend ses couleurs que lorsque son centre arrive au milieu
-// de l'écran (± 12 % de sa hauteur). Simple fondu de filtre.
+/* membres : noir et blanc, couleur au défilement (tactile) */
+// sans survol possible, une photo reste en noir et blanc presque tout son passage et ne prend ses couleurs que quand son centre arrive au milieu de l'écran (± 12 % de sa hauteur). simple fondu de filtre
 const ZONE_COULEUR = 0.12;
 function couleurAuDefilement() {
   const liste = $("[data-membres]");
@@ -1017,8 +1224,7 @@ function couleurAuDefilement() {
     if (etroit.matches) return; // grille à 2 colonnes : le toucher décide, pas le défilement
     const milieu = innerHeight / 2;
     const marge = innerHeight * ZONE_COULEUR;
-    // Plusieurs tuiles sur une même rangée (tablette, paysage) : seule la plus
-    // proche du centre horizontal de l'écran s'allume.
+    // plusieurs tuiles sur une rangée (tablette, paysage) : seule la plus proche du centre horizontal s'allume
     const centreX = innerWidth / 2;
     let elue = null, meilleure = Infinity;
     for (const t of tuiles) {
@@ -1036,29 +1242,56 @@ function couleurAuDefilement() {
   maj();
 }
 
-/* ---------- Fiche d'un membre (téléphone) ---------- */
-// Un toucher sur une tuile ouvre une fiche en grand, en couleur, qui part de la
-// tuile (animation « FLIP » : la carte glisse et grandit depuis la photo) ; les
-// trois petits textes arrivent ensuite un par un (CSS). Un toucher en dehors de la
-// carte ou Échap la referme (pas de croix : toucher l'écran suffit). Tablette et ordinateur : inchangés.
+/* néons à côté des titres de section */
+// trois petits tirets lumineux, les uns sous les autres, à droite de chaque titre (couleur du bandeau, via --accent)
+function initNeonTitres() {
+  const boites = [];
+  $$(".bloc__titre").forEach((h) => {
+    if (h.parentElement?.classList.contains("titre-neon")) return;
+    const boite = document.createElement("div");
+    boite.className = "titre-neon";
+    h.before(boite);
+    // le titre est posé dans une « bande » qui porte aussi les petits points BD autour du bandeau
+    const bande = document.createElement("div");
+    bande.className = "titre-bande";
+    bande.innerHTML = '<span class="bd-points" aria-hidden="true"></span>';
+    bande.append(h);
+    boite.append(bande);
+    // compos et clip : un triangle play en néon ; les autres sections : trois tirets
+    boite.insertAdjacentHTML("beforeend", h.id === "ecouter-titre" || h.id === "clip-titre"
+      ? '<span class="neon-play" aria-hidden="true"><svg viewBox="0 0 24 28" focusable="false"><path d="M4.5 3.5 L20.5 14 L4.5 24.5 Z"/></svg></span>'
+      : '<span class="neon-pile" aria-hidden="true"><i></i><i></i><i></i></span>');
+    boites.push(boite);
+  });
+  // les néons s'allument (petit délai, l'un après l'autre) quand le titre arrive à l'écran et s'éteignent quand on s'en éloigne. sans animations : toujours allumés
+  if (mouvementReduit() || !("IntersectionObserver" in window)) { boites.forEach((b) => b.classList.add("est-allume")); return; }
+  const obs = new IntersectionObserver((entrees) => {
+    entrees.forEach((e) => e.target.classList.toggle("est-allume", e.isIntersecting));
+  }, { rootMargin: "-5% 0px -5% 0px", threshold: 0.15 });
+  boites.forEach((b) => obs.observe(b));
+}
+
+/* fiche d'un membre (téléphone) */
+// un toucher sur une tuile ouvre une fiche en grand, en couleur, qui part de la tuile (animation FLIP : la carte glisse et grandit depuis la photo) ;
+// les trois petits textes arrivent ensuite un par un (css). un toucher à côté de la carte ou échap la referme, pas de croix. tablette et ordinateur : inchangés
 function initFiches() {
   const dlg = $("#fiche-membre");
   const liste = $("[data-membres]");
   if (!dlg || !liste) return;
   const carte = $("[data-fiche-carte]", dlg);
-  const etroit = matchMedia("(max-width: 39.99rem)");
+  const etroit = matchMedia("(max-width: 39.99rem), (orientation: landscape) and (max-height: 540px)"); // téléphone, y compris en paysage (où les tuiles n'affichent plus leurs mots)
   let tuile = null, ferme = true;
 
   const ouvrir = (t) => {
     const m = (contenu.membres || [])[Number(t.dataset.i)];
     if (!m) return;
     tuile = t; ferme = false;
+    $(".fiche__logo", dlg)?.getAnimations().forEach((an) => an.cancel());
     carte.getAnimations().forEach((an) => an.cancel()); // efface l'animation de retour restée figée (fill: forwards) de la fiche précédente
     const base = m.photo?.base ? urlSure(m.photo.base) : "";
     const img = $("[data-fiche-img]", dlg);
     const grande = base ? `${base}-960.webp` : (m.photo?.src ? urlSure(m.photo.src) : "");
-    // La photo de CE membre s'affiche tout de suite (la version déjà chargée dans sa tuile), puis la grande la remplace
-    // dès qu'elle est prête. Sans ça, l'ancienne photo restait à l'écran jusqu'au chargement de la nouvelle.
+    // la photo de ce membre s'affiche tout de suite (version déjà chargée dans sa tuile), puis la grande la remplace. sans ça l'ancienne photo restait affichée jusqu'au chargement de la nouvelle
     const deja = $("img", t)?.currentSrc || "";
     img.removeAttribute("srcset");
     img.src = deja || grande;
@@ -1074,10 +1307,11 @@ function initFiches() {
     $("[data-fiche-traits]", dlg).innerHTML = (m.traits || []).filter(Boolean).map((tr, j) => `<li style="--rang:${j}">${esc(tr)}</li>`).join("");
     carte.setAttribute("style", t.getAttribute("style") || ""); // reprend --couleur / --encre du membre
     dlg.showModal();
-    carte.focus({ preventScroll: true }); // le focus sur la carte (pas de contour au toucher)
+    carte.focus({ preventScroll: true }); // focus sur la carte (pas de contour au toucher)
+    t.classList.add("est-ouverte"); // la tuile quitte sa place : c'est elle qui grandit au milieu, pas une deuxième
     if (mouvementReduit()) return;
-    // La carte part de la tuile : même position et même taille, puis grandit jusqu'à sa place
-    const a = t.getBoundingClientRect(), b = carte.getBoundingClientRect();
+    // la carte part de la photo de la tuile (même position, même taille) puis grandit jusqu'au milieu de l'écran
+    const a = ($(".membre__photo", t) || t).getBoundingClientRect(), b = carte.getBoundingClientRect();
     carte.animate([
       { transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})` },
       { transform: "none" },
@@ -1088,14 +1322,20 @@ function initFiches() {
   const fermer = () => {
     if (ferme) return;
     ferme = true;
-    const fin = () => { carte.getAnimations().forEach((an) => an.cancel()); dlg.close(); tuile?.focus({ preventScroll: true }); };
+    const logo = $(".fiche__logo", dlg);
+    const fin = (pose) => {
+      logo?.getAnimations().forEach((an) => an.cancel()); carte.getAnimations().forEach((an) => an.cancel());
+      dlg.close(); tuile?.classList.remove("est-ouverte"); tuile?.focus({ preventScroll: true });
+    };
     if (mouvementReduit() || !tuile) { fin(); return; }
-    // Retour vers la tuile
-    const a = tuile.getBoundingClientRect(), b = carte.getBoundingClientRect();
+    // le logo repart dans l'autre sens : il redescend en s'effaçant
+    logo?.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(.6rem)" }], { duration: 220, easing: "ease-in", fill: "forwards" });
+    // retour vers la tuile
+    const a = ($(".membre__photo", tuile) || tuile).getBoundingClientRect(), b = carte.getBoundingClientRect();
     carte.animate([
       { transform: "none", opacity: 1 },
-      { transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`, opacity: 0.2 },
-    ], { duration: 280, easing: "cubic-bezier(.5, 0, .8, .4)", fill: "forwards" }).finished.then(fin, fin);
+      { transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`, opacity: 1 },
+    ], { duration: 300, easing: "cubic-bezier(.55, 0, .9, .45)", fill: "forwards" }).finished.then(() => fin(true), () => fin());
   };
 
   liste.addEventListener("click", (e) => {
@@ -1106,33 +1346,30 @@ function initFiches() {
     const t = e.target.closest(".membre");
     if (t && etroit.matches && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); ouvrir(t); }
   });
-  // Un toucher n'importe où (carte, fond, logo) referme la fiche
-  dlg.addEventListener("click", fermer); // un toucher n'importe où (sur la carte ou à côté) referme la fiche
-  dlg.addEventListener("cancel", (e) => { e.preventDefault(); fermer(); }); // Échap
-  addEventListener("resize", () => { if (!etroit.matches && dlg.open) { ferme = true; dlg.close(); } }, { passive: true });
+  // un toucher n'importe où (carte, fond, logo) referme la fiche
+  dlg.addEventListener("click", fermer);
+  dlg.addEventListener("cancel", (e) => { e.preventDefault(); fermer(); }); // échap
+  addEventListener("resize", () => { if (!etroit.matches && dlg.open) { ferme = true; dlg.close(); tuile?.classList.remove("est-ouverte"); } }, { passive: true });
 }
 
-/* ---------- Indicateur de défilement de l'en-tête ---------- */
-// Visible en haut de page, il s'efface dès que l'on commence à défiler.
+/* indicateur de défilement de l'en-tête */
+// visible en haut de page, il s'efface dès qu'on défile
 function initIndicateur() {
   const suite = $("[data-hero-suite]");
   if (!suite) return;
   const maj = () => suite.classList.toggle("est-cache", scrollY > 60);
   addEventListener("scroll", maj, { passive: true });
   maj();
-  // Un toucher fait descendre d'à peu près un écran (le lien « #dates » est déjà à l'écran sur téléphone)
+  // un toucher fait descendre d'à peu près un écran (le lien #dates est déjà à l'écran sur téléphone)
   suite.addEventListener("click", (e) => {
     e.preventDefault();
     scrollBy({ top: innerHeight * 0.85, behavior: mouvementReduit() ? "auto" : "smooth" });
   });
 }
 
-/* ---------- Barre fixe : le gros logo monte et se pose dedans ---------- */
-// Pendant le défilement, le logo de l'en-tête se déplace et rétrécit jusqu'à
-// l'emplacement du logo de la barre ; la barre s'assombrit en même temps
-// (--p de 0 à 1). Arrivé, il passe le relais au petit logo de la barre, placé
-// exactement au même endroit. Animations réduites : pas de déplacement, la
-// barre apparaît simplement quand le logo est sorti de l'écran.
+/* barre fixe : le gros logo monte et se pose dedans */
+// pendant le défilement le logo de l'en-tête se déplace et rétrécit jusqu'à l'emplacement du logo de la barre, qui s'assombrit en même temps (--p de 0 à 1).
+// arrivé, il passe le relais au petit logo de la barre, placé exactement au même endroit. animations réduites : pas de déplacement, la barre apparaît quand le logo est sorti de l'écran
 function initBarre() {
   const barre = $("[data-barre]");
   const logo = $(".hero__logo");
@@ -1169,24 +1406,33 @@ function initBarre() {
     barre.classList.toggle("est-arrivee", arrive);
     barre.classList.toggle("est-active", p > 0.6);
     logo.classList.toggle("est-pose", arrive && !mouvementReduit());
-    logo.classList.toggle("en-vol", p > 0.02 && !mouvementReduit()); // l’œil se recentre dès que le logo part : plus de saut au moment du relais
+    logo.classList.toggle("en-vol", p > 0.02 && !mouvementReduit()); // l'œil se recentre dès que le logo part : plus de saut au moment du relais
   };
   const planifier = () => { if (!demande) demande = requestAnimationFrame(maj); };
   addEventListener("scroll", planifier, { passive: true });
   addEventListener("resize", () => { depart = null; planifier(); }, { passive: true });
-  // Les polices et le logo peuvent décaler la mise en page au chargement
+  // les polices et le logo peuvent décaler la mise en page au chargement
   addEventListener("load", () => { depart = null; planifier(); });
   maj();
 }
 
-/* ---------- Démarrage ---------- */
+/* démarrage */
 
 initIntro();
+// filet : tout lien vers un autre site s'ouvre dans un nouvel onglet, même écrit sans target
+document.addEventListener("click", (e) => {
+  const a = e.target.closest?.("a[href]");
+  if (!a || a.target || a.hasAttribute("download")) return;
+  if (/^https?:/i.test(a.href) && new URL(a.href).origin !== location.origin) { a.target = "_blank"; a.rel = "noopener"; }
+}, true);
+
+initNeonTitres(); // tôt : les titres sont déjà dans la page
 initProgression();
 initFond();
 animerTexteHero();
 initParallaxeHero();
 initDiaporama();
+initVideoFond();
 initOeil();
 initIndicateur();
 initBarre();
@@ -1194,25 +1440,29 @@ initProjecteurs();
 rendrePresentation();
 rendreMembres();
 initFlechesMembres();
-rendreGalerie(rendreVideos());
+rendreGalerie(nbVideos());
+rendreVideos();
+initSliderGalerie();
+$("[data-clip]").hidden = !nbVideos();
 rendrePartenaires();
 pauseHorsEcran();
 couleurAuDefilement();
 initFiches();
 initBooking();
+initMkl();
 rendreMusique();
 initMenu();
 initRetour();
 rendreReseaux();
-rendreEmbeds();
+rendreEmbeds(); // le cadre facebook s'affiche tout de suite ; les articles le remplacent si le serveur répond
+rendreActus();
 rendreMentions();
 rendreCredits();
 $("[data-annee]").textContent = new Date().getFullYear();
-$("#visionneuse").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 const apparitions = apparitionsAuDefilement();
 initPwa();
 initAlertes();
 rendreProgramme().finally(() => apparitions.rafraichir()); // les affiches et dates arrivent après le chargement
 
-// Retour du réseau : on recharge le programme pour afficher la version à jour.
+// retour du réseau : on recharge le programme pour afficher la version à jour
 addEventListener("online", rendreProgramme);

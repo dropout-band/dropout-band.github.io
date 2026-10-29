@@ -1,16 +1,9 @@
-// Écran de démarrage : fond noir uni, le logo apparaît au centre, puis vient se poser à sa
-// place dans l'en-tête pendant que le fond s'efface.
-// - Affiché quand on revient après plus de 5 minutes d'absence (ou à la toute première visite) :
-//   le script de index.html décide avant le premier affichage, en posant la classe « intro-actif »
-//   sur <html>, d'après l'heure de dernière présence enregistrée ici (localStorage « dropout-vu »).
-//   Recharger la page ou revenir vite sur le site ne le rejoue donc pas. Le délai (5 minutes) se règle
-//   dans le script en tête de index.html.
-// - Jamais avec « réduire les animations », ni si l'adresse porte une ancre (#dates…) ou ?agenda.
-// - ?intro force l'affichage ; ?intro=lent le ralentit trois fois (pour le mettre au point).
-// - Filet de sécurité : si ce script ne se lance pas, le CSS efface l'écran de lui-même après 6 s.
+// écran de démarrage : fond noir, le logo apparaît au centre puis vient se poser dans l'en-tête pendant que le fond s'efface.
+// affiché à la première visite ou après plus de 5 min d'absence (le script de index.html pose la classe intro-actif sur <html> d'après localStorage « dropout-vu »).
+// jamais avec animations réduites, ni avec une ancre (#dates) ou ?agenda. ?intro force l'affichage, ?intro=lent le ralentit x3.
+// filet : si ce script ne tourne pas, le css efface l'écran après 6 s
 
-// Enregistre « je suis là » : à l'ouverture, toutes les 30 s tant que la page est visible, et au
-// moment où elle se cache ou se ferme. L'absence se mesure donc depuis la dernière présence réelle.
+// note la présence : à l'ouverture, toutes les 30 s tant que la page est visible, et quand elle se cache ou se ferme
 function suivrePresence() {
   const marquer = () => { try { localStorage.setItem("dropout-vu", String(Date.now())); } catch { /* stockage indisponible */ } };
   marquer();
@@ -31,36 +24,36 @@ export function initIntro() {
 
   const k = new URLSearchParams(location.search).get("intro") === "lent" ? 3 : 1;
   const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
-  racine.style.overflow = "hidden"; // pas de défilement pendant l'écran de démarrage
+  racine.style.overflow = "hidden"; // pas de défilement pendant l'intro
 
-  // La page est prête : polices, première photo décodée, chargement terminé
+  // page prête : polices, première photo décodée, chargement fini
   const photo = document.querySelector(".diapo.est-active");
   const prete = Promise.all([
     document.fonts?.ready,
     photo?.decode?.().catch(() => {}),
     document.readyState === "complete" ? null : new Promise((r) => addEventListener("load", r, { once: true })),
   ]);
-  // Au moins 0,7 s (le temps de voir le logo), au plus 3,5 s (réseau lent : on ne bloque pas)
+  // entre 0,7 s (le temps de voir le logo) et 3,5 s (réseau lent : on ne bloque pas)
   Promise.race([Promise.all([attendre(700 * k), prete]), attendre(3500 * k)]).then(() => {
     const depart = logo.getBoundingClientRect();
-    const cible = logoSite.getBoundingClientRect(); // l'emplacement exact du logo de l'en-tête
+    const cible = logoSite.getBoundingClientRect(); // emplacement exact du logo de l'en-tête
     if (!depart.width || !cible.width) { fin(); return; }
     const dx = cible.left + cible.width / 2 - (depart.left + depart.width / 2);
     const dy = cible.top + cible.height / 2 - (depart.top + depart.height / 2);
     const echelle = cible.width / depart.width;
 
-    logo.getAnimations().forEach((a) => a.cancel()); // l'animation d'entrée est finie : on repart de l'état affiché
+    logo.getAnimations().forEach((a) => a.cancel()); // animation d'entrée finie : on repart de l'état affiché
     logo.style.opacity = "1";
     const deplacement = logo.animate(
       [{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${echelle})` }],
       { duration: 650 * k, easing: "cubic-bezier(.65, 0, .2, 1)", fill: "forwards" },
     );
-    // Le fond s'efface pendant que le logo voyage : la page apparaît derrière lui
+    // le fond s'efface pendant que le logo voyage
     intro.animate(
       [{ backgroundColor: "rgb(10 10 10 / 1)" }, { backgroundColor: "rgb(10 10 10 / 0)" }],
       { duration: 500 * k, delay: 150 * k, easing: "ease-in-out", fill: "forwards" },
     );
-    // Posé : le vrai logo prend le relais au pixel près, l'écran de démarrage disparaît
+    // posé : le vrai logo prend le relais, l'intro disparaît
     deplacement.finished.then(fin, fin);
   });
 }
