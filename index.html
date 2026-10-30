@@ -216,6 +216,7 @@
         <p class="slider__compteur" data-compteur aria-live="polite"></p>
       </div>
       <div class="conteneur medias__clip" data-clip>
+        <img class="laura__perso" src="assets/img/titre-laura.webp" width="211" height="260" alt="" loading="lazy" decoding="async">
         <h2 class="bloc__titre" id="clip-titre">Clip</h2>
         <div class="videos" data-videos></div>
       </div>
@@ -245,13 +246,14 @@
 
   <footer class="pied">
     <div class="pied__contenu conteneur">
-      <p class="pied__copy">© <span data-annee></span> Drop Out<span data-credit></span></p>
+      <p class="pied__copy">© <span data-annee></span> Drop Out</p>
       <img class="pied__logo" src="assets/logo/logo-blanc-600.webp" width="600" height="330" alt="Drop Out" loading="lazy" decoding="async">
       <button type="button" class="pied__haut" data-haut aria-label="Remonter en haut de la page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 12l7-7 7 7"/></svg></button>
       <div class="pied__liens">
         <a class="lien-discret" href="app/" data-installer hidden>Télécharger l’application</a>
         <button type="button" class="lien-discret pied__legal" data-mentions aria-haspopup="dialog">Mentions légales</button>
       </div>
+      <p class="pied__credits" data-credit></p>
       <p class="propulse">Propulsé par <button type="button" class="propulse__lien" data-mkl aria-haspopup="dialog" aria-label="MKL.studio : envoyer un message"><img src="assets/logo/mkl-studio.svg" width="1269" height="247" alt="MKL.studio" loading="lazy" decoding="async"></button></p>
     </div>
   </footer>
@@ -330,6 +332,7 @@
         <label class="mkl-form__champ"><span>Votre message</span>
           <textarea name="message" required rows="5" maxlength="2000" placeholder="Votre projet, en quelques lignes…"></textarea></label>
         <input class="mkl-form__piege" type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="mkl-form__rgpd">Votre adresse et votre message ne servent qu’à vous répondre. Détails : mentions légales, rubrique « Données personnelles et cookies ».</p>
         <p class="mkl-form__etat" data-mkl-etat role="status" aria-live="polite"></p>
         <button type="submit" class="bouton bouton--plein mkl-form__envoi" data-mkl-envoi>Envoyer</button>
       </form>

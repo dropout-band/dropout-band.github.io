@@ -2588,12 +2588,12 @@ img { -webkit-touch-callout: none; }
 
 /* fond noir avec de grosses bulles de couleur floues sur les bords gauche et droit, une paire par catégorie, qui se fondent l'une dans l'autre au défilement. simples dégradés radiaux : diffus, sans filtre coûteux */
 .fond__img { background-color: transparent; background-repeat: no-repeat; }
-/* nappes de fond : couleurs un peu désaturées et plus discrètes */
-.fond__img--dates   { background-image: radial-gradient(ellipse 80% 34% at 0% 24%, rgb(150 18 28 / .5), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 76%, rgb(150 18 28 / .42), transparent 72%); }
-.fond__img--groupe  { background-image: radial-gradient(ellipse 80% 34% at 0% 70%, rgb(176 140 84 / .32), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 26%, rgb(176 140 84 / .28), transparent 72%); }
-.fond__img--ecouter { background-image: radial-gradient(ellipse 80% 34% at 0% 26%, rgb(116 84 110 / .4), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 72%, rgb(116 84 110 / .34), transparent 72%); }
-.fond__img--galerie { background-image: radial-gradient(ellipse 80% 34% at 0% 68%, rgb(64 94 138 / .42), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 28%, rgb(64 94 138 / .36), transparent 72%); }
-.fond__img--reseaux { background-image: radial-gradient(ellipse 80% 34% at 0% 30%, rgb(104 142 80 / .32), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 74%, rgb(104 142 80 / .28), transparent 72%); }
+/* nappes de fond : couleurs de la charte, un peu plus soutenues */
+.fond__img--dates   { background-image: radial-gradient(ellipse 80% 34% at 0% 24%, rgb(179 41 44 / .62), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 76%, rgb(179 41 44 / .5), transparent 72%); }
+.fond__img--groupe  { background-image: radial-gradient(ellipse 80% 34% at 0% 70%, rgb(209 147 63 / .55), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 26%, rgb(209 147 63 / .5), transparent 72%); }
+.fond__img--ecouter { background-image: radial-gradient(ellipse 80% 34% at 0% 26%, rgb(135 80 122 / .68), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 72%, rgb(135 80 122 / .58), transparent 72%); }
+.fond__img--galerie { background-image: radial-gradient(ellipse 80% 34% at 0% 68%, rgb(42 90 154 / .7), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 28%, rgb(42 90 154 / .6), transparent 72%); }
+.fond__img--reseaux { background-image: radial-gradient(ellipse 80% 34% at 0% 30%, rgb(102 160 59 / .55), transparent 72%), radial-gradient(ellipse 80% 34% at 100% 74%, rgb(102 160 59 / .48), transparent 72%); }
 
 /* téléphone : la photo n'est plus agrandie pour que les cinq membres restent dans le cadre */
 /* indication de défilement (téléphone) : petite flèche discrète collée en bas de l'écran */
@@ -3439,9 +3439,9 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
 .attente__texte::before { color: #e0312f; }
 .attente__texte::after { color: var(--jaune); }
 @media (prefers-reduced-motion: no-preference) {
-  .attente__texte { animation: glitch-texte 4.8s steps(1, end) infinite; }
-  .attente__texte::before { animation: glitch-rouge 4.8s steps(1, end) infinite; }
-  .attente__texte::after { animation: glitch-jaune 4.8s steps(1, end) infinite; }
+  .attente__texte { animation: glitch-texte 2.5s steps(1, end) infinite; }
+  .attente__texte::before { animation: glitch-rouge 2.5s steps(1, end) infinite; }
+  .attente__texte::after { animation: glitch-jaune 2.5s steps(1, end) infinite; }
 }
 @keyframes glitch-texte {
   0%, 38%, 40.5%, 74%, 77.5%, 100% { transform: skewX(-9deg); opacity: 1; }
@@ -3741,22 +3741,17 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
 /* « Ils nous ont fait confiance » : titre plus petit */
 .confiance .confiance__titre { font-size: .66rem; letter-spacing: .2em; }
 
-/* test : clip d'en-tête en couleur (téléphone et tablette). pour revenir au noir et blanc, supprimer ce bloc */
-html.video-fond .hero__media { filter: none; }
-
 .agenda-plus-tard { margin-top: .6rem; }
 
 /* texte lu par les lecteurs d'écran seulement */
 .sr-seul { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 
-/* fenêtre Booking : cadre rouge profond, légèrement penché, ombre dure foncée, trame de points dans le coin et titre en bande */
+/* fenêtre Booking : fond noir, cadre rouge profond, légèrement penché, ombre dure foncée, trame de points dans le coin et titre en bande */
 #booking-fenetre {
   --rouge-profond: #9a1b22;
   --rouge-sombre: #5c0f14;
   border-color: var(--rouge-profond);
-  background:
-    radial-gradient(circle at 0% 100%, rgb(154 27 34 / .35), transparent 60%),
-    var(--noir-2);
+  background: var(--noir);
   box-shadow: 8px 8px 0 var(--rouge-sombre), 0 1.5rem 3.5rem rgb(0 0 0 / .6);
   overflow: hidden;
 }
@@ -3777,7 +3772,7 @@ html.video-fond .hero__media { filter: none; }
 #booking-fenetre .booking-fenetre__fermer { position: absolute; }
 #booking-fenetre .booking-fenetre__titre { --accent: var(--rouge-profond); font-size: calc(var(--fs-h2) * 1.25); transform: rotate(-3deg); box-shadow: 4px 4px 0 var(--rouge-sombre); }
 #booking-fenetre .booking-fenetre__bouton { box-shadow: 4px 4px 0 var(--rouge-profond); }
-#booking-fenetre::backdrop { background: rgb(40 4 8 / .72); }
+#booking-fenetre::backdrop { background: rgb(0 0 0 / .8); }
 
 /* « À l'affiche » : néons plus loin du titre (« Suivez-nous » garde sa distance) */
 .dates-zone .entete-neon { gap: clamp(2.3rem, 5.4vw + .8rem, 4.2rem); }
@@ -3791,12 +3786,8 @@ html.video-fond .hero__media { filter: none; }
 }
 @keyframes visionneuse-fondu { from { opacity: 0; } }
 
-/* bandeau des logos : les bords s'estompent avec deux dégradés posés dessus, pas avec un masque (un masque sur une piste très large qui défile donnait des carrés noirs sur certains téléphones) */
-.confiance__fenetre { position: relative; -webkit-mask-image: none; mask-image: none; }
-.confiance__fenetre::before, .confiance__fenetre::after { content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; width: 12%; pointer-events: none; }
-.confiance__fenetre::before { left: 0; background: linear-gradient(to right, var(--noir), transparent); }
-.confiance__fenetre::after { right: 0; background: linear-gradient(to left, var(--noir), transparent); }
-@media (prefers-reduced-motion: reduce) { .confiance__fenetre::before, .confiance__fenetre::after { display: none; } }
+/* bandeau des logos : aucun dégradé ni masque sur les bords (ils faisaient deux bandes noires sur le fond coloré) */
+.confiance__fenetre { -webkit-mask-image: none; mask-image: none; }
 
 /* clip d'en-tête : le fondu vers le noir est un dégradé posé par-dessus, plus un masque sur la vidéo (un masque oblige à retraiter chaque image du clip : lourd, donc saccades sur certains téléphones) */
 @media (max-width: 55.99rem) and (min-height: 541px) {
@@ -3807,3 +3798,255 @@ html.video-fond .hero__media { filter: none; }
   html.video-fond .hero__media { -webkit-mask-image: none; mask-image: none; }
   html.video-fond .hero__media::after { content: ""; background: linear-gradient(to right, var(--noir), transparent 30%); background-size: auto; }
 }
+
+/* barre du haut : menu, logo et « Contact » sur la même ligne médiane (ils étaient décalés de 1 à 3 px les uns des autres) */
+.barre__menu { top: calc(env(safe-area-inset-top) + .4rem + (100% - env(safe-area-inset-top) - .4rem) / 2); }
+.barre .barre__logo { top: calc(env(safe-area-inset-top) + .91rem); }
+@media (max-width: 55.99rem) and (orientation: landscape) and (max-height: 540px) {
+  .barre__menu { top: calc(env(safe-area-inset-top) + .3rem + (100% - env(safe-area-inset-top) - .3rem) / 2); }
+  .barre .barre__logo { top: calc(env(safe-area-inset-top) + .72rem); }
+}
+
+/* deux éclairs néon blancs de chaque côté de « Suivez-nous » : ils partent du bas, au bord de l'écran, et leur pointe monte vers le titre. tracé blanc fin, double halo, scintillement décalé. téléphone et tablette seulement */
+@media (max-width: 55.99rem) {
+  .suivez { position: relative; }
+  .suivez::before, .suivez::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 3.2rem;
+    height: 9.6rem;
+    margin-top: -4.8rem; /* centrés en hauteur dans la section */
+    z-index: 0;
+    pointer-events: none;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 160' fill='rgb(255 255 255 / .1)' stroke='white' stroke-width='2.2' stroke-linejoin='miter' stroke-linecap='square'><path d='M36 2 12 72l17-4L8 158 52 52 33 56 48 2z'/><path d='M50 92 41 118l7-2-9 24' fill='none'/></svg>") center / contain no-repeat;
+    filter: drop-shadow(0 0 .2rem rgb(255 255 255 / .9)) drop-shadow(0 0 .7rem rgb(255 255 255 / .45));
+  }
+  .suivez::before { left: -.9rem; transform: rotate(205deg); }
+  .suivez::after { right: -.9rem; transform: scaleX(-1) rotate(205deg); }
+}
+/* scintillement discret et organique : la lueur respire doucement, avec de rares petits sursauts, et chaque éclair a son propre rythme (jamais en même temps) */
+@media (max-width: 55.99rem) and (prefers-reduced-motion: no-preference) {
+  .suivez::before { animation: eclair-suivez-g 7.3s ease-in-out infinite; }
+  .suivez::after { animation: eclair-suivez-d 9.1s ease-in-out infinite; }
+}
+@keyframes eclair-suivez-g {
+  0%, 100% { opacity: .96; }
+  18% { opacity: .84; }
+  34% { opacity: 1; }
+  52% { opacity: .88; }
+  71% { opacity: 1; }
+  73% { opacity: .62; }
+  75% { opacity: .98; }
+  88% { opacity: .86; }
+}
+@keyframes eclair-suivez-d {
+  0%, 100% { opacity: 1; }
+  14% { opacity: .9; }
+  29% { opacity: .8; }
+  47% { opacity: .98; }
+  63% { opacity: .87; }
+  82% { opacity: 1; }
+  84% { opacity: .66; }
+  86% { opacity: .97; }
+}
+
+/* icônes des réseaux sociaux en néon blanc (section « Suivez-nous » et menu) : trait blanc un peu plus épais, double halo, léger scintillement décalé d'une icône à l'autre ; le halo grossit au survol */
+.suivez .lien-icone svg, .menu__reseaux .lien-icone svg {
+  stroke-width: 1.9;
+  filter: drop-shadow(0 0 .15rem rgb(255 255 255 / .95)) drop-shadow(0 0 .55rem rgb(255 255 255 / .5));
+  transition: filter .2s ease;
+}
+@media (hover: hover) {
+  .suivez .lien-icone:hover svg, .menu__reseaux .lien-icone:hover svg { filter: drop-shadow(0 0 .2rem #fff) drop-shadow(0 0 .8rem rgb(255 255 255 / .8)); }
+}
+/* les icônes clignotent l'une après l'autre, de gauche à droite (un double clignotement chacune), puis une pause avant de recommencer */
+@media (prefers-reduced-motion: no-preference) {
+  .suivez .lien-icone svg, .menu__reseaux .lien-icone svg { animation: neon-icone 5s linear infinite; }
+  .suivez .lien-icone:nth-child(1) svg, .menu__reseaux .lien-icone:nth-child(1) svg, .menu__reseaux li:nth-child(1) .lien-icone svg { animation-delay: 0.00s; }
+  .suivez .lien-icone:nth-child(2) svg, .menu__reseaux .lien-icone:nth-child(2) svg, .menu__reseaux li:nth-child(2) .lien-icone svg { animation-delay: 0.55s; }
+  .suivez .lien-icone:nth-child(3) svg, .menu__reseaux .lien-icone:nth-child(3) svg, .menu__reseaux li:nth-child(3) .lien-icone svg { animation-delay: 1.10s; }
+  .suivez .lien-icone:nth-child(4) svg, .menu__reseaux .lien-icone:nth-child(4) svg, .menu__reseaux li:nth-child(4) .lien-icone svg { animation-delay: 1.65s; }
+  .suivez .lien-icone:nth-child(5) svg, .menu__reseaux .lien-icone:nth-child(5) svg, .menu__reseaux li:nth-child(5) .lien-icone svg { animation-delay: 2.20s; }
+  .suivez .lien-icone:nth-child(6) svg, .menu__reseaux .lien-icone:nth-child(6) svg, .menu__reseaux li:nth-child(6) .lien-icone svg { animation-delay: 2.75s; }
+}
+@keyframes neon-icone {
+  0%, 11%, 100% { opacity: 1; filter: drop-shadow(0 0 .15rem rgb(255 255 255 / .95)) drop-shadow(0 0 .55rem rgb(255 255 255 / .5)); }
+  2%, 6% { opacity: .2; filter: none; }
+  4%, 8% { opacity: 1; filter: drop-shadow(0 0 .2rem #fff) drop-shadow(0 0 .9rem rgb(255 255 255 / .85)); }
+}
+
+/* cadre facebook / instagram : il ne capte plus le défilement du doigt. un voile transparent le recouvre (le défilement de la page continue dessus) ; un toucher sur « Toucher pour parcourir » le rend actif, « Terminer » ou un toucher ailleurs le rend à la page */
+.embed__zone { position: relative; }
+.embed__voile {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 380px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 .9rem;
+  border: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / .45), transparent 30%);
+  color: var(--blanc);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.embed__voile span { padding: .4rem .8rem; background: rgb(0 0 0 / .75); border: 1px solid rgb(238 235 228 / .6); font-size: var(--fs-petit, .8rem); letter-spacing: .06em; }
+.embed__terminer { display: none; position: absolute; top: .5rem; right: .5rem; padding: .35rem .7rem; border: 1px solid var(--blanc); background: var(--noir); color: var(--blanc); font: inherit; font-size: .8rem; cursor: pointer; }
+.embed.est-interactif .embed__voile { display: none; }
+.embed.est-interactif .embed__terminer { display: block; }
+
+/* coupure entre le clip (ou la photo) de l'en-tête et le reste du site : la vidéo elle-même devient transparente vers le bas (masque en dégradé), donc elle se fond dans le fond du site au lieu de finir sur une bande noire. plus de dégradé noir posé par-dessus. téléphone et tablette en portrait */
+@media (max-width: 55.99rem) and (min-height: 541px) {
+  html.video-fond .hero__media {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgb(0 0 0 / .78) 64%, rgb(0 0 0 / .45) 76%, rgb(0 0 0 / .18) 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgb(0 0 0 / .78) 64%, rgb(0 0 0 / .45) 76%, rgb(0 0 0 / .18) 88%, transparent 100%);
+  }
+  html.video-fond .hero__media::after { background: none; }
+}
+
+/* formulaire MKL.studio : rappel court sur l'usage des données, sous les champs */
+.mkl-form__rgpd { margin: 0; font-size: .72rem; line-height: 1.4; color: var(--gris-3); text-wrap: pretty; }
+
+/* barre du haut : le menu à gauche, le logo (et son atterrissage) au milieu de la barre, « Contact » à droite */
+.barre__menu { left: calc(var(--marge-g) + .75rem); }
+@media (max-width: 55.99rem) {
+  .barre .barre__logo { left: 50%; transform: translateX(-50%); }
+}
+
+/* menu : un panneau qui glisse depuis la gauche et ne prend pas tout l'écran (le reste est assombri, un toucher dessus le ferme) */
+.menu {
+  inset: 0 auto 0 0;
+  width: min(84vw, 21rem);
+  height: 100svh;
+  max-height: none;
+  border-bottom: 0;
+  border-right: 1px solid rgb(238 235 228 / .35);
+}
+.menu__fermer { left: auto; right: .4rem; transform: translateY(-50%); }
+@media (prefers-reduced-motion: no-preference) {
+  .menu[open] { animation: menu-glisse .32s var(--ease) both; }
+}
+@keyframes menu-glisse { from { transform: translateX(-100%); } }
+.menu__panneau { min-height: 100%; box-sizing: border-box; } /* le panneau couvre tout le tiroir : un toucher dans le vide du tiroir ne le ferme pas */
+
+/* noir et blanc plus clair sur les extraits vidéo et photos de l'en-tête et sur les clips */
+html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1); }
+@media (min-width: 56rem) and (hover: hover) { .diapo { filter: grayscale(1) contrast(.95) brightness(1.95); } }
+.video video { filter: grayscale(1) contrast(1) brightness(1.4); }
+
+/* titres de section : le même liseré crème épais et la même ombre dure que les cadres BD des personnages (le bandeau devient un rectangle : le bout coupé en biais ne pouvait pas porter de liseré) */
+.bloc__titre, .annonce__h {
+  clip-path: none;
+  border: 1.5px solid var(--blanc);
+  box-shadow: 4px 4px 0 rgb(0 0 0 / .85);
+}
+
+/* accueil : Tom (à gauche) et Wil (à droite), dans un cadre de BD (jaune et violet) un peu de travers, de chaque côté de la prochaine date. ils sortent un peu de l'écran, le personnage dépasse du cadre par le haut. le cadre est dessiné par des fonds superposés : le personnage, l'aplat de couleur, la bordure crème. images : assets/img/titre-*.webp, découpées de l'illustration du groupe. téléphone et tablette seulement */
+@media (max-width: 55.99rem) {
+  .dates-zone { overflow-x: clip; } /* ils sortent de l'écran sans créer de défilement horizontal */
+  .dates-zone .annonce { position: relative; }
+  .dates-zone .annonce::before, .dates-zone .annonce::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 5.8rem;
+    height: 8.6rem;
+    margin-top: -2.1rem;
+    z-index: 0;
+    pointer-events: none;
+    filter: drop-shadow(.22rem .22rem 0 rgb(0 0 0 / .85));
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  .dates-zone .annonce::before {
+    left: calc(-1 * var(--marge) - 1.8rem);
+    background:
+      url("../img/titre-tom.webp") 50% 100% / contain no-repeat,
+      linear-gradient(var(--jaune), var(--jaune)) 52% calc(100% - .2rem) / 82% calc(76% - .4rem) no-repeat,
+      linear-gradient(var(--blanc), var(--blanc)) 52% 100% / calc(82% + .4rem) 76% no-repeat;
+    transform: rotate(10deg);
+  }
+  .dates-zone .annonce::after {
+    right: calc(-1 * var(--marge) - 1.2rem);
+    background:
+      url("../img/titre-wil.webp") 50% 100% / contain no-repeat,
+      linear-gradient(var(--bd-prune), var(--bd-prune)) calc(48% - .9rem) calc(100% - .2rem) / 82% calc(76% - .4rem) no-repeat,
+      linear-gradient(var(--blanc), var(--blanc)) calc(48% - .9rem) 100% / calc(82% + .4rem) 76% no-repeat;
+    transform: rotate(-10deg) scaleX(-1); /* en miroir : il regarde vers le centre */
+  }
+  /* ils apparaissent en fondu quand tout est chargé (initPersos dans main.js pose html.persos-prets) */
+  html.persos-prets .dates-zone .annonce::before, html.persos-prets .dates-zone .annonce::after { opacity: 1; }
+}
+@media (max-width: 55.99rem) and (prefers-reduced-motion: reduce) {
+  .dates-zone .annonce::before, .dates-zone .annonce::after { transition: none; }
+}
+
+/* les autres membres, au bord droit de l'écran, à la hauteur des gros titres de section : Dean pour « Le groupe », Louna pour « Compos », Tom pour « Médias », Laura pour « Clip », Wil pour « Actus ». sans cadre, penchés vers le titre, le bas qui s'efface dans le noir, en fondu après le chargement (comme Tom et Wil de l'accueil). ils ne montent pas plus haut que l'espace du haut de leur section. Laura est avant la vidéo dans la page : la vidéo passe par-dessus elle. téléphone et tablette seulement */
+.laura__perso { display: none; }
+@media (max-width: 55.99rem) {
+  #groupe, #ecouter, #galerie, #reseaux { overflow-x: clip; }
+  #groupe, #ecouter, #reseaux { padding-top: calc(var(--section-y) + 1.5rem); } /* de l'air pour les personnages */
+  .medias__clip { margin-top: calc(2 * var(--section-y) + 1.5rem); }
+  #groupe > .conteneur:first-child, #ecouter > .conteneur:first-child, #galerie > .conteneur:first-child, #galerie > .medias__clip, #reseaux > .conteneur:first-child { position: relative; }
+  #groupe > .conteneur:first-child::after, #ecouter > .conteneur:first-child::after,
+  #galerie > .conteneur:first-child::after, #reseaux > .conteneur:first-child::after, .laura__perso {
+    content: "";
+    position: absolute;
+    right: var(--marge-d);
+    top: max(calc(var(--fs-titre) * .635 - 3.4rem), calc(-1 * (var(--section-y) + 1.5rem)));
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 50% 0;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  html.persos-prets #groupe > .conteneur:first-child::after, html.persos-prets #ecouter > .conteneur:first-child::after,
+  html.persos-prets #galerie > .conteneur:first-child::after, html.persos-prets #reseaux > .conteneur:first-child::after, html.persos-prets .laura__perso { opacity: 1; }
+  #groupe > .conteneur:first-child::after { top: max(calc(var(--fs-titre) * .635 - 4.6rem), calc(-1 * (var(--section-y) + 1.5rem))); width: 5.2rem; height: 7.6rem; background-image: url("../img/titre-dean.webp"); transform: rotate(-8deg) scaleX(-1); }
+  #ecouter > .conteneur:first-child::after { top: max(calc(var(--fs-titre) * .635 - 4.6rem), calc(-1 * (var(--section-y) + 1.5rem))); width: 7.7rem; height: 6.6rem; background-image: url("../img/titre-louna.webp"); transform: rotate(-11deg); }
+  #galerie > .conteneur:first-child::after { top: max(calc(var(--fs-titre) * .635 - 3.4rem), calc(-1 * var(--section-y))); width: 4.9rem; height: 6.6rem; background-image: url("../img/titre-tom.webp"); transform: rotate(-9deg) scaleX(-1); }
+  #reseaux > .conteneur:first-child::after { width: 4.2rem; height: 6.6rem; background-image: url("../img/titre-wil.webp"); transform: rotate(-10deg) scaleX(-1); }
+  .laura__perso { display: block; width: auto; height: 6.6rem; transform: rotate(-9deg) scaleX(-1); -webkit-user-select: none; user-select: none; }
+}
+@media (max-width: 55.99rem) and (prefers-reduced-motion: reduce) {
+  #groupe > .conteneur:first-child::after, #ecouter > .conteneur:first-child::after,
+  #galerie > .conteneur:first-child::after, #reseaux > .conteneur:first-child::after, .laura__perso { transition: none; }
+}
+
+/* « Ils nous ont fait confiance » : plus bas, plus petit, le titre collé au bandeau de logos ; « Événements passés » : le titre est masqué, les affiches restent */
+.confiance { margin-top: 2.8rem; }
+.confiance .confiance__titre { font-size: .58rem; margin-bottom: .45rem; }
+.confiance__logo img { height: calc(2.3rem * var(--taille, 1)); }
+@media (min-width: 56rem) { .confiance__logo img { height: calc(2.7rem * var(--taille, 1)); } }
+.deja__titre { display: none; }
+
+/* pied de page : une colonne centrée et compacte. le logo à côté des mentions légales (la flèche « haut » à droite sur la même ligne), puis le copyright, les crédits photos et illustrations à la suite, et « Propulsé par », avec des espaces réguliers et des textes petits et discrets */
+.pied__credits[hidden] { display: none; }
+.pied .pied__contenu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
+  grid-template-areas:
+    ". logo liens haut"
+    "copy copy copy copy"
+    "credits credits credits credits"
+    "propulse propulse propulse propulse";
+  justify-items: center;
+  align-items: center;
+  gap: 0 1.25rem;
+  text-align: center;
+  padding-top: .4rem;
+  padding-bottom: max(1.4rem, env(safe-area-inset-bottom));
+}
+.pied .pied__logo { grid-area: logo; width: clamp(3rem, 13vw, 3.8rem); }
+.pied .pied__haut { grid-area: haut; justify-self: end; margin: 0 -.5rem 0 0; }
+.pied .pied__liens { grid-area: liens; justify-self: start; justify-content: center; gap: .35rem 1.5rem; margin-top: 0; }
+.pied .pied__liens .lien-discret { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--gris-2); }
+.pied .pied__copy { grid-area: copy; justify-self: center; text-align: center; margin: .6rem 0 0; font-size: .68rem; letter-spacing: .04em; color: var(--gris-3); }
+.pied .pied__credits { grid-area: credits; justify-self: center; max-width: 24rem; margin: .3rem 0 0; font-size: .62rem; line-height: 1.5; letter-spacing: .03em; color: var(--gris-4, var(--gris-3)); opacity: .85; }
+.pied .propulse { grid-area: propulse; justify-self: center; margin: .8rem 0 0; font-size: .58rem; letter-spacing: .16em; }

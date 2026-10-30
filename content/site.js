@@ -167,10 +167,10 @@ export default {
   legal: {
     editeur: {
       nom: "Drop Out",
-      statut: "",
-      responsable: "",
-      adresse: "",
-      email: "dropout07200@gmail.com",
+      statut: "Groupe de musique amateur, non constitué en société ni en association",
+      responsable: "MKL.studio",
+      adresse: "Non publiée : le groupe n’a pas d’adresse propre. L’identité de l’éditeur est communiquée à l’hébergeur, conformément à l’article 6 de la loi pour la confiance dans l’économie numérique.",
+      email: "mikael.godineau@hotmail.fr",
     },
     hebergeur: {
       nom: "GitHub, Inc. (GitHub Pages)",
@@ -182,6 +182,7 @@ export default {
 
   credits: {
     photos: "Romane Lézy",
+    illustrations: "Louna Caruso",
     liens: [
       { nom: "Site web", url: "https://romanelphotos.myportfolio.com/a-propos" },
       { nom: "Instagram", url: "https://www.instagram.com/romanelphotos/" },

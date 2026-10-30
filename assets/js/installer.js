@@ -34,6 +34,12 @@ addEventListener("appinstalled", () => {
 
 bouton.addEventListener("click", async () => {
   etat.classList.remove("est-ok");
+  if (!invite && /android/i.test(navigator.userAgent) && typeof navigator.brave?.isBrave !== "function") {
+    // Chrome envoie l'invitation d'installation un peu après le chargement : on l'attend un instant
+    etat.textContent = "Préparation…";
+    for (let t = 0; t < 15 && !invite; t++) await new Promise((r) => setTimeout(r, 100));
+    etat.textContent = "";
+  }
   if (invite) {
     aide.hidden = true;
     invite.prompt();

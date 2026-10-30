@@ -7,6 +7,7 @@ const ua = navigator.userAgent;
 export const estIos = () =>
   /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS se fait passer pour un Mac
 const estAndroid = () => /android/i.test(ua);
+const estBrave = () => typeof navigator.brave?.isBrave === "function"; // brave se déclare par cette fonction (pas dans le user-agent)
 const estNavigateurIntegre = () => /instagram|fban|fbav|fb_iab|line\/|snapchat|tiktok|musical_ly|twitter/i.test(ua);
 
 const liste = (...pas) => `<ol>${pas.map((p) => `<li>${p}</li>`).join("")}</ol>`;
@@ -58,10 +59,20 @@ export function aideInstallation() {
   }
 
   if (estAndroid()) {
+    if (estBrave()) {
+      return {
+        titre: "Sur Android (Brave)",
+        html: liste(
+          "Brave n’installe pas les applications web : il ne sait créer qu’un <strong>raccourci</strong> sur l’écran d’accueil (avec le petit badge du navigateur).",
+          "Pour une vraie application, sans badge : ouvrez cette page dans <strong>Chrome</strong>, puis touchez « Télécharger » et « Installer ».",
+          "Si le raccourci vous va : menu ⋮ de Brave, « Ajouter à l’écran d’accueil ».",
+        ),
+      };
+    }
     if (/firefox/i.test(ua)) {
       return {
         titre: "Sur Android (Firefox)",
-        html: liste("Touchez le menu ⋮ du navigateur.", "Choisissez « Installer » (ou « Ajouter à l’écran d’accueil »).", "Confirmez : l’icône Drop Out apparaît parmi vos applications."),
+        html: liste("Touchez le menu ⋮ du navigateur.", "Choisissez « Installer » (ou « Ajouter à l’écran d’accueil » si « Installer » n’existe pas).", "Confirmez : l’icône Drop Out apparaît parmi vos applications."),
       };
     }
     if (/samsungbrowser/i.test(ua)) {
@@ -72,8 +83,8 @@ export function aideInstallation() {
     }
     return {
       titre: "Sur Android",
-      html: liste("Touchez le menu ⋮ du navigateur, en haut à droite.", "Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».", "Confirmez : l’icône Drop Out apparaît parmi vos applications.") +
-        note("Si ces options n’apparaissent pas, ouvrez le site avec Chrome."),
+      html: liste("Touchez le menu ⋮ du navigateur, en haut à droite.", "Choisissez <strong>« Installer l’application »</strong>.", "Confirmez : l’icône Drop Out apparaît parmi vos applications.") +
+        note("Évitez « Ajouter à l’écran d’accueil » ou « Créer un raccourci » : l’icône garderait le petit badge du navigateur. Si « Installer l’application » n’apparaît pas, ouvrez le site avec Chrome."),
     };
   }
 

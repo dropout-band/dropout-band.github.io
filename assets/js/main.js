@@ -974,6 +974,9 @@ function apparitionsAuDefilement() {
 
 function rendreCredits() {
   const cr = contenu.credits || {};
+  const pied = [cr.photos && `Photos © ${cr.photos}`, cr.illustrations && `Illustrations © ${cr.illustrations}`].filter(Boolean).join(" · ");
+  const zone = $("[data-credit]");
+  if (pied) zone.textContent = pied; else zone.hidden = true;
   if (!cr.photos) return;
   const liste = avecUrl(cr.liens);
   const insta = liste.find((l) => /instagram.com/i.test(l.url)), site = liste.find((l) => l !== insta);
@@ -981,7 +984,6 @@ function rendreCredits() {
   const icones = lien(insta, ICONES.instagram, "Instagram", "credit__lien--insta") + lien(site, ICONES.site, "Site web", "credit__lien--site");
   // le nom, puis instagram en dessous et le site web à côté. le pied de page garde la mention seule
   $("[data-credit-groupe]").innerHTML = `<span class="credit__nom">Photos © ${esc(cr.photos)}</span>${icones ? `<span class="credit__liens">${icones}</span>` : ""}`;
-  $("[data-credit]").textContent = ` · Photos © ${cr.photos}`;
 }
 
 /* réseaux sociaux : petits encarts facebook et instagram */
@@ -1124,7 +1126,15 @@ function rendreEmbeds() {
       carte.classList.add("est-charge");
       corps.innerHTML = '<iframe src="' + esc(src) + '" width="' + largeur + '" height="380" title="Publications ' + esc(r.nom) + ' de ' + esc(nomGroupe) +
         '" loading="lazy" allow="encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+        // le cadre ne capte pas le défilement tant qu'on ne l'a pas demandé : un voile le recouvre (le doigt fait défiler la page), un toucher l'active, « Terminer » ou un toucher ailleurs le rend à la page
+        '<button type="button" class="embed__voile" data-voile aria-label="Parcourir les publications dans le cadre"><span>Toucher pour parcourir</span></button>' +
+        '<button type="button" class="embed__terminer" data-terminer>Terminer</button>' +
         '<button type="button" class="lien-discret embed__retirer" data-retirer>Retirer l’accord</button>';
+      const rendre = () => carte.classList.remove("est-interactif");
+      $("[data-voile]", corps).addEventListener("click", () => carte.classList.add("est-interactif"));
+      $("[data-terminer]", corps).addEventListener("click", rendre);
+      document.addEventListener("pointerdown", (e) => { if (!carte.contains(e.target)) rendre(); }, { passive: true });
+      if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { if (!e.isIntersecting) rendre(); }).observe(carte);
       $("[data-retirer]", corps).addEventListener("click", () => { ecrireAccord(cle, false); attente(); toast("Accord retiré : " + r.nom + " n’est plus chargé"); });
     };
 
@@ -1151,6 +1161,7 @@ function rendreMentions() {
   const mail = ed.email || contenu.contact?.email || "";
   const lienMail = mail ? '<a href="mailto:' + esc(mail) + '">' + esc(mail) + '</a>' : aRenseigner("legal.editeur.email", "span");
   const photos = contenu.credits?.photos;
+  const illustrations = contenu.credits?.illustrations;
   corps.innerHTML =
     '<section><h3>Éditeur du site</h3><ul>' +
       ligne("Nom", ed.nom || nomGroupe, "legal.editeur.nom") +
@@ -1166,13 +1177,15 @@ function rendreMentions() {
     '</ul></section>' +
     '<section><h3>Propriété intellectuelle</h3><p>Le nom, le logo, les textes et les visuels de Drop Out sont la propriété du groupe. ' +
       (photos ? 'Les photographies sont © ' + esc(photos) + ', publiées avec son accord. ' : '') +
+      (illustrations ? 'Les illustrations du groupe sont l’œuvre de ' + esc(illustrations) + ', © ' + esc(illustrations) + '. ' : '') +
       'Toute reproduction sans autorisation écrite est interdite. Les morceaux joués en concert qui sont des reprises restent la propriété de leurs auteurs.</p></section>' +
     '<section><h3>Données personnelles et cookies</h3>' +
-      '<p><strong>Ce site ne dépose aucun cookie de suivi, n’utilise aucun outil de mesure d’audience et ne collecte aucune donnée personnelle.</strong> Il n’a ni compte, ni formulaire.</p>' +
+      '<p><strong>Ce site ne dépose aucun cookie de suivi et n’utilise aucun outil de mesure d’audience.</strong> Il n’a pas de compte utilisateur. Il ne reçoit de données personnelles que si vous les envoyez vous-même : par le formulaire « Un projet ? » de MKL.studio ou en activant les alertes, comme détaillé ci-dessous.</p>' +
       '<p>Quelques informations techniques restent uniquement sur votre appareil (stockage local du navigateur), sans jamais être envoyées au groupe : le fait d’avoir déjà vu l’animation d’accueil, votre choix d’activer ou non les alertes « nouvelle date », et vos accords pour les encarts Facebook et Instagram. Elles sont nécessaires au fonctionnement du site et se suppriment en vidant les données du site dans votre navigateur.</p>' +
       '<p><strong>Facebook et Instagram.</strong> Ces deux encarts sont fournis par Meta Platforms Ireland Limited. Tant que vous n’avez pas cliqué sur « Afficher », rien n’est chargé depuis ces services. Après votre accord, ils peuvent déposer des cookies et recevoir votre adresse IP, selon leur propre politique de confidentialité. L’accord est conservé 6 mois et se retire à tout moment.</p>' +
       '<p><button type="button" class="bouton mentions__retirer" data-retirer-accords>Retirer mes accords</button></p>' +
       (contenu.notifications?.serveur ? '<p><strong>Alertes « nouvelle date ».</strong> Si vous activez les alertes, votre navigateur fournit une adresse technique propre à votre appareil, avec deux clés de chiffrement. Elles sont enregistrées sur un serveur de notifications (Cloudflare, Inc.) pour une seule finalité : vous envoyer les notifications du groupe. Aucun nom, courriel ou numéro n’est demandé. Cet enregistrement repose sur votre consentement : il est supprimé dès que vous désactivez les alertes, et automatiquement lorsque l’adresse n’est plus valide.</p>' : '') +
+      (contenu.notifications?.serveur ? '<p><strong>Formulaire « Un projet ? » (MKL.studio).</strong> Si vous écrivez par ce formulaire, votre adresse e-mail et votre message sont transmis par un serveur relais (Cloudflare, Inc.) puis envoyés par courriel, via le service Resend, à ' + esc(ed.responsable || "MKL.studio") + ', responsable du traitement (' + lienMail + '). Ils servent uniquement à répondre à votre demande, sur la base de votre démarche. Le serveur du site n’en garde aucune copie : il ne retient qu’un compteur anonyme pour limiter les envois abusifs, sans adresse IP ni identifiant. Votre message reste dans la boîte de réception du responsable le temps de l’échange, puis est supprimé au plus tard 12 mois après le dernier contact. Ces prestataires peuvent traiter les données hors de l’Union européenne, notamment aux États-Unis, avec les garanties prévues par le RGPD. Vos données ne sont ni vendues ni utilisées à d’autres fins.</p>' : '') +
       '<p><strong>Contact par courriel.</strong> Si vous écrivez au groupe, votre adresse et votre message ne servent qu’à vous répondre ; ils ne sont ni transmis ni conservés au-delà de l’échange.</p>' +
       '<p><strong>Vos droits.</strong> Conformément au RGPD et à la loi Informatique et Libertés, vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à ' + lienMail + '. En cas de difficulté, vous pouvez saisir la CNIL (<a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">cnil.fr</a>).</p></section>' +
     '<section><h3>Liens externes</h3><p>Le site renvoie vers des sites tiers (réseaux sociaux, partenaires, salles). Le groupe n’est pas responsable de leur contenu.</p></section>' +
@@ -1345,6 +1358,20 @@ function initIndicateur() {
   });
 }
 
+/* Tom et Wil (de chaque côté de la prochaine date) n'apparaissent qu'une fois tout chargé : la page entière, les images, et l'écran de démarrage s'il y en a un. la classe persos-prets sur <html> les fait paraître en fondu (style.css) */
+function initPersos() {
+  const racine = document.documentElement;
+  const montre = () => racine.classList.add("persos-prets");
+  const attendIntro = () => {
+    if (!racine.classList.contains("intro-actif")) { requestAnimationFrame(() => setTimeout(montre, 150)); return; }
+    const obs = new MutationObserver(() => { if (!racine.classList.contains("intro-actif")) { obs.disconnect(); setTimeout(montre, 150); } });
+    obs.observe(racine, { attributes: true, attributeFilter: ["class"] });
+    setTimeout(() => { obs.disconnect(); montre(); }, 8000); // filet de sécurité
+  };
+  if (document.readyState === "complete") attendIntro();
+  else addEventListener("load", attendIntro, { once: true });
+}
+
 /* barre fixe : le gros logo monte et se pose dedans */
 // pendant le défilement le logo de l'en-tête se déplace et rétrécit jusqu'à l'emplacement du logo de la barre, qui s'assombrit en même temps (--p de 0 à 1).
 // arrivé, il passe le relais au petit logo de la barre, placé exactement au même endroit. animations réduites : pas de déplacement, la barre apparaît quand le logo est sorti de l'écran
@@ -1413,6 +1440,7 @@ initDiaporama();
 initVideoFond();
 initOeil();
 initIndicateur();
+initPersos();
 initBarre();
 initProjecteurs();
 rendrePresentation();
