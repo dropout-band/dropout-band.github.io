@@ -110,39 +110,23 @@ function initBooking() {
 }
 
 /* formulaire de contact MKL.studio */
-// le logo MKL.studio du pied de page ouvre une fenêtre (adresse + message). le message part au serveur de notifications (route /mkl-contact)
+// le logo MKL.studio du pied de page ouvre une petite fenêtre avec un bouton qui ouvre la messagerie
 // qui le transmet par courriel à une adresse gardée secrète côté serveur
 function initMkl() {
   const dlg = $("#mkl-fenetre");
   const ouvrirs = $$("[data-mkl]");
   if (!dlg || !ouvrirs.length) return;
-  const form = $("[data-mkl-form]", dlg), etat = $("[data-mkl-etat]", dlg), envoi = $("[data-mkl-envoi]", dlg), merci = $("[data-mkl-merci]", dlg);
-  const serveur = ((contenu.notifications || {}).serveur || "").replace(/\/$/, "");
-  let ouvertA = 0;
-  const reinitialiser = () => { form.hidden = false; merci.hidden = true; etat.textContent = ""; envoi.disabled = false; };
+  // le bouton ouvre la messagerie du visiteur, vers l'adresse de l'éditeur (mentions légales)
+  const ecrire = $("[data-mkl-ecrire]", dlg);
+  const mail = contenu.legal?.editeur?.email || contenu.contact?.email || "";
+  if (ecrire) {
+    if (mail) ecrire.href = "mailto:" + mail + "?subject=" + encodeURIComponent("Un projet — vu sur le site Drop Out");
+    else ecrire.hidden = true;
+  }
   ouvrirs.forEach((b) => b.addEventListener("click", () => {
-    if (!dlg.open) { reinitialiser(); ouvertA = Date.now(); dlg.showModal(); $("[data-mkl-carte]", dlg).focus({ preventScroll: true }); }
+    if (!dlg.open) { dlg.showModal(); $("[data-mkl-carte]", dlg).focus({ preventScroll: true }); }
   }));
   dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-mkl-fermer]")) dlg.close(); }); // fond ou croix
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = form.email.value.trim(), message = form.message.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { etat.textContent = "Cette adresse e-mail ne semble pas valide."; form.email.focus(); return; }
-    if (message.length < 10) { etat.textContent = "Votre message est un peu court."; form.message.focus(); return; }
-    if (!serveur) { etat.textContent = "L’envoi n’est pas disponible pour le moment."; return; }
-    envoi.disabled = true; etat.textContent = "Envoi en cours…";
-    try {
-      const rep = await fetch(serveur + "/mkl-contact", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, message, piege: form.site.value, delai: Date.now() - ouvertA }),
-      });
-      if (!rep.ok) throw new Error(String(rep.status));
-      form.reset(); form.hidden = true; merci.hidden = false; // remerciement à la place du formulaire
-    } catch {
-      etat.textContent = "Le message n’est pas parti. Réessayez dans un instant.";
-      envoi.disabled = false;
-    }
-  });
 }
 
 /* musique */
@@ -1180,12 +1164,11 @@ function rendreMentions() {
       (illustrations ? 'Les illustrations du groupe sont l’œuvre de ' + esc(illustrations) + ', © ' + esc(illustrations) + '. ' : '') +
       'Toute reproduction sans autorisation écrite est interdite. Les morceaux joués en concert qui sont des reprises restent la propriété de leurs auteurs.</p></section>' +
     '<section><h3>Données personnelles et cookies</h3>' +
-      '<p><strong>Ce site ne dépose aucun cookie de suivi et n’utilise aucun outil de mesure d’audience.</strong> Il n’a pas de compte utilisateur. Il ne reçoit de données personnelles que si vous les envoyez vous-même : par le formulaire « Un projet ? » de MKL.studio ou en activant les alertes, comme détaillé ci-dessous.</p>' +
+      '<p><strong>Ce site ne dépose aucun cookie de suivi et n’utilise aucun outil de mesure d’audience.</strong> Il n’a pas de compte utilisateur. Il ne reçoit de données personnelles que si vous activez les alertes, comme détaillé ci-dessous.</p>' +
       '<p>Quelques informations techniques restent uniquement sur votre appareil (stockage local du navigateur), sans jamais être envoyées au groupe : le fait d’avoir déjà vu l’animation d’accueil, votre choix d’activer ou non les alertes « nouvelle date », et vos accords pour les encarts Facebook et Instagram. Elles sont nécessaires au fonctionnement du site et se suppriment en vidant les données du site dans votre navigateur.</p>' +
       '<p><strong>Facebook et Instagram.</strong> Ces deux encarts sont fournis par Meta Platforms Ireland Limited. Tant que vous n’avez pas cliqué sur « Afficher », rien n’est chargé depuis ces services. Après votre accord, ils peuvent déposer des cookies et recevoir votre adresse IP, selon leur propre politique de confidentialité. L’accord est conservé 6 mois et se retire à tout moment.</p>' +
       '<p><button type="button" class="bouton mentions__retirer" data-retirer-accords>Retirer mes accords</button></p>' +
       (contenu.notifications?.serveur ? '<p><strong>Alertes « nouvelle date ».</strong> Si vous activez les alertes, votre navigateur fournit une adresse technique propre à votre appareil, avec deux clés de chiffrement. Elles sont enregistrées sur un serveur de notifications (Cloudflare, Inc.) pour une seule finalité : vous envoyer les notifications du groupe. Aucun nom, courriel ou numéro n’est demandé. Cet enregistrement repose sur votre consentement : il est supprimé dès que vous désactivez les alertes, et automatiquement lorsque l’adresse n’est plus valide.</p>' : '') +
-      (contenu.notifications?.serveur ? '<p><strong>Formulaire « Un projet ? » (MKL.studio).</strong> Si vous écrivez par ce formulaire, votre adresse e-mail et votre message sont transmis par un serveur relais (Cloudflare, Inc.) puis envoyés par courriel, via le service Resend, à ' + esc(ed.responsable || "MKL.studio") + ', responsable du traitement (' + lienMail + '). Ils servent uniquement à répondre à votre demande, sur la base de votre démarche. Le serveur du site n’en garde aucune copie : il ne retient qu’un compteur anonyme pour limiter les envois abusifs, sans adresse IP ni identifiant. Votre message reste dans la boîte de réception du responsable le temps de l’échange, puis est supprimé au plus tard 12 mois après le dernier contact. Ces prestataires peuvent traiter les données hors de l’Union européenne, notamment aux États-Unis, avec les garanties prévues par le RGPD. Vos données ne sont ni vendues ni utilisées à d’autres fins.</p>' : '') +
       '<p><strong>Contact par courriel.</strong> Si vous écrivez au groupe, votre adresse et votre message ne servent qu’à vous répondre ; ils ne sont ni transmis ni conservés au-delà de l’échange.</p>' +
       '<p><strong>Vos droits.</strong> Conformément au RGPD et à la loi Informatique et Libertés, vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à ' + lienMail + '. En cas de difficulté, vous pouvez saisir la CNIL (<a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">cnil.fr</a>).</p></section>' +
     '<section><h3>Liens externes</h3><p>Le site renvoie vers des sites tiers (réseaux sociaux, partenaires, salles). Le groupe n’est pas responsable de leur contenu.</p></section>' +

@@ -3343,31 +3343,6 @@ html.video-fond .hero__media::after {
 #mkl-fenetre .booking-fenetre__fermer { top: .35rem; right: .35rem; }
 #mkl-fenetre .booking-fenetre__titre { --accent: var(--blanc); --sur-accent: var(--noir); color: var(--noir); margin: 0; justify-self: start; font-size: var(--fs-h2); }
 .mkl-fenetre__logo { display: block; height: 1.3rem; width: auto; margin: 0 0 .25rem; }
-.mkl-form { display: grid; gap: .9rem; }
-.mkl-form .booking-fenetre__texte { margin: 0; }
-.mkl-form__champ { display: grid; gap: .35rem; }
-.mkl-form__champ span { font-size: var(--fs-petit); letter-spacing: .08em; text-transform: uppercase; color: var(--gris-2); }
-.mkl-form input[type="email"], .mkl-form textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: .65rem .75rem;
-  border: 2px solid var(--blanc);
-  border-radius: var(--rayon);
-  background: var(--noir);
-  color: var(--blanc);
-  font: inherit;
-  font-size: 1rem; /* 16 px : pas de zoom automatique sur iphone */
-  line-height: 1.4;
-}
-.mkl-form textarea { resize: vertical; min-height: 7rem; }
-.mkl-form input::placeholder, .mkl-form textarea::placeholder { color: var(--gris-4); }
-.mkl-form input:focus-visible, .mkl-form textarea:focus-visible { outline: 2px solid var(--blanc); outline-offset: 2px; }
-.mkl-form__piege { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-.mkl-form__etat { margin: 0; min-height: 1.2em; font-size: var(--fs-petit); color: var(--gris-2); }
-.mkl-form__envoi { width: 100%; }
-.mkl-form__envoi:disabled { opacity: .6; cursor: default; }
-.mkl-form[hidden], .mkl-merci[hidden] { display: none; }
-.mkl-merci { margin: 0; padding: 1rem 0 .5rem; font-size: var(--fs-corps); line-height: 1.5; }
 
 /* pied de page : première ligne « copyright · logo · flèche » (téléphone : le copyright prend la place restante, la flèche reste au bord droit ; ordinateur : tout à gauche, la flèche juste après le logo) */
 .pied__contenu { grid-template-columns: minmax(0, 1fr) auto auto; }
@@ -3906,8 +3881,6 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
   html.video-fond .hero__media::after { background: none; }
 }
 
-/* formulaire MKL.studio : rappel court sur l'usage des données, sous les champs */
-.mkl-form__rgpd { margin: 0; font-size: .72rem; line-height: 1.4; color: var(--gris-3); text-wrap: pretty; }
 
 /* barre du haut : le menu à gauche, le logo (et son atterrissage) au milieu de la barre, « Contact » à droite */
 .barre__menu { left: calc(var(--marge-g) + .75rem); }
@@ -4050,3 +4023,4 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1
 .pied .pied__copy { grid-area: copy; justify-self: center; text-align: center; margin: .6rem 0 0; font-size: .68rem; letter-spacing: .04em; color: var(--gris-3); }
 .pied .pied__credits { grid-area: credits; justify-self: center; max-width: 24rem; margin: .3rem 0 0; font-size: .62rem; line-height: 1.5; letter-spacing: .03em; color: var(--gris-4, var(--gris-3)); opacity: .85; }
 .pied .propulse { grid-area: propulse; justify-self: center; margin: .8rem 0 0; font-size: .58rem; letter-spacing: .16em; }
+.mkl-fenetre__ecrire { display: inline-flex; justify-content: center; width: 100%; text-decoration: none; }

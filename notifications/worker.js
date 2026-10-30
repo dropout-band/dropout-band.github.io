@@ -2,7 +2,6 @@
 //  POST /abonner     { endpoint, keys }  : enregistre l'appareil (appelé par le site)
 //  POST /desabonner  { endpoint }        : le retire (appelé par le site)
 //  GET  /actus                          : dernières publications de la page facebook (API meta), 15 min en cache
-//  POST /mkl-contact { email, message }  : formulaire MKL.studio du pied de page, transmis par courriel (adresse gardée en secret ici)
 //  POST /envoyer     { titre, texte, url, curseur } + mot de passe : envoie une notification (appelé par tools/notifier.mjs)
 // données gardées : l'adresse technique du service de push de l'appareil et ses deux clés. ni nom, ni courriel, ni ip
 import { envoyer } from "./webpush.js";
@@ -70,38 +69,7 @@ export default {
     let corps;
     try { corps = JSON.parse(texte); } catch { return json({ erreur: "JSON illisible" }, 400, cors); }
 
-    // formulaire MKL.studio (pied de page) : le message part par courriel à l'adresse secrète MKL_EMAIL.
-    // secrets RESEND_KEY (clé de l'API resend) et MKL_EMAIL (l'adresse qui reçoit), facultatif MKL_FROM.
     // l'adresse n'est ni dans le site ni dans le dépôt, seulement dans ces secrets
-    if (url.pathname === "/mkl-contact") {
-      if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "refusé" }, 403, cors);
-      if (!env.RESEND_KEY || !env.MKL_EMAIL) return json({ erreur: "non configuré" }, 503, cors);
-      const email = String(corps.email || "").trim().slice(0, 200);
-      const message = String(corps.message || "").trim().slice(0, 2000);
-      if (corps.piege) return json({ ok: true }, 200, cors); // champ piège rempli : c'est un robot, on fait comme si de rien n'était
-      if (Number(corps.delai) < 2500) return json({ erreur: "trop rapide" }, 429, cors); // un humain met plus de 2,5 s
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ erreur: "adresse invalide" }, 400, cors);
-      if (message.length < 10) return json({ erreur: "message trop court" }, 400, cors);
-      // plafond de 20 messages par jour pour tout le site
-      const cle = "mkl:" + new Date().toISOString().slice(0, 10);
-      const dejaEnvoyes = Number(await env.ABONNES.get(cle)) || 0;
-      if (dejaEnvoyes >= 20) return json({ erreur: "trop de messages aujourd'hui" }, 429, cors);
-      const rep = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + env.RESEND_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: env.MKL_FROM || "MKL.studio <onboarding@resend.dev>",
-          to: [env.MKL_EMAIL],
-          reply_to: email,
-          subject: "Message via le site Drop Out : " + email.replace(/[\r\n]+/g, " "),
-          text: "De : " + email + "\n\n" + message,
-        }),
-      }).catch(() => null);
-      if (!rep || !rep.ok) return json({ erreur: "envoi impossible" }, 502, cors);
-      await env.ABONNES.put(cle, String(dejaEnvoyes + 1), { expirationTtl: 172800 });
-      return json({ ok: true }, 200, cors);
-    }
-
     // abonnement et désabonnement : appelés depuis le site, uniquement
     if (url.pathname === "/abonner" || url.pathname === "/desabonner") {
       if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "origine" }, 403, cors);
