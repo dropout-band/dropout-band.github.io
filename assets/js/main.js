@@ -30,7 +30,7 @@ $$("[data-texte]").forEach((el) => {
 const trace = (contenuSvg) => `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${contenuSvg}</svg>`;
 const ICONES = {
   instagram: trace('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".6" fill="currentColor"/>'),
-  facebook: trace('<circle cx="12" cy="12" r="8.5"/><path d="M14.6 8.2h-1.4a2 2 0 0 0-2 2v10.3M9.2 13.2h5"/>'),
+  facebook: trace('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M14.6 8.2h-1.4a2 2 0 0 0-2 2v10.3M9.2 13.2h5"/>'),
   site: trace('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5z"/>'),
 };
 const iconeDe = (url) => (/instagram\.com/i.test(url) ? ICONES.instagram : /facebook\.com/i.test(url) ? ICONES.facebook : ICONES.site);

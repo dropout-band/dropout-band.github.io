@@ -3890,11 +3890,11 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
 
 /* menu : un panneau qui glisse depuis la gauche et ne prend pas tout l'écran (le reste est assombri, un toucher dessus le ferme) */
 .menu {
-  inset: 0 auto 0 0;
+  inset: 0 auto auto 0; /* collé en haut à gauche, sans bord en bas : la hauteur suit le contenu */
   width: min(84vw, 21rem);
-  height: 100svh;
-  max-height: none;
-  border-bottom: 0;
+  height: auto;
+  max-height: 100svh; /* la hauteur du contenu : le tiroir s'arrête sous le dernier lien */
+  border-bottom: 1px solid rgb(238 235 228 / .35);
   border-right: 1px solid rgb(238 235 228 / .35);
 }
 .menu__fermer { left: auto; right: .4rem; transform: translateY(-50%); }
@@ -3902,7 +3902,6 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
   .menu[open] { animation: menu-glisse .32s var(--ease) both; }
 }
 @keyframes menu-glisse { from { transform: translateX(-100%); } }
-.menu__panneau { min-height: 100%; box-sizing: border-box; } /* le panneau couvre tout le tiroir : un toucher dans le vide du tiroir ne le ferme pas */
 
 /* noir et blanc plus clair sur les extraits vidéo et photos de l'en-tête et sur les clips */
 html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1); }
