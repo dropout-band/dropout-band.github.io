@@ -2644,9 +2644,9 @@ html.entree .hero__suite { animation: entree-fondu .5s ease 1s backwards; }
   .hero__logo { margin-top: max(-38vw, -10.5rem); }
 }
 
-/* téléphone : tout suit la largeur de l'écran. la taille de base (html) varie de 14 px (petit écran) à 17 px (grand), donc textes, espaces et boutons (en rem) gardent les mêmes proportions */
+/* téléphone : tout suit la largeur de l'écran. la taille de base (html) vaut 4,1 % de la largeur, de 11 px (très petit écran) à 21 px (très grand) : les textes, espaces, boutons et personnages (en rem) gardent les mêmes proportions, quel que soit le téléphone */
 @media (max-width: 39.99rem) {
-  html { font-size: clamp(14px, 4.1vw, 17px); }
+  html { font-size: clamp(11px, 4.1vw, 21px); }
 }
 
 /* téléphone en paysage (écran large et peu haut) : même esprit que le portrait (photo en noir et blanc, titres en bandes, cadres à ombre dure) mais la largeur est utilisée : en-tête à deux colonnes */
@@ -3902,6 +3902,13 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
   .menu[open] { animation: menu-glisse .32s var(--ease) both; }
 }
 @keyframes menu-glisse { from { transform: translateX(-100%); } }
+/* fermeture : le tiroir repart vers la gauche, le fond s'éclaircit (navigation.js ajoute .se-ferme puis ferme la fenêtre) */
+@media (prefers-reduced-motion: no-preference) {
+  .menu.se-ferme { animation: menu-ferme .26s var(--ease) both; }
+  .menu.se-ferme::backdrop { animation: menu-fond-ferme .26s ease both; }
+}
+@keyframes menu-ferme { to { transform: translateX(-100%); } }
+@keyframes menu-fond-ferme { to { opacity: 0; } }
 
 /* noir et blanc plus clair sur les extraits vidéo et photos de l'en-tête et sur les clips */
 html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1); }

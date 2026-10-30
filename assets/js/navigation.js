@@ -68,13 +68,30 @@ export function initMenu() {
   };
   ouvrir.addEventListener("click", ouvrirMenu);
 
+  // fermeture en douceur : le tiroir repart vers la gauche et le fond s'éclaircit, puis la fenêtre se ferme vraiment
+  let enFermeture = null;
+  const fermer = () => {
+    if (!dlg.open) return Promise.resolve();
+    if (mouvementReduit()) { dlg.close(); return Promise.resolve(); }
+    if (enFermeture) return enFermeture;
+    enFermeture = new Promise((fini) => {
+      const fin = () => { dlg.classList.remove("se-ferme"); enFermeture = null; if (dlg.open) dlg.close(); fini(); };
+      dlg.classList.add("se-ferme");
+      dlg.addEventListener("animationend", (e) => { if (e.target === dlg) fin(); }, { once: true });
+      setTimeout(fin, 450); // filet de sécurité si l'animation ne se déclenche pas
+    });
+    return enFermeture;
+  };
+  dlg.addEventListener("cancel", (e) => { e.preventDefault(); fermer(); }); // touche Échap ou geste « retour »
+
   dlg.addEventListener("click", (e) => {
-    if (e.target === dlg || e.target.closest("[data-menu-fermer]")) { dlg.close(); return; } // fond ou croix
+    if (e.target === dlg || e.target.closest("[data-menu-fermer]")) { fermer(); return; } // fond ou croix
     const b = e.target.closest("button");
     if (!b) return;
-    dlg.close();
-    if (b.hasAttribute("data-partager")) { partager(); return; }
-    if (b.hasAttribute("data-menu-booking")) { $("[data-booking]")?.click(); return; } // ouvre la fenêtre booking
-    $(b.dataset.cible)?.scrollIntoView({ behavior: mouvementReduit() ? "auto" : "smooth", block: "start" });
+    fermer().then(() => {
+      if (b.hasAttribute("data-partager")) { partager(); return; }
+      if (b.hasAttribute("data-menu-booking")) { $("[data-booking]")?.click(); return; } // ouvre la fenêtre booking
+      $(b.dataset.cible)?.scrollIntoView({ behavior: mouvementReduit() ? "auto" : "smooth", block: "start" });
+    });
   });
 }
