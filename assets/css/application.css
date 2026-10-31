@@ -201,3 +201,20 @@ html:has(.page-appli) { overflow: hidden; }
   from { background-position: 0 0, 0% 0, 100% 0; }
   to { background-position: 0 0, 100% 0, 0% 0; }
 }
+
+/* réseaux en néon sous « Continuer sans installer » : les icônes de « Suivez-nous » (trait blanc, double halo, clignotement l'une après l'autre) */
+.appli__reseaux { justify-content: center; gap: .5rem; margin: .9rem 0 0; padding: 0; list-style: none; }
+.appli__reseaux .lien-icone { width: 3.5rem; height: 3.5rem; color: var(--blanc); }
+.appli__reseaux .lien-icone svg {
+  width: 2rem; height: 2rem;
+  stroke-width: 1.9;
+  filter: drop-shadow(0 0 .15rem rgb(255 255 255 / .95)) drop-shadow(0 0 .55rem rgb(255 255 255 / .5));
+  transition: filter .2s ease;
+}
+@media (hover: hover) {
+  .appli__reseaux .lien-icone:hover svg { filter: drop-shadow(0 0 .2rem #fff) drop-shadow(0 0 .8rem rgb(255 255 255 / .8)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .appli__reseaux .lien-icone svg { animation: neon-icone 5s linear infinite; }
+  .appli__reseaux li:nth-child(2) .lien-icone svg { animation-delay: .55s; }
+}
