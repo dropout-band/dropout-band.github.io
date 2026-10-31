@@ -64,9 +64,9 @@ export default {
   */
   membres: [
     {
-      nom: "Tom", role: "Guitariste / Chanteur", couleur: "#d1933f",
+      nom: "Ludwig", role: "Guitariste / Chanteur", couleur: "#d1933f",
       traits: ["Barbu", "Déjanté", "Gourmand"],
-      photo: { base: "assets/img/membre-1", alt: "Tom, guitariste et chanteur de Drop Out, au micro", position: "50% 25%" },
+      photo: { base: "assets/img/membre-1", alt: "Ludwig, guitariste et chanteur de Drop Out, au micro", position: "50% 25%" },
     },
     {
       nom: "Laura", role: "Chanteuse", couleur: "#2a5a9a",

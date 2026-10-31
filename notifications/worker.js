@@ -2,6 +2,8 @@
 //  POST /abonner     { endpoint, keys }  : enregistre l'appareil (appelé par le site)
 //  POST /desabonner  { endpoint }        : le retire (appelé par le site)
 //  GET  /actus                          : dernières publications de la page facebook (API meta), 15 min en cache
+//  GET  /vues                           : total des visites (un seul nombre, aucune donnée sur les visiteurs)
+//  POST /vue                            : compte une visite de plus (appelé par le site, une fois par navigateur et par 12 h)
 //  POST /envoyer     { titre, texte, url, curseur } + mot de passe : envoie une notification (appelé par tools/notifier.mjs)
 // données gardées : l'adresse technique du service de push de l'appareil et ses deux clés. ni nom, ni courriel, ni ip
 import { envoyer } from "./webpush.js";
@@ -59,6 +61,11 @@ async function actus(env, cors) {
   return new Response(corps, { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=300", ...cors } });
 }
 
+// compteur de visites : un seul nombre, aucune donnée sur les visiteurs (ni ip, ni identifiant).
+// il est gardé sous la clé « ~vues » : dans le coffre COMPTEUR s'il existe, sinon dans ABONNES (l'envoi aux abonnés ignore les clés sans métadonnées)
+const coffreVues = (env) => env.COMPTEUR || env.ABONNES;
+const lireVues = async (env) => parseInt(await coffreVues(env).get("~vues"), 10) || 0;
+
 export default {
   async fetch(requete, env) {
     const url = new URL(requete.url);
@@ -70,8 +77,17 @@ export default {
     };
     if (requete.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     if (requete.method === "GET" && url.pathname === "/actus") return actus(env, cors);
+    if (requete.method === "GET" && url.pathname === "/vues") return json({ vues: await lireVues(env) }, 200, { ...cors, "Cache-Control": "public, max-age=60" });
     if (requete.method === "GET") return new Response("Drop Out — notifications", { headers: { "Content-Type": "text/plain; charset=utf-8" } });
     if (requete.method !== "POST") return json({ erreur: "méthode" }, 405, cors);
+
+    // une visite de plus (appelé par le site, une fois par navigateur et par 12 h)
+    if (url.pathname === "/vue") {
+      if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "origine" }, 403, cors);
+      let n = await lireVues(env);
+      try { await coffreVues(env).put("~vues", String(n + 1)); n += 1; } catch { /* quota d'écriture atteint : on affiche le total sans compter */ }
+      return json({ vues: n }, 200, cors);
+    }
 
     const texte = await requete.text();
     if (texte.length > 4000) return json({ erreur: "trop gros" }, 413, cors);

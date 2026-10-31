@@ -4027,3 +4027,15 @@ img, video, picture, canvas {
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* compteur de visites : une ligne minuscule tout en bas du pied de page, sous « Propulsé par » */
+.pied .pied__contenu {
+  grid-template-areas:
+    ". logo liens haut"
+    "copy copy copy copy"
+    "credits credits credits credits"
+    "propulse propulse propulse propulse"
+    "vues vues vues vues";
+}
+.pied .pied__vues { grid-area: vues; justify-self: center; margin: .5rem 0 0; font-size: .62rem; line-height: 1.5; letter-spacing: .03em; color: var(--gris-4, var(--gris-3)); opacity: .85; font-variant-numeric: tabular-nums; } /* comme la ligne des crédits photos */
+.pied__vues[hidden] { display: none; }

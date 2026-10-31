@@ -1167,7 +1167,8 @@ function rendreMentions() {
       'Toute reproduction sans autorisation écrite est interdite. Les morceaux joués en concert qui sont des reprises restent la propriété de leurs auteurs.</p></section>' +
     '<section><h3>Données personnelles et cookies</h3>' +
       '<p><strong>Ce site ne dépose aucun cookie de suivi et n’utilise aucun outil de mesure d’audience.</strong> Il n’a pas de compte utilisateur. Il ne reçoit de données personnelles que si vous activez les alertes, comme détaillé ci-dessous.</p>' +
-      '<p>Quelques informations techniques restent uniquement sur votre appareil (stockage local du navigateur), sans jamais être envoyées au groupe : le fait d’avoir déjà vu l’animation d’accueil, votre choix d’activer ou non les alertes « nouvelle date », et vos accords pour les encarts Facebook et Instagram. Elles sont nécessaires au fonctionnement du site et se suppriment en vidant les données du site dans votre navigateur.</p>' +
+      (contenu.notifications?.serveur ? '<p>Un petit compteur de visites s’affiche en bas de page. Il ne garde qu’un nombre total : ni adresse IP, ni identifiant, ni cookie ne sont enregistrés. Ce nombre est conservé sur un serveur Cloudflare, Inc.</p>' : '') +
+      '<p>Quelques informations techniques restent uniquement sur votre appareil (stockage local du navigateur), sans jamais être envoyées au groupe : le fait d’avoir déjà vu l’animation d’accueil, votre choix d’activer ou non les alertes « nouvelle date », ' + (contenu.notifications?.serveur ? 'la date de votre dernière visite comptée (pour ne pas vous compter plusieurs fois dans la journée), ' : '') + 'et vos accords pour les encarts Facebook et Instagram. Elles sont nécessaires au fonctionnement du site et se suppriment en vidant les données du site dans votre navigateur.</p>' +
       '<p><strong>Facebook et Instagram.</strong> Ces deux encarts sont fournis par Meta Platforms Ireland Limited. Tant que vous n’avez pas cliqué sur « Afficher », rien n’est chargé depuis ces services. Après votre accord, ils peuvent déposer des cookies et recevoir votre adresse IP, selon leur propre politique de confidentialité. L’accord est conservé 6 mois et se retire à tout moment.</p>' +
       '<p><button type="button" class="bouton mentions__retirer" data-retirer-accords>Retirer mes accords</button></p>' +
       (contenu.notifications?.serveur ? '<p><strong>Alertes « nouvelle date ».</strong> Si vous activez les alertes, votre navigateur fournit une adresse technique propre à votre appareil, avec deux clés de chiffrement. Elles sont enregistrées sur un serveur de notifications (Cloudflare, Inc.) pour une seule finalité : vous envoyer les notifications du groupe. Aucun nom, courriel ou numéro n’est demandé. Cet enregistrement repose sur votre consentement : il est supprimé dès que vous désactivez les alertes, et automatiquement lorsque l’adresse n’est plus valide.</p>' : '') +
@@ -1445,11 +1446,39 @@ initMkl();
 rendreMusique();
 initMenu();
 initRetour();
+/* compteur de visites */
+// le serveur de notifications tient un seul nombre, sans aucune donnée sur les visiteurs. une visite par navigateur et par 12 h : un repère dans le stockage local évite de recompter les rechargements.
+// en local (localhost, réseau local) on ne fait que lire le total, pour ne pas fausser le compte, et si le serveur ne répond pas on affiche un faux total qui monte à chaque rechargement (pour voir le rendu).
+// en ligne, sans serveur ou en cas d'erreur, rien ne s'affiche
+async function initCompteur() {
+  const zone = $("[data-vues]");
+  const serveur = contenu.notifications?.serveur;
+  if (!zone || !serveur) return;
+  const base = serveur.replace(/\/$/, "");
+  const CLE = "dropout-visite", DELAI = 12 * 60 * 60 * 1000;
+  const enLigne = !/^(localhost|127\.|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname);
+  let compter = enLigne;
+  try { compter = enLigne && Date.now() - Number(localStorage.getItem(CLE) || 0) > DELAI; } catch { /* stockage indisponible : on compte */ }
+  let vues = NaN;
+  try {
+    const rep = await fetch(base + (compter ? "/vue" : "/vues"), compter ? { method: "POST" } : undefined);
+    if (rep.ok) vues = (await rep.json()).vues;
+    if (rep.ok && compter) { try { localStorage.setItem(CLE, String(Date.now())); } catch { /* stockage indisponible */ } }
+  } catch { /* serveur injoignable */ }
+  if (!Number.isFinite(vues) && !enLigne) { // simulation, en local seulement
+    try { vues = Number(localStorage.getItem("dropout-vues-demo") || 1233) + 1; localStorage.setItem("dropout-vues-demo", String(vues)); } catch { vues = 1234; }
+  }
+  if (!Number.isFinite(vues) || vues < 1) return;
+  zone.textContent = new Intl.NumberFormat("fr-FR").format(vues) + (vues > 1 ? " visites" : " visite");
+  zone.hidden = false;
+}
+
 rendreReseaux();
 rendreEmbeds(); // le cadre facebook s'affiche tout de suite ; les articles le remplacent si le serveur répond
 rendreActus();
 rendreMentions();
 rendreCredits();
+initCompteur();
 $("[data-annee]").textContent = new Date().getFullYear();
 const apparitions = apparitionsAuDefilement();
 initPwa();
