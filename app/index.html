@@ -28,29 +28,47 @@
 </head>
 <body class="page-appli">
   <main class="appli">
-    <!-- le logo du site, avec l'œil qui bouge (animation de style.css) -->
-    <h1 class="hero__logo appli__logo">
-      <span class="logo">
-        <img class="logo__base"
-          src="../assets/logo/logo-sans-oeil-600.webp"
-          srcset="../assets/logo/logo-sans-oeil-600.webp 600w, ../assets/logo/logo-sans-oeil-1200.webp 1200w"
-          sizes="(min-width: 40rem) 26rem, 80vw"
-          width="1200" height="660" alt="Drop Out">
-        <img class="logo__oeil" src="../assets/logo/logo-oeil-76.webp" width="76" height="76" alt="">
-      </span>
-    </h1>
-    <p class="appli__style">Rock alternatif · Ardèche</p>
+    <div class="appli__haut">
+      <!-- le logo du site, avec l'œil qui bouge (animation de style.css) -->
+      <h1 class="hero__logo appli__logo">
+        <span class="logo">
+          <img class="logo__base"
+            src="../assets/logo/logo-sans-oeil-600.webp"
+            srcset="../assets/logo/logo-sans-oeil-600.webp 600w, ../assets/logo/logo-sans-oeil-1200.webp 1200w"
+            sizes="(min-width: 40rem) 26rem, 80vw"
+            width="1200" height="660" alt="Drop Out">
+          <img class="logo__oeil" src="../assets/logo/logo-oeil-76.webp" width="76" height="76" alt="">
+        </span>
+      </h1>
+      <p class="appli__style">Rock alternatif · Ardèche</p>
+    </div>
 
     <button type="button" class="bouton bouton--plein appli__bouton" data-telecharger>
       <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>
       <span>Télécharger</span>
     </button>
-    <p class="appli__etat" data-etat role="status" aria-live="polite"></p>
 
-    <!-- mode d'emploi (iPhone, ou navigateur sans installation directe) -->
-    <div class="appli__aide" data-aide hidden></div>
+    <div class="appli__bas">
+      <p class="appli__etat" data-etat role="status" aria-live="polite"></p>
 
-    <a class="lien-action appli__suite" href="../?site"><span>Continuer sans installer</span></a>
+      <!-- mode d'emploi (iPhone, ou navigateur sans installation directe) -->
+      <div class="appli__aide" data-aide hidden></div>
+
+      <a class="lien-action appli__suite" href="../?site"><span>Continuer sans installer</span></a>
+    </div>
   </main>
+
+  <!-- deux projecteurs, un par angle du haut de l'écran, braqués sur le logo -->
+  <div class="appli__projos" aria-hidden="true">
+    <div class="projo projo--g"><i class="projo__faisceau"></i><i class="projo__lampe"></i></div>
+    <div class="projo projo--d"><i class="projo__faisceau"></i><i class="projo__lampe"></i></div>
+  </div>
+
+  <!-- le groupe au trait, au bas de l'écran : Wil dans l'angle gauche, Louna à la batterie au centre, Laura dans l'angle droit. dessins de Louna Caruso, décoratifs -->
+  <div class="appli__groupe" aria-hidden="true">
+    <img class="perso perso--g" src="../assets/illustrations/trait-bassiste-tatoue.webp" width="839" height="900" alt="" decoding="async">
+    <img class="perso perso--c" src="../assets/illustrations/trait-batteur.webp" width="769" height="900" alt="" decoding="async">
+    <img class="perso perso--d" src="../assets/illustrations/trait-chanteuse.webp" width="436" height="900" alt="" decoding="async">
+  </div>
 </body>
 </html>

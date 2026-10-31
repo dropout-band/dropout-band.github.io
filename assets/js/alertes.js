@@ -34,7 +34,7 @@ function afficher(bouton, actif, animer = true) {
     zone.classList.remove("s-allume"); void zone.offsetWidth; zone.classList.add("s-allume");
   }
   const texte = zone?.querySelector(".alertes__texte");
-  if (texte) texte.textContent = actif ? "Activé" : "Prévenez-moi !";
+  if (texte) texte.textContent = "Prévenez-moi !";
 }
 
 // relance la vérification en arrière-plan sans geste de l'utilisateur (possible si la permission est déjà accordée).

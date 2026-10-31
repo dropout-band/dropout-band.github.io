@@ -10,7 +10,7 @@
    
    quand on ajoute des fichiers essentiels : augmenter VERSION.
 */
-const VERSION = "v363";
+const VERSION = "v394";
 // en local (localhost, réseau local) pas de cache : le service worker se retire et efface tout, la page vient toujours du serveur
 // le cache hors connexion n'existe que sur le site publié (https)
 const LOCAL = /^(localhost|127\.|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(self.location.hostname);
@@ -22,6 +22,9 @@ const ESSENTIELS = [
   "./",
   "app/",
   "assets/css/application.css",
+  "assets/illustrations/trait-bassiste-tatoue.webp",
+  "assets/illustrations/trait-batteur.webp",
+  "assets/illustrations/trait-chanteuse.webp",
   "assets/js/installer.js",
   "assets/js/aide-installation.js",
   "assets/js/oeil.js",
@@ -31,6 +34,7 @@ const ESSENTIELS = [
   "manifest.webmanifest",
   "assets/css/style.css",
   "assets/js/main.js",
+  "assets/js/protection.js",
   "assets/js/outils.js",
   "assets/js/concerts.js",
   "assets/js/pwa.js",

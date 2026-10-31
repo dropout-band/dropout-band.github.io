@@ -5,6 +5,7 @@ import { initPwa } from "./pwa.js";
 import { initAlertes } from "./alertes.js";
 import { initOeil } from "./oeil.js";
 import { initIntro } from "./intro.js";
+import { initProtection } from "./protection.js";
 import { initRetour, initMenu } from "./navigation.js";
 
 const $ = (s, c = document) => c.querySelector(s);
@@ -1406,6 +1407,7 @@ function initBarre() {
 
 /* démarrage */
 
+initProtection();
 initIntro();
 // filet : tout lien vers un autre site s'ouvre dans un nouvel onglet, même écrit sans target
 document.addEventListener("click", (e) => {

@@ -3288,13 +3288,6 @@ html.video-fond .hero__media::after {
 .entete-neon { transform: rotate(-1.5deg); }
 .entete-neon .annonce__h { transform: none; }
 
-/* ordinateur : le diaporama de l'en-tête (à la place du clip) est en noir et blanc */
-@media (min-width: 56rem) and (hover: hover) {
-  .diapo { filter: grayscale(1) contrast(1) brightness(1.55); }
-}
-@media (min-width: 56rem) and (hover: hover) and (prefers-reduced-motion: reduce) {
-  .diapo { filter: grayscale(1); }
-}
 
 /* téléphone en paysage : écran bas, photos du slider plus petites (3 à la fois, format paysage) pour tenir à l'écran */
 @media (orientation: landscape) and (max-height: 540px) {
@@ -3362,11 +3355,10 @@ html.video-fond .hero__media::after {
   .pied__haut { margin-left: -.75rem; } /* la zone tactile de la flèche déborde de son dessin : on compense pour que l'écart visible soit le même de chaque côté du logo */}
 .pied__haut { margin-left: -.75rem; }
 
-/* téléphone et tablette : le clip d'en-tête (et son image d'attente) en noir et blanc, comme les photos du diaporama sur ordinateur */
-html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55); }
 
 /* médias : photos et aperçu du clip en noir et blanc, en couleur au toucher (sous le doigt, dans la photo agrandie, à la lecture du clip) et au survol sur ordinateur */
-#galerie .galerie__photo img, .video video { filter: grayscale(1) contrast(1.05) brightness(1.15); transition: filter .5s var(--ease); }
+#galerie .galerie__photo img { filter: grayscale(1) contrast(1.05) brightness(1.15); transition: filter .5s var(--ease); }
+.video video { filter: grayscale(1) contrast(1) brightness(1.4); }
 #galerie .galerie__photo button:active img, .video:active video, .video video.a-joue { filter: none; }
 @media (hover: hover) { .video:hover video { filter: none; } }
 @media (hover: hover) {
@@ -3743,8 +3735,8 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
   -webkit-mask-image: radial-gradient(circle 9rem at 100% 0%, #000 15%, transparent 100%);
   mask-image: radial-gradient(circle 9rem at 100% 0%, #000 15%, transparent 100%);
 }
-#booking-fenetre .booking-fenetre__contenu, #booking-fenetre .booking-fenetre__fermer { position: relative; z-index: 1; }
-#booking-fenetre .booking-fenetre__fermer { position: absolute; }
+#booking-fenetre .booking-fenetre__contenu { position: relative; z-index: 1; }
+#booking-fenetre .booking-fenetre__fermer { position: absolute; z-index: 2; }
 #booking-fenetre .booking-fenetre__titre { --accent: var(--rouge-profond); font-size: calc(var(--fs-h2) * 1.25); transform: rotate(-3deg); box-shadow: 4px 4px 0 var(--rouge-sombre); }
 #booking-fenetre .booking-fenetre__bouton { box-shadow: 4px 4px 0 var(--rouge-profond); }
 #booking-fenetre::backdrop { background: rgb(0 0 0 / .8); }
@@ -3911,9 +3903,6 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(1) brightness(1.55)
 @keyframes menu-fond-ferme { to { opacity: 0; } }
 
 /* noir et blanc plus clair sur les extraits vidéo et photos de l'en-tête et sur les clips */
-html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1); }
-@media (min-width: 56rem) and (hover: hover) { .diapo { filter: grayscale(1) contrast(.95) brightness(1.95); } }
-.video video { filter: grayscale(1) contrast(1) brightness(1.4); }
 
 /* titres de section : le même liseré crème épais et la même ombre dure que les cadres BD des personnages (le bandeau devient un rectangle : le bout coupé en biais ne pouvait pas porter de liseré) */
 .bloc__titre, .annonce__h {
@@ -4030,3 +4019,11 @@ html.video-fond .hero__media { filter: grayscale(1) contrast(.95) brightness(2.1
 .pied .pied__credits { grid-area: credits; justify-self: center; max-width: 24rem; margin: .3rem 0 0; font-size: .62rem; line-height: 1.5; letter-spacing: .03em; color: var(--gris-4, var(--gris-3)); opacity: .85; }
 .pied .propulse { grid-area: propulse; justify-self: center; margin: .8rem 0 0; font-size: .58rem; letter-spacing: .16em; }
 .mkl-fenetre__ecrire { display: inline-flex; justify-content: center; width: 100%; text-decoration: none; }
+
+/* Médias : pas d'appui long « enregistrer », pas de glisser-déposer */
+img, video, picture, canvas {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
