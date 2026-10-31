@@ -2,7 +2,6 @@
    Page « Télécharger l'application » (app/index.html)
    Reprend les couleurs, polices et boutons de style.css.
    ========================================================== */
-.page-appli { min-height: 100vh; min-height: 100svh; }
 .appli {
   min-height: 100vh;
   min-height: 100svh;
@@ -76,14 +75,16 @@
 }
 
 /* fond noir uni (plus de halos ni de trame rouges) */
-.page-appli { background: var(--noir); position: relative; overflow-x: hidden; }
+.page-appli { background: var(--noir); }
 .page-appli .appli { position: relative; z-index: 1; }
 
 /* page sans défilement : la colonne fait exactement la hauteur de l'écran et le bloc (logo, bouton, lien) est centré d'un seul tenant :
    même distance entre le haut du logo et le haut de l'écran qu'entre le bas du lien et le bas de l'écran.
    (seul le mode d'emploi, s'il est très long sur un petit écran, défile à l'intérieur de la colonne) */
 html:has(.page-appli) { overflow: hidden; }
-.page-appli { display: flex; flex-direction: column; height: 100vh; height: 100svh; overflow: hidden; }
+/* la page occupe exactement la zone visible du navigateur : en position fixe sur tout l'écran (inset: 0) elle suit les barres d'adresse et d'outils du téléphone
+   qui apparaissent ou se replient, au lieu d'une hauteur calculée à part (100vh serait trop grand, 100svh fige la hauteur barres déployées) */
+.page-appli { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
 .page-appli .appli {
   flex: 1 1 0;
   min-height: 0;
@@ -132,6 +133,7 @@ html:has(.page-appli) { overflow: hidden; }
    ils s'allument en grésillant au chargement puis balayent doucement */
 .appli__projos {
   --visee: calc(50svh - 5rem);
+  --visee: calc(50dvh - 5rem); /* hauteur dynamique : suit les barres du navigateur (ignorée si non gérée) */
   --a: atan2(var(--visee), 50vw);
   --long: hypot(50vw, var(--visee));
   --ouv: calc(var(--long) * .5);

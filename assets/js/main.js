@@ -651,8 +651,9 @@ document.addEventListener("click", (e) => {
 function initProjecteurs() {
   if (mouvementReduit()) return;
   const SCINTILLE = [[0, 0], [.08, 1], [.16, .15], [.26, .85], [.34, .25], [.5, 1], [.62, .7], [1, 1]]; // [avancée, intensité]
-  const DELAI = 1100; // ms d'obscurité : ils sont les derniers à apparaître au chargement (après logo, titre, annonce, partenaires et flèche)
-  const DECALAGE = 350; // celui de droite s'allume 0,35 s après celui de gauche
+  const DELAI = 300; // ms d'obscurité avant le premier éclat, juste le temps que le logo et le titre soient posés
+  const DECALAGE = 180; // celui de droite s'allume 0,18 s après celui de gauche
+  const DUREE = 360; // ms du scintillement d'allumage
   let demande = 0;
   const allumage = (t) => {
     for (let i = 1; i < SCINTILLE.length; i++) {
@@ -677,9 +678,9 @@ function initProjecteurs() {
       let g = 0, d = 0;
       if (!document.documentElement.classList.contains("intro-actif")) {
         if (!st.debut) st.debut = maintenant;
-        const depuis = maintenant - st.debut - (cadre.matches(".scene-cadre, .dates-zone [data-neon-scroll]") ? DELAI : 250); // ailleurs que sur la scène du haut, pas besoin d'attendre la fin du chargement
-        g = allumage(Math.min(1, Math.max(0, depuis / 450)));
-        d = allumage(Math.min(1, Math.max(0, (depuis - DECALAGE) / 450)));
+        const depuis = maintenant - st.debut - (cadre.matches(".scene-cadre, .dates-zone [data-neon-scroll]") ? DELAI : 150); // ailleurs que sur la scène du haut, pas besoin d'attendre la fin du chargement
+        g = allumage(Math.min(1, Math.max(0, depuis / DUREE)));
+        d = allumage(Math.min(1, Math.max(0, (depuis - DECALAGE) / DUREE)));
       }
       regler(g * defilement, d * defilement);
       if (g < 1 || d < 1) encore = true;
