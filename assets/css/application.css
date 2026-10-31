@@ -79,49 +79,24 @@
 .page-appli { background: var(--noir); position: relative; overflow-x: hidden; }
 .page-appli .appli { position: relative; z-index: 1; }
 
-/* page sans défilement : la colonne fait exactement la hauteur de l'écran, en trois rangées (haut | bouton | bas) dont les deux extrêmes sont égales,
-   donc « Télécharger » est au centre de l'écran. les dessins sont posés par-dessus, en bas, sans rien pousser.
+/* page sans défilement : la colonne fait exactement la hauteur de l'écran et le bloc (logo, bouton, lien) est centré d'un seul tenant :
+   même distance entre le haut du logo et le haut de l'écran qu'entre le bas du lien et le bas de l'écran.
    (seul le mode d'emploi, s'il est très long sur un petit écran, défile à l'intérieur de la colonne) */
 html:has(.page-appli) { overflow: hidden; }
-.page-appli { --u: min(1vw, .5svh); --perso: calc(40 * var(--u)); } /* unité des personnages (voir plus bas) */
 .page-appli { display: flex; flex-direction: column; height: 100vh; height: 100svh; overflow: hidden; }
 .page-appli .appli {
   flex: 1 1 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: auto auto auto;
   justify-items: center;
-  align-content: stretch;
+  align-content: safe center;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.appli__haut { align-self: end; display: grid; justify-items: center; padding-bottom: 1.75rem; }
-.appli__bas { align-self: start; display: grid; justify-items: center; width: 100%; }
+.appli__haut { display: grid; justify-items: center; padding-bottom: 1.75rem; }
+.appli__bas { display: grid; justify-items: center; width: 100%; }
 .page-appli .appli__bouton { margin-top: 0; }
-
-/* Wil dans l'angle bas gauche, Louna au centre, Laura dans l'angle bas droit.
-   toutes les tailles se calculent avec une seule unité (--u) qui suit l'écran : 1 % de la largeur, sans jamais dépasser 0,5 % de la hauteur.
-   les trois personnages ont exactement la même hauteur (--perso, 40 unités) : sur n'importe quel écran ils gardent les mêmes proportions entre eux et avec l'écran (le téléphone en hauteur est le cas de référence) */
-.appli__groupe { position: fixed; inset: 0; z-index: 0; pointer-events: none; user-select: none; }
-.perso {
-  position: absolute;
-  bottom: 0;
-  width: auto;
-  opacity: .92;
-  /* fondu sur le bas : les pieds, la batterie et les câbles s'estompent dans le noir au lieu d'être coupés net */
-  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
-}
-.perso--c { left: 50%; translate: -50% 5%; height: var(--perso); }
-/* Wil (à gauche, large, tête près du bord) sort de 20 % de sa largeur, Laura (à droite) de 12 %, et tous les trois descendent de 5 % de leur hauteur sous le bord bas */
-.perso--g { left: 0; translate: -20% 5%; height: var(--perso); }
-.perso--d { right: 0; translate: 12% 5%; height: var(--perso); }
-@media (prefers-reduced-motion: no-preference) {
-  .perso { animation: appli-entree .8s var(--ease) both; }
-  .perso--g { animation-delay: .1s; }
-  .perso--d { animation-delay: .2s; }
-}
-@keyframes appli-entree { from { opacity: 0; transform: translateY(.9rem); } to { opacity: .92; transform: none; } }
 
 /* logo, sous-titre et bouton plus petits : la colonne centrale reste légère et le bouton au centre de l'écran, avec de l'air autour des dessins */
 .page-appli .appli .hero__logo { width: min(56vw, 16rem); }
@@ -152,11 +127,11 @@ html:has(.page-appli) { overflow: hidden; }
 }
 
 /* deux projecteurs braqués sur le logo : un faisceau crème par angle du haut de l'écran, une petite tête de lampe dans le coin.
-   le faisceau part du coin (0 ou 100 % de la largeur, tout en haut) vers le logo, un peu au-dessus du bouton qui est au centre de l'écran (visée : 50svh - 9,5rem).
+   le faisceau part du coin (0 ou 100 % de la largeur, tout en haut) vers le logo, là où le bloc centré place le logo, un peu au-dessus du milieu de l'écran (visée : 50svh - 5rem).
    l'angle et la longueur se calculent depuis l'écran (atan2 et hypot), donc le faisceau suit le logo sur tous les écrans.
    ils s'allument en grésillant au chargement puis balayent doucement */
 .appli__projos {
-  --visee: calc(50svh - 9.5rem);
+  --visee: calc(50svh - 5rem);
   --a: atan2(var(--visee), 50vw);
   --long: hypot(50vw, var(--visee));
   --ouv: calc(var(--long) * .5);
