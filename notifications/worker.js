@@ -8,6 +8,15 @@ import { envoyer } from "./webpush.js";
 
 const PAR_LOT = 40; // l'offre gratuite limite à 50 appels externes par requête : on envoie par lots
 
+// seuls les vrais services de push des navigateurs sont acceptés comme adresse d'envoi (google, mozilla, apple, microsoft) :
+// l'en-tête Origin se falsifie hors d'un navigateur, sans cette liste le serveur enverrait des requêtes vers n'importe quel site
+const SERVICES_PUSH = /^(fcm\.googleapis\.com|android\.googleapis\.com|([a-z0-9-]+\.)*push\.services\.mozilla\.com|([a-z0-9-]+\.)*push\.apple\.com|([a-z0-9-]+\.)*notify\.windows\.com)$/;
+function adresseDePushValide(endpoint) {
+  let u;
+  try { u = new URL(endpoint); } catch { return false; }
+  return u.protocol === "https:" && !u.username && !u.password && (u.port === "" || u.port === "443") && SERVICES_PUSH.test(u.hostname);
+}
+
 const json = (donnees, statut, cors) =>
   new Response(JSON.stringify(donnees), { status: statut, headers: { "Content-Type": "application/json", ...cors } });
 
@@ -75,10 +84,11 @@ export default {
       if (requete.headers.get("Origin") !== env.ORIGINE) return json({ erreur: "origine" }, 403, cors);
       const endpoint = String(corps.endpoint || "");
       if (!/^https:\/\/[^\s]{10,900}$/.test(endpoint)) return json({ erreur: "adresse invalide" }, 400, cors);
+      if (url.pathname === "/abonner" && !adresseDePushValide(endpoint)) return json({ erreur: "service de push inconnu" }, 400, cors);
       const id = await identifiant(endpoint);
       if (url.pathname === "/desabonner") { await env.ABONNES.delete(id); return json({ ok: true }, 200, cors); }
       const { p256dh, auth } = corps.keys || {};
-      if (typeof p256dh !== "string" || typeof auth !== "string" || p256dh.length !== 87 || auth.length !== 22) return json({ erreur: "clés invalides" }, 400, cors);
+      if (typeof p256dh !== "string" || typeof auth !== "string" || !/^B[A-Za-z0-9_-]{86}$/.test(p256dh) || !/^[A-Za-z0-9_-]{22}$/.test(auth)) return json({ erreur: "clés invalides" }, 400, cors);
       const meta = { e: endpoint, p: p256dh, a: auth };
       if (JSON.stringify(meta).length > 1000) return json({ erreur: "abonnement trop long" }, 413, cors);
       await env.ABONNES.put(id, "1", { metadata: meta });
